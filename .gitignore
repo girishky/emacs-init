@@ -1,0 +1,9 @@
+auto-save-list/
+custom.el
+elpa/
+places
+projects
+recentf
+transient/
+tree-sitter/
+*~
