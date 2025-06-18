@@ -35,7 +35,7 @@
   (defalias 'yes-or-no-p 'y-or-n-p)
   (setq auto-save-default nil)
   (global-auto-revert-mode 1)
-  (setq treesit-font-lock-level 4)
+  (setq treesit-font-lock-level 3)
   (global-set-key [remap list-buffers] 'ibuffer)
 
   ;; Improve scrolling behavior
@@ -49,7 +49,7 @@
   ;; Set a reasonable default tab width
   (setq-default tab-width 4)
   ;; Set default font face
-  (set-face-attribute 'default nil :font "Atkinson Hyperlegible Mono-17") ;
+  (set-face-attribute 'default nil :font "Atkinson Hyperlegible Mono-15")
   ;; (set-face-attribute 'default nil :font "IBM Plex Mono-14") ;
 
   ;; Enable delete-selection-mode
@@ -92,18 +92,18 @@
 (use-package which-key
   :init
   (setq which-key-idle-delay 0.5) ; Open after .5s instead of 1s
-  :after evil
+  ;; :after evil
   :config
   (which-key-mode 1)
   ;; (which-key-setup-minibuffer)
   ;; (setq which-key-popup-type 'minibuffer)
   )
 
-(use-package evil
-  :ensure t
-  :config
-  (evil-mode 1)
-  (define-key evil-normal-state-map (kbd "C-s-u") 'evil-scroll-up))
+;; (use-package evil
+;;   :ensure t
+;;   :config
+;;   (evil-mode 1)
+;;   (define-key evil-normal-state-map (kbd "C-s-u") 'evil-scroll-up))
 
 (use-package vertico
   :ensure t
@@ -221,6 +221,9 @@
 
 (use-package apheleia
   :ensure t
+  :hook
+  ((latex-mode . (lambda () (apheleia-mode -1)))
+   (LaTeX-mode . (lambda () (apheleia-mode -1))))
   :config
   (apheleia-global-mode t)
   (with-eval-after-load 'apheleia
