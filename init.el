@@ -35,7 +35,8 @@
   (defalias 'yes-or-no-p 'y-or-n-p)
   (setq auto-save-default nil)
   (global-auto-revert-mode 1)
-  (setq treesit-font-lock-level 3)
+  (setq treesit-font-lock-level 4)
+  (setq eldoc-echo-area-use-multiline-p nil)
   (global-set-key [remap list-buffers] 'ibuffer)
 
   ;; Improve scrolling behavior
