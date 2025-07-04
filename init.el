@@ -50,7 +50,7 @@
   ;; Set a reasonable default tab width
   (setq-default tab-width 4)
   ;; Set default font face
-  (set-face-attribute 'default nil :font "Atkinson Hyperlegible Mono-15")
+  (set-face-attribute 'default nil :font "Atkinson Hyperlegible Mono-16")
   ;; (set-face-attribute 'default nil :font "IBM Plex Mono-14") ;
 
   ;; Enable delete-selection-mode
@@ -214,10 +214,12 @@
   :ensure t
   :bind
   (("C-c g" . magit-file-dispatch))
+  :custom
+  (magit-git-executable "/opt/homebrew/bin/git")
   :config
   (setq magit-diff-refine-hunk 'all)
   (setq magit-repository-directories
-        '(("~/Documents/repos/" . 1))))
+        '(("~/Documents/repos/" . 2))))
 
 
 (use-package apheleia
