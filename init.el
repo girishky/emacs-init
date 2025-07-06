@@ -65,16 +65,16 @@
   (setq python-shell-interpreter ".venv/bin/python3")
   (setq python-shell-prompt-detect-failure-warning nil)
 
-  ;; (with-eval-after-load 'eglot
-  ;;   (add-to-list 'eglot-server-programs
-  ;;                '(python-ts-mode . ("pyright-langserver" "--stdio")))
-  ;;   (add-to-list 'eglot-server-programs
-  ;;                '(text-mode . ("harper-ls" "--stdio"))))
+  (with-eval-after-load 'eglot
+    ;; (add-to-list 'eglot-server-programs
+    ;;              '(python-ts-mode . ("pyright-langserver" "--stdio")))
+    (add-to-list 'eglot-server-programs
+                 '(text-mode . ("harper-ls" "--stdio"))))
   ;; Enable relative line numbers in programming modes
   :hook ((prog-mode . (lambda () (setq display-line-numbers 'relative)))
          (LaTeX-mode . (lambda () (setq display-line-numbers 'relative)))
          (python-ts-mode . eglot-ensure)
-         ;; (text-mode . eglot-ensure)
+         (text-mode . eglot-ensure)
          )
   :bind
   ("M-o" . other-window)
@@ -276,7 +276,7 @@
 (use-package doom-themes
   :ensure t
   :config
-  (load-theme 'doom-zenburn t))
+  (load-theme 'doom-solarized-light t))
 
 
 ;; (use-package atom-one-dark-theme
