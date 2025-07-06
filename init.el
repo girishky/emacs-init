@@ -38,7 +38,7 @@
   (setq treesit-font-lock-level 4)
   (setq eldoc-echo-area-use-multiline-p nil)
   (global-set-key [remap list-buffers] 'ibuffer)
-
+  (setq delete-by-moving-to-trash t)
   ;; Improve scrolling behavior
   (setq redisplay-dont-pause t
         scroll-margin 1
