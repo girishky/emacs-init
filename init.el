@@ -74,7 +74,7 @@
   :hook ((prog-mode . (lambda () (setq display-line-numbers 'relative)))
          (LaTeX-mode . (lambda () (setq display-line-numbers 'relative)))
          (python-ts-mode . eglot-ensure)
-         (text-mode . eglot-ensure)
+         ;; (text-mode . eglot-ensure)
          )
   :bind
   ("M-o" . other-window)
@@ -303,7 +303,8 @@
          (LaTeX-mode . turn-on-reftex)
          ;; (LaTeX-mode . TeX-source-correlate-mode)
          (LaTeX-mode . flyspell-mode)
-         (LaTeX-mode . turn-on-auto-fill))
+         (LaTeX-mode . turn-on-auto-fill)
+         (LaTeX-mode . my-buffer-face-mode-variable))
   :config
   (setq TeX-PDF-mode t)
   (setq TeX-auto-save t)
