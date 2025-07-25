@@ -356,6 +356,12 @@
         ;; rename files when moving - needed for mbsync:
         mu4e-change-filenames-when-moving t)
 
+  (add-to-list 'mu4e-bookmarks
+               ;; bookmark for unread messages in my Gmail inbox
+               '( :name "Unread Gmail Inbox"
+                  :key  ?U
+                  :query "maildir:/Gmail/Inbox AND flag:unread"))
+
   (setq mu4e-contexts
         (list
          (make-mu4e-context
