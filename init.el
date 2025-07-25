@@ -276,7 +276,9 @@
 (use-package doom-themes
   :ensure t
   :config
-  (load-theme 'doom-solarized-light t))
+  ;; (load-theme 'doom-solarized-light t)
+  (load-theme 'doom-oceanic-next t)
+  )
 
 
 ;; (use-package atom-one-dark-theme
@@ -302,12 +304,13 @@
   :hook ((LaTeX-mode . LaTeX-math-mode)
          (LaTeX-mode . turn-on-reftex)
          ;; (LaTeX-mode . TeX-source-correlate-mode)
-         (LaTeX-mode . flyspell-mode)
+         ;; (LaTeX-mode . flyspell-mode)
          (LaTeX-mode . turn-on-auto-fill)
          (LaTeX-mode . my-buffer-face-mode-variable))
   :config
   (setq TeX-PDF-mode t)
   (setq TeX-auto-save t)
+  (setq TeX-save-query nil)
   (setq TeX-parse-self t)
   ;; (setq-default TeX-master nil)
   )
