@@ -320,3 +320,10 @@
   :config
   (setq reftex-plug-into-AUCTeX t)
   )
+
+(use-package ebib
+  :ensure t
+  :defer t
+  :bind ("C-c e" . ebib)
+  )
+
