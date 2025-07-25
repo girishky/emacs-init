@@ -327,3 +327,10 @@
   :bind ("C-c e" . ebib)
   )
 
+;; Use variable width font faces in current buffer
+(defun my-buffer-face-mode-variable ()
+  "Set font to a variable width (proportional) fonts in current buffer"
+  (interactive)
+  (setq buffer-face-mode-face '(:family "Source Code Pro" :height 160))
+  (buffer-face-mode))
+
