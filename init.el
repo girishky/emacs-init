@@ -334,3 +334,88 @@
   (setq buffer-face-mode-face '(:family "Source Code Pro" :height 160))
   (buffer-face-mode))
 
+(use-package mu4e
+  :ensure nil
+  :load-path  "/opt/homebrew/share/emacs/site-lisp/mu/mu4e/"
+  :config
+  ;; we installed this with homebrew
+  (setq mu4e-mu-binary (executable-find "mu")
+        ;; this is the directory we created before:
+        mu4e-maildir "~/.maildir"
+        ;; this command is called to sync imap servers:
+        mu4e-get-mail-command (concat (executable-find "mbsync") " -a")
+        ;; how often to call it in seconds:
+        mu4e-update-interval 300
+        mu4e-headers-auto-update t
+        mu4e-compose-format-flowed t
+        ;; save attachment to desktop by default
+        mu4e-attachment-dir "~/Documents"
+        ;; rename files when moving - needed for mbsync:
+        mu4e-change-filenames-when-moving t)
+
+  (setq mu4e-contexts
+        (list
+         (make-mu4e-context
+          :name "gmail"
+          :enter-func
+          (lambda () (mu4e-message "Enter context personal gmail"))
+          :leave-func
+          (lambda () (mu4e-message "Leave context personal gmail"))
+          :match-func
+          (lambda (msg)
+            (when msg
+		      (mu4e-message-contact-field-matches
+		       msg '(:from :to :cc :bcc) "write_gmail_address_here")))
+          :vars '((user-mail-address . "write_gmail_address_here")
+                  (user-full-name . "write_your_name_here")
+                  (mu4e-drafts-folder . "/Gmail/Drafts")
+                  (mu4e-refile-folder . "/Gmail/Archive")
+                  (mu4e-sent-folder . "/Gmail/Sent")
+                  (mu4e-trash-folder . "/Gmail/Trash")
+                  (mu4e-maildir-shortcuts . (( "/Gmail/Inbox"   .   ?i)
+                                             ("/Gmail/Sent" . ?s)))
+                  (message-send-mail-function . smtpmail-send-it)
+                  (smtpmail-smtp-service .  587)
+                  (smtpmail-default-smtp-server . "smtp.gmail.com")
+                  (smtpmail-smtp-server .  "smtp.gmail.com")
+                  ;; don't save message to Sent Messages, Gmail/IMAP takes care of this
+                  (mu4e-sent-messages-behavior . delete)
+                  ))
+         )
+        )
+
+  (setq mu4e-context-policy 'pick-first) ;; start with the first (default) context;
+  (setq mu4e-compose-context-policy 'ask) ;; ask for context if no context matches;
+  (setq  message-confirm-send t
+         message-signature nil
+         message-signature-file "~/.signature_work")
+                                        ;
+  ;; don't keep message buffers around
+  (setq message-kill-buffer-on-exit t
+        mu4e-compose-dont-reply-to-self t
+        ;; attempt to show images when viewing messages
+        mu4e-view-show-images t
+        ;; Disbale inline images in messages
+        gnus-inhibit-images t
+        ;; hide annoying "mu4e Retrieving mail..." msg in mini buffer:
+        mu4e-hide-index-messages t
+        ;; by default do not show related emails:
+        mu4e-headers-include-related nil
+        ;; hide duplicate messages
+        mu4e-headers-skip-duplicates t
+        )
+  ;; Quickly switching between plain text and HTML mime type.
+  (keymap-set mu4e-view-mode-map (kbd "K")
+              (lambda ()
+                (interactive)
+                (gnus-article-jump-to-part 1)
+                (gnus-article-press-button)
+                (gnus-article-press-button)))
+  (with-eval-after-load 'mm-decode
+    (add-to-list 'mm-discouraged-alternatives "text/html")
+    (add-to-list 'mm-discouraged-alternatives "text/richtext"))
+
+  (add-hook 'mu4e-view-mode-hook 'my-buffer-face-mode-variable)
+  (add-hook 'mu4e-thread-mode-hook #'mu4e-thread-fold-apply-all)
+  )
+
