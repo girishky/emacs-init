@@ -348,7 +348,7 @@
         ;; this command is called to sync imap servers:
         mu4e-get-mail-command (concat (executable-find "mbsync") " -a")
         ;; how often to call it in seconds:
-        mu4e-update-interval 300
+        mu4e-update-interval 180
         mu4e-headers-auto-update t
         mu4e-compose-format-flowed t
         ;; save attachment to desktop by default
