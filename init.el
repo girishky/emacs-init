@@ -334,6 +334,9 @@
   (setq buffer-face-mode-face '(:family "Source Code Pro" :height 160))
   (buffer-face-mode))
 
+;; Load external file defining email & name functions
+(load-file (expand-file-name "~/.mu4e-identity.el"))
+
 (use-package mu4e
   :ensure nil
   :load-path  "/opt/homebrew/share/emacs/site-lisp/mu/mu4e/"
@@ -356,18 +359,16 @@
   (setq mu4e-contexts
         (list
          (make-mu4e-context
-          :name "gmail"
+          :name "Gmail"
           :enter-func
-          (lambda () (mu4e-message "Enter context personal gmail"))
+          (lambda () (mu4e-message "Enter context personal Gmail"))
           :leave-func
-          (lambda () (mu4e-message "Leave context personal gmail"))
-          :match-func
-          (lambda (msg)
-            (when msg
-		      (mu4e-message-contact-field-matches
-		       msg '(:from :to :cc :bcc) "write_gmail_address_here")))
-          :vars '((user-mail-address . "write_gmail_address_here")
-                  (user-full-name . "write_your_name_here")
+          (lambda () (mu4e-message "Leave context personal Gmail"))
+          :match-func (lambda (msg)
+                        (when msg
+                          (string-prefix-p "/Gmail" (mu4e-message-field msg :maildir))))
+          :vars `((user-mail-address . ,(gmail-address))
+                  (user-full-name . ,(full-name))
                   (mu4e-drafts-folder . "/Gmail/Drafts")
                   (mu4e-refile-folder . "/Gmail/Archive")
                   (mu4e-sent-folder . "/Gmail/Sent")
