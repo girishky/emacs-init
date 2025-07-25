@@ -341,7 +341,7 @@
   :ensure nil
   :load-path  "/opt/homebrew/share/emacs/site-lisp/mu/mu4e/"
   :config
-  ;; we installed this with homebrew
+  ;; mu installed with homebrew
   (setq mu4e-mu-binary (executable-find "mu")
         ;; this is the directory we created before:
         mu4e-maildir "~/.maildir"
@@ -354,7 +354,23 @@
         ;; save attachment to desktop by default
         mu4e-attachment-dir "~/Documents"
         ;; rename files when moving - needed for mbsync:
-        mu4e-change-filenames-when-moving t)
+        mu4e-change-filenames-when-moving t
+        ;; don't save message to Sent Messages, IMAP takes care of this
+        mu4e-sent-messages-behavior 'delete
+        ;; don't keep message buffers around
+        message-kill-buffer-on-exit t
+        mu4e-compose-dont-reply-to-self t
+        ;; attempt to show images when viewing messages
+        mu4e-view-show-images t
+        ;; Disbale inline images in messages
+        gnus-inhibit-images t
+        ;; hide annoying "mu4e Retrieving mail..." msg in mini buffer:
+        mu4e-hide-index-messages t
+        ;; by default do not show related emails:
+        mu4e-headers-include-related nil
+        ;; hide duplicate messages
+        mu4e-headers-skip-duplicates t
+        )
 
   (add-to-list 'mu4e-bookmarks
                ;; bookmark for unread messages in my Gmail inbox
@@ -385,8 +401,7 @@
                   (smtpmail-smtp-service .  587)
                   (smtpmail-default-smtp-server . "smtp.gmail.com")
                   (smtpmail-smtp-server .  "smtp.gmail.com")
-                  ;; don't save message to Sent Messages, Gmail/IMAP takes care of this
-                  (mu4e-sent-messages-behavior . delete)))
+                  ))
          
          (make-mu4e-context
           :name "2ndGmail"
@@ -409,8 +424,6 @@
                   (smtpmail-smtp-service .  587)
                   (smtpmail-default-smtp-server . "smtp.gmail.com")
                   (smtpmail-smtp-server .  "smtp.gmail.com")
-                  ;; don't save message to Sent Messages, Gmail/IMAP takes care of this
-                  (mu4e-sent-messages-behavior . delete)
                   ))
          )
         )
@@ -422,20 +435,7 @@
          message-signature nil
          message-signature-file "~/.signature_work")
                                         ;
-  ;; don't keep message buffers around
-  (setq message-kill-buffer-on-exit t
-        mu4e-compose-dont-reply-to-self t
-        ;; attempt to show images when viewing messages
-        mu4e-view-show-images t
-        ;; Disbale inline images in messages
-        gnus-inhibit-images t
-        ;; hide annoying "mu4e Retrieving mail..." msg in mini buffer:
-        mu4e-hide-index-messages t
-        ;; by default do not show related emails:
-        mu4e-headers-include-related nil
-        ;; hide duplicate messages
-        mu4e-headers-skip-duplicates t
-        )
+
   ;; Quickly switching between plain text and HTML mime type.
   (keymap-set mu4e-view-mode-map (kbd "K")
               (lambda ()
