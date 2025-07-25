@@ -380,10 +380,35 @@
                   (smtpmail-default-smtp-server . "smtp.gmail.com")
                   (smtpmail-smtp-server .  "smtp.gmail.com")
                   ;; don't save message to Sent Messages, Gmail/IMAP takes care of this
+                  (mu4e-sent-messages-behavior . delete)))
+         
+         (make-mu4e-context
+          :name "2ndGmail"
+          :enter-func
+          (lambda () (mu4e-message "Enter context 2ndGmail"))
+          :leave-func
+          (lambda () (mu4e-message "Leave context 2ndGmail"))
+          :match-func (lambda (msg)
+                        (when msg
+                          (string-prefix-p "/2ndGmail" (mu4e-message-field msg :maildir))))
+          :vars `((user-mail-address . ,(another-gmail-address))
+                  (user-full-name . ,(full-name))
+                  (mu4e-drafts-folder . "/2ndGmail/Drafts")
+                  (mu4e-refile-folder . "/2ndGmail/Archive")
+                  (mu4e-sent-folder . "/2ndGmail/Sent")
+                  (mu4e-trash-folder . "/2ndGmail/Trash")
+                  (mu4e-maildir-shortcuts . (( "/2ndGmail/Inbox"   .   ?i)
+                                             ("/2ndGmail/Sent" . ?s)))
+                  (message-send-mail-function . smtpmail-send-it)
+                  (smtpmail-smtp-service .  587)
+                  (smtpmail-default-smtp-server . "smtp.gmail.com")
+                  (smtpmail-smtp-server .  "smtp.gmail.com")
+                  ;; don't save message to Sent Messages, Gmail/IMAP takes care of this
                   (mu4e-sent-messages-behavior . delete)
                   ))
          )
         )
+
 
   (setq mu4e-context-policy 'pick-first) ;; start with the first (default) context;
   (setq mu4e-compose-context-policy 'ask) ;; ask for context if no context matches;
