@@ -49,6 +49,8 @@
   (setq-default indent-tabs-mode nil)
   ;; Set a reasonable default tab width
   (setq-default tab-width 4)
+  (set-default-coding-systems 'utf-8)
+  (set-language-environment "UTF-8")
   ;; Set default font face
   (set-face-attribute 'default nil :font "Atkinson Hyperlegible Mono-16")
   ;; (set-face-attribute 'default nil :font "IBM Plex Mono-14") ;
@@ -348,9 +350,9 @@
         ;; this command is called to sync imap servers:
         mu4e-get-mail-command (concat (executable-find "mbsync") " -a")
         ;; how often to call it in seconds:
-        mu4e-update-interval 180
+        mu4e-update-interval 300
         mu4e-headers-auto-update t
-        mu4e-compose-format-flowed t
+        mu4e-compose-format-flowed nil
         ;; save attachment to desktop by default
         mu4e-attachment-dir "~/Documents"
         ;; rename files when moving - needed for mbsync:
@@ -370,7 +372,15 @@
         mu4e-headers-include-related nil
         ;; hide duplicate messages
         mu4e-headers-skip-duplicates t
+        ;; configure function to send mail
+        send-mail-function 'smtpmail-send-it
+        ;; confirm before sending mail
+        message-confirm-send t
+        ;; email signature imported from a file
+        message-signature nil
+        message-signature-file "~/.signature_work"
         )
+
 
   (add-to-list 'mu4e-bookmarks
                ;; bookmark for unread messages in my Gmail inbox
@@ -381,7 +391,7 @@
   (setq mu4e-contexts
         (list
          (make-mu4e-context
-          :name "Gmail"
+          :name "Personal"
           :enter-func
           (lambda () (mu4e-message "Enter context personal Gmail"))
           :leave-func
@@ -397,14 +407,15 @@
                   (mu4e-trash-folder . "/Gmail/Trash")
                   (mu4e-maildir-shortcuts . (( "/Gmail/Inbox"   .   ?i)
                                              ("/Gmail/Sent" . ?s)))
-                  (message-send-mail-function . smtpmail-send-it)
+	              (smtpmail-smtp-user . ,(gmail-address))
+	              (smtpmail-default-smtp-server . "smtp.gmail.com")
+	              (smtpmail-smtp-server . "smtp.gmail.com")
                   (smtpmail-smtp-service .  587)
-                  (smtpmail-default-smtp-server . "smtp.gmail.com")
-                  (smtpmail-smtp-server .  "smtp.gmail.com")
+                  (smtpmail-stream-type . starttls)
                   ))
          
          (make-mu4e-context
-          :name "2ndGmail"
+          :name "second-gmail"
           :enter-func
           (lambda () (mu4e-message "Enter context 2ndGmail"))
           :leave-func
@@ -420,21 +431,18 @@
                   (mu4e-trash-folder . "/2ndGmail/Trash")
                   (mu4e-maildir-shortcuts . (( "/2ndGmail/Inbox"   .   ?i)
                                              ("/2ndGmail/Sent" . ?s)))
-                  (message-send-mail-function . smtpmail-send-it)
+	              (smtpmail-smtp-user . ,(another-gmail-address))
+	              (smtpmail-default-smtp-server . "smtp.gmail.com")
+	              (smtpmail-smtp-server . "smtp.gmail.com")
                   (smtpmail-smtp-service .  587)
-                  (smtpmail-default-smtp-server . "smtp.gmail.com")
-                  (smtpmail-smtp-server .  "smtp.gmail.com")
+                  (smtpmail-stream-type . starttls)
                   ))
          )
         )
 
 
   (setq mu4e-context-policy 'pick-first) ;; start with the first (default) context;
-  (setq mu4e-compose-context-policy 'ask) ;; ask for context if no context matches;
-  (setq  message-confirm-send t
-         message-signature nil
-         message-signature-file "~/.signature_work")
-                                        ;
+  (setq mu4e-compose-context-policy 'ask) ;; ask for context if no context 
 
   ;; Quickly switching between plain text and HTML mime type.
   (keymap-set mu4e-view-mode-map (kbd "K")
@@ -443,11 +451,13 @@
                 (gnus-article-jump-to-part 1)
                 (gnus-article-press-button)
                 (gnus-article-press-button)))
-  (with-eval-after-load 'mm-decode
-    (add-to-list 'mm-discouraged-alternatives "text/html")
-    (add-to-list 'mm-discouraged-alternatives "text/richtext"))
+  ;; (with-eval-after-load 'mm-decode
+  ;;   (add-to-list 'mm-discouraged-alternatives "text/html")
+  ;;   (add-to-list 'mm-discouraged-alternatives "text/richtext"))
 
-  (add-hook 'mu4e-view-mode-hook 'my-buffer-face-mode-variable)
-  (add-hook 'mu4e-thread-mode-hook #'mu4e-thread-fold-apply-all)
+  (add-hook 'mu4e-view-mode-hook #'my-buffer-face-mode-variable)
+  (add-hook 'mu4e-view-mode-hook #'visual-line-mode)
+  (add-hook 'mu4e-compose-mode-hook #'turn-off-auto-fill)
+
   )
 
