@@ -329,14 +329,10 @@
   :bind ("C-c e" . ebib)
   )
 
-;; Use variable width font faces in current buffer
-(defun my-buffer-face-mode-variable ()
-  "Set font to a variable width (proportional) fonts in current buffer"
-  (interactive)
-  (setq buffer-face-mode-face '(:family "Source Code Pro" :height 160))
-  (buffer-face-mode))
-
 ;; Load external file defining email & name functions
+;; Example code in the file:
+;;;         (defun gmail-address () "my_gmail_address")
+;; define simiallry functions for name and other email address
 (load-file (expand-file-name "~/.mu4e-identity.el"))
 
 (use-package mu4e
@@ -352,7 +348,7 @@
         ;; how often to call it in seconds:
         mu4e-update-interval 300
         mu4e-headers-auto-update t
-        mu4e-compose-format-flowed nil
+        ;; mu4e-compose-format-flowed nil
         ;; save attachment to desktop by default
         mu4e-attachment-dir "~/Documents"
         ;; rename files when moving - needed for mbsync:
@@ -455,9 +451,21 @@
   ;;   (add-to-list 'mm-discouraged-alternatives "text/html")
   ;;   (add-to-list 'mm-discouraged-alternatives "text/richtext"))
 
-  (add-hook 'mu4e-view-mode-hook #'my-buffer-face-mode-variable)
+  ;; (add-hook 'mu4e-view-mode-hook #'my-buffer-face-mode-variable)
+  (dolist (hook '(mu4e-main-mode-hook
+                  mu4e-headers-mode-hook
+                  mu4e-view-mode-hook
+                  mu4e-compose-mode-hook))
+    (add-hook hook #'my-buffer-face-mode-variable))
+
   (add-hook 'mu4e-view-mode-hook #'visual-line-mode)
   (add-hook 'mu4e-compose-mode-hook #'turn-off-auto-fill)
 
   )
 
+;; Use variable width font faces in current buffer
+(defun my-buffer-face-mode-variable ()
+  "Set font to a variable width (proportional) fonts in current buffer"
+  (interactive)
+  (setq buffer-face-mode-face '(:family "Source Code Pro" :height 160))
+  (buffer-face-mode))
