@@ -52,7 +52,7 @@
   (set-default-coding-systems 'utf-8)
   (set-language-environment "UTF-8")
   ;; Set default font face
-  (set-face-attribute 'default nil :font "Atkinson Hyperlegible Mono-16")
+  (set-face-attribute 'default nil :font "Iosevka SS08-16")
   ;; (set-face-attribute 'default nil :font "IBM Plex Mono-14") ;
 
   ;; Enable delete-selection-mode
@@ -80,7 +80,7 @@
          )
   :bind
   ("M-o" . other-window)
-  ("C-s-S-f" . toggle-frame-fullscreen)
+  ("C-s-f" . toggle-frame-fullscreen)
   ("C-c l d" . xref-find-definitions)
   ("C-c l r" . xref-find-references) 
   ("C-c l a" . eglot-code-actions)  
@@ -227,10 +227,9 @@
 (use-package apheleia
   :ensure t
   :hook
-  ((latex-mode . (lambda () (apheleia-mode -1)))
-   (LaTeX-mode . (lambda () (apheleia-mode -1))))
+  (prog-mode . (lambda () (apheleia-mode t)))
   :config
-  (apheleia-global-mode t)
+  ;; (apheleia-global-mode t)
   (with-eval-after-load 'apheleia
     (setf (alist-get 'python-mode apheleia-mode-alist)
           '(ruff-isort ruff))
@@ -249,7 +248,7 @@
 (use-package olivetti
   :ensure t
   ;; :defer
-  :bind ("C-s-f" . olivetti-mode)
+  :bind ("C-s-S-f" . olivetti-mode)
   :init
   (setq olivetti-body-width 80)
   (setq olivetti-style 'fancy)
@@ -279,7 +278,8 @@
   :ensure t
   :config
   ;; (load-theme 'doom-solarized-light t)
-  (load-theme 'doom-oceanic-next t)
+  ;;  (load-theme 'doom-oceanic-next t)
+  (load-theme 'doom-nord-light t)
   )
 
 
@@ -308,7 +308,8 @@
          ;; (LaTeX-mode . TeX-source-correlate-mode)
          ;; (LaTeX-mode . flyspell-mode)
          (LaTeX-mode . turn-on-auto-fill)
-         (LaTeX-mode . my-buffer-face-mode-variable))
+         ;; (LaTeX-mode . my-buffer-face-mode-variable)
+         )
   :config
   (setq TeX-PDF-mode t)
   (setq TeX-auto-save t)
@@ -323,11 +324,6 @@
   (setq reftex-plug-into-AUCTeX t)
   )
 
-(use-package ebib
-  :ensure t
-  :defer t
-  :bind ("C-c e" . ebib)
-  )
 
 ;; Load external file defining email & name functions
 ;; Example code in the file:
@@ -348,7 +344,9 @@
         ;; how often to call it in seconds:
         mu4e-update-interval 300
         mu4e-headers-auto-update t
-        ;; mu4e-compose-format-flowed nil
+        mu4e-compose-format-flowed t
+        mu4e-view-use-gnus t
+        fill-flowed-encode-column 990
         ;; save attachment to desktop by default
         mu4e-attachment-dir "~/Documents"
         ;; rename files when moving - needed for mbsync:
@@ -376,6 +374,9 @@
         message-signature nil
         message-signature-file "~/.signature_work"
         )
+  ;; (setq
+  ;;  mu4e-index-cleanup nil      ;; don't do a full cleanup check
+  ;;  mu4e-index-lazy-check t)    ;; don't consider up-to-date dirs
 
 
   (add-to-list 'mu4e-bookmarks
@@ -387,7 +388,7 @@
   (setq mu4e-contexts
         (list
          (make-mu4e-context
-          :name "Personal"
+          :name "personal"
           :enter-func
           (lambda () (mu4e-message "Enter context personal Gmail"))
           :leave-func
@@ -418,15 +419,15 @@
           (lambda () (mu4e-message "Leave context 2ndGmail"))
           :match-func (lambda (msg)
                         (when msg
-                          (string-prefix-p "/2ndGmail" (mu4e-message-field msg :maildir))))
+                          (string-prefix-p "/othermail" (mu4e-message-field msg :maildir))))
           :vars `((user-mail-address . ,(another-gmail-address))
                   (user-full-name . ,(full-name))
-                  (mu4e-drafts-folder . "/2ndGmail/Drafts")
-                  (mu4e-refile-folder . "/2ndGmail/Archive")
-                  (mu4e-sent-folder . "/2ndGmail/Sent")
-                  (mu4e-trash-folder . "/2ndGmail/Trash")
-                  (mu4e-maildir-shortcuts . (( "/2ndGmail/Inbox"   .   ?i)
-                                             ("/2ndGmail/Sent" . ?s)))
+                  (mu4e-drafts-folder . "/othermail/Drafts")
+                  (mu4e-refile-folder . "/othermail/Archive")
+                  (mu4e-sent-folder . "/othermail/Sent")
+                  (mu4e-trash-folder . "/othermail/Trash")
+                  (mu4e-maildir-shortcuts . (( "/othermail/Inbox"   .   ?i)
+                                             ("/othermail/Sent" . ?s)))
 	              (smtpmail-smtp-user . ,(another-gmail-address))
 	              (smtpmail-default-smtp-server . "smtp.gmail.com")
 	              (smtpmail-smtp-server . "smtp.gmail.com")
@@ -447,16 +448,16 @@
                 (gnus-article-jump-to-part 1)
                 (gnus-article-press-button)
                 (gnus-article-press-button)))
-  ;; (with-eval-after-load 'mm-decode
-  ;;   (add-to-list 'mm-discouraged-alternatives "text/html")
-  ;;   (add-to-list 'mm-discouraged-alternatives "text/richtext"))
+  (with-eval-after-load 'mm-decode
+    (add-to-list 'mm-discouraged-alternatives "text/html")
+    (add-to-list 'mm-discouraged-alternatives "text/richtext"))
 
-  ;; (add-hook 'mu4e-view-mode-hook #'my-buffer-face-mode-variable)
-  (dolist (hook '(mu4e-main-mode-hook
-                  mu4e-headers-mode-hook
-                  mu4e-view-mode-hook
-                  mu4e-compose-mode-hook))
-    (add-hook hook #'my-buffer-face-mode-variable))
+  ;;;;  (add-hook 'mu4e-view-mode-hook #'my-buffer-face-mode-variable)
+  ;; (dolist (hook '(mu4e-main-mode-hook
+  ;;                 mu4e-headers-mode-hook
+  ;;                 mu4e-view-mode-hook
+  ;;                 mu4e-compose-mode-hook))
+  ;;   (add-hook hook #'my-buffer-face-mode-variable))
 
   (add-hook 'mu4e-view-mode-hook #'visual-line-mode)
   (add-hook 'mu4e-compose-mode-hook #'turn-off-auto-fill)
@@ -467,5 +468,7 @@
 (defun my-buffer-face-mode-variable ()
   "Set font to a variable width (proportional) fonts in current buffer"
   (interactive)
-  (setq buffer-face-mode-face '(:family "Source Code Pro" :height 160))
+  (setq buffer-face-mode-face '(:family "Iosevka Aile" :height 160))
   (buffer-face-mode))
+
+(setq shr-use-fonts nil) ;; disable variable fonts
