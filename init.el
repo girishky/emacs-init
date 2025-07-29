@@ -53,7 +53,6 @@
   (set-language-environment "UTF-8")
   ;; Set default font face
   (set-face-attribute 'default nil :font "Iosevka SS08-16")
-  ;; (set-face-attribute 'default nil :font "IBM Plex Mono-14") ;
 
   ;; Enable delete-selection-mode
   (delete-selection-mode 1)
@@ -280,6 +279,7 @@
   ;; (load-theme 'doom-solarized-light t)
   ;;  (load-theme 'doom-oceanic-next t)
   (load-theme 'doom-nord-light t)
+  ;; (load-theme 'doom-nord t)
   )
 
 
@@ -448,9 +448,9 @@
                 (gnus-article-jump-to-part 1)
                 (gnus-article-press-button)
                 (gnus-article-press-button)))
-  (with-eval-after-load 'mm-decode
-    (add-to-list 'mm-discouraged-alternatives "text/html")
-    (add-to-list 'mm-discouraged-alternatives "text/richtext"))
+  ;; (with-eval-after-load 'mm-decode
+  ;;   (add-to-list 'mm-discouraged-alternatives "text/html")
+  ;;   (add-to-list 'mm-discouraged-alternatives "text/richtext"))
 
   ;;;;  (add-hook 'mu4e-view-mode-hook #'my-buffer-face-mode-variable)
   ;; (dolist (hook '(mu4e-main-mode-hook
@@ -472,3 +472,21 @@
   (buffer-face-mode))
 
 (setq shr-use-fonts nil) ;; disable variable fonts
+
+;; ;; When I delete gmail messages, they don't go to trash
+;; ;; folder. Instead, they went to all mail. The following setting
+;; ;; seems to fix this.
+;; (setf (alist-get 'trash mu4e-marks)
+;;       '(:char ("d" . "▼")
+;;               :prompt "dtrash"
+;;               :dyn-target (lambda (target msg) (mu4e-get-trash-folder msg))
+;;               ;; Here's the main difference to the regular trash mark, no +T
+;;               ;; before -N so the message is not marked as IMAP-deleted:
+;;               :action (lambda (docid msg target)
+;;                         (mu4e--server-move docid
+;;                                            (mu4e--mark-check-target target) "+S-u-N"))))
+
+;; enable spell-checking in text-mode
+;; Note: need to install aspell (I installed it via homebrew)
+(dolist (hook '(text-mode-hook))
+  (add-hook hook (lambda () (flyspell-mode 1)) ))
