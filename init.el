@@ -53,17 +53,19 @@
   (set-language-environment "UTF-8")
   ;; Set default font face
   (set-face-attribute 'default nil :font "Iosevka SS08-16")
-
-  ;; Enable delete-selection-mode
-  (delete-selection-mode 1)
+  (setq shr-use-fonts nil) ;; disable variable fonts
+  (delete-selection-mode 1) ;; enable delete-selection-mode
   (winner-mode 1)
   ;; (tab-bar-mode 1)
-  (windmove-default-keybindings)
+  ;; (windmove-default-keybindings)
   :config
   ;; Use tree-sitter mode for Python
   (setq major-mode-remap-alist
         '((python-mode . python-ts-mode)))
-  (setq python-shell-interpreter ".venv/bin/python3")
+  ;; set path to python virtual environment. This works for me, but
+  ;; is not ideal setting. will not work if the virtual enviroment is
+  ;; at different path.
+  (setq python-shell-interpreter ".venv/bin/python3") 
   (setq python-shell-prompt-detect-failure-warning nil)
 
   (with-eval-after-load 'eglot
@@ -87,25 +89,15 @@
   ("C-c l f" . eglot-format-buffer)
   ("C-c l h" . eldoc)             
   ("C-c l e"  . flymake-show-buffer-diagnostics)
-  ("M-n" . flymake-goto-next-error)
-  ("M-p" . flymake-goto-prev-error)) 
+  ("M-s-n" . flymake-goto-next-error)
+  ("M-s-p" . flymake-goto-prev-error))
 
 
 (use-package which-key
   :init
   (setq which-key-idle-delay 0.5) ; Open after .5s instead of 1s
-  ;; :after evil
   :config
-  (which-key-mode 1)
-  ;; (which-key-setup-minibuffer)
-  ;; (setq which-key-popup-type 'minibuffer)
-  )
-
-;; (use-package evil
-;;   :ensure t
-;;   :config
-;;   (evil-mode 1)
-;;   (define-key evil-normal-state-map (kbd "C-s-u") 'evil-scroll-up))
+  (which-key-mode 1))
 
 (use-package vertico
   :ensure t
@@ -334,14 +326,15 @@
 (use-package mu4e
   :ensure nil
   :load-path  "/opt/homebrew/share/emacs/site-lisp/mu/mu4e/"
+  :init
+  (add-hook 'mu4e-view-mode-hook #'visual-line-mode)
+  (add-hook 'mu4e-compose-mode-hook #'turn-off-auto-fill)
   :config
-  ;; mu installed with homebrew
-  (setq mu4e-mu-binary (executable-find "mu")
-        ;; this is the directory we created before:
+  (setq mu4e-mu-binary (executable-find "mu")  ;; mu installed with homebrew
         mu4e-maildir "~/.maildir"
-        ;; this command is called to sync imap servers:
+        ;; command to sync imap servers:
         mu4e-get-mail-command (concat (executable-find "mbsync") " -a")
-        ;; how often to call it in seconds:
+        ;; how often to sync in seconds:
         mu4e-update-interval 300
         mu4e-headers-auto-update t
         mu4e-compose-format-flowed t
@@ -373,17 +366,27 @@
         ;; email signature imported from a file
         message-signature nil
         message-signature-file "~/.signature_work"
+        ;; use gmail style message citation
+        message-citation-line-format "On %a, %b %d, %Y at %R %Z, %f wrote:\n"
+        ;; show my timezone instead of UTC time
+        message-citation-line-function
+        (lambda ()
+          (message-insert-formatted-citation-line
+           nil nil (car (current-time-zone))))
         )
   ;; (setq
-  ;;  mu4e-index-cleanup nil      ;; don't do a full cleanup check
+  ;;  ;;  mu4e-index-cleanup nil      ;; don't do a full cleanup check
   ;;  mu4e-index-lazy-check t)    ;; don't consider up-to-date dirs
 
-
+  ;; additional bookmarks
   (add-to-list 'mu4e-bookmarks
-               ;; bookmark for unread messages in my Gmail inbox
-               '( :name "Unread Gmail Inbox"
-                  :key  ?U
-                  :query "maildir:/Gmail/Inbox AND flag:unread"))
+               ;; bookmark for unread messages in my Gmail Inbox
+               '( :name "Unread personal" :key  ?U
+                  :query "maildir:/gmail/Inbox AND flag:unread"))
+  (add-to-list 'mu4e-bookmarks
+               ;; bookmark for unread messages in my Gmail All mail
+               '( :name "Unread msg" :key  ?A
+                  :query "maildir:/gmail/Archive AND flag:unread"))
 
   (setq mu4e-contexts
         (list
@@ -395,39 +398,38 @@
           (lambda () (mu4e-message "Leave context personal Gmail"))
           :match-func (lambda (msg)
                         (when msg
-                          (string-prefix-p "/Gmail" (mu4e-message-field msg :maildir))))
+                          (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
           :vars `((user-mail-address . ,(gmail-address))
                   (user-full-name . ,(full-name))
-                  (mu4e-drafts-folder . "/Gmail/Drafts")
-                  (mu4e-refile-folder . "/Gmail/Archive")
-                  (mu4e-sent-folder . "/Gmail/Sent")
-                  (mu4e-trash-folder . "/Gmail/Trash")
-                  (mu4e-maildir-shortcuts . (( "/Gmail/Inbox"   .   ?i)
-                                             ("/Gmail/Sent" . ?s)))
+                  (mu4e-drafts-folder . "/gmail/Drafts")
+                  (mu4e-refile-folder . "/gmail/Archive")
+                  (mu4e-sent-folder . "/gmail/Sent")
+                  (mu4e-trash-folder . "/gmail/Trash")
+                  (mu4e-maildir-shortcuts . (( "/gmail/Inbox"   .   ?i)
+                                             ("/gmail/Sent" . ?s)))
 	              (smtpmail-smtp-user . ,(gmail-address))
 	              (smtpmail-default-smtp-server . "smtp.gmail.com")
 	              (smtpmail-smtp-server . "smtp.gmail.com")
                   (smtpmail-smtp-service .  587)
                   (smtpmail-stream-type . starttls)
                   ))
-         
+
          (make-mu4e-context
-          :name "second-gmail"
+          :name "othergmail"
           :enter-func
-          (lambda () (mu4e-message "Enter context 2ndGmail"))
+          (lambda () (mu4e-message "Enter context other Gmail"))
           :leave-func
-          (lambda () (mu4e-message "Leave context 2ndGmail"))
+          (lambda () (mu4e-message "Leave context other Gmail"))
           :match-func (lambda (msg)
                         (when msg
-                          (string-prefix-p "/othermail" (mu4e-message-field msg :maildir))))
+                          (string-prefix-p "/othergmail" (mu4e-message-field msg :maildir))))
           :vars `((user-mail-address . ,(another-gmail-address))
                   (user-full-name . ,(full-name))
-                  (mu4e-drafts-folder . "/othermail/Drafts")
-                  (mu4e-refile-folder . "/othermail/Archive")
-                  (mu4e-sent-folder . "/othermail/Sent")
-                  (mu4e-trash-folder . "/othermail/Trash")
-                  (mu4e-maildir-shortcuts . (( "/othermail/Inbox"   .   ?i)
-                                             ("/othermail/Sent" . ?s)))
+                  (mu4e-drafts-folder . "/othergmail/Drafts")
+                  (mu4e-refile-folder . "/othergmail/Archive")
+                  (mu4e-sent-folder . "/othergmail/Sent")
+                  (mu4e-trash-folder . "/othergmail/Trash")
+                  (mu4e-maildir-shortcuts . (( "/othergmail/Inbox"   .   ?i)))
 	              (smtpmail-smtp-user . ,(another-gmail-address))
 	              (smtpmail-default-smtp-server . "smtp.gmail.com")
 	              (smtpmail-smtp-server . "smtp.gmail.com")
@@ -436,7 +438,6 @@
                   ))
          )
         )
-
 
   (setq mu4e-context-policy 'pick-first) ;; start with the first (default) context;
   (setq mu4e-compose-context-policy 'ask) ;; ask for context if no context 
@@ -452,41 +453,34 @@
   ;;   (add-to-list 'mm-discouraged-alternatives "text/html")
   ;;   (add-to-list 'mm-discouraged-alternatives "text/richtext"))
 
-  ;;;;  (add-hook 'mu4e-view-mode-hook #'my-buffer-face-mode-variable)
-  ;; (dolist (hook '(mu4e-main-mode-hook
-  ;;                 mu4e-headers-mode-hook
-  ;;                 mu4e-view-mode-hook
-  ;;                 mu4e-compose-mode-hook))
-  ;;   (add-hook hook #'my-buffer-face-mode-variable))
-
-  (add-hook 'mu4e-view-mode-hook #'visual-line-mode)
-  (add-hook 'mu4e-compose-mode-hook #'turn-off-auto-fill)
-
+  (setq message-citation-line-format "On %a, %b %d, %Y at %R %Z, %f wrote:\n")
+  ;; show my timezone when replying instead of UTC time stamp
+  (setq message-citation-line-function
+        (lambda ()
+          (message-insert-formatted-citation-line
+           nil nil (car (current-time-zone)))))
   )
 
-;; Use variable width font faces in current buffer
+;; function to change the font of buffer
 (defun my-buffer-face-mode-variable ()
   "Set font to a variable width (proportional) fonts in current buffer"
   (interactive)
   (setq buffer-face-mode-face '(:family "Iosevka Aile" :height 160))
   (buffer-face-mode))
 
-(setq shr-use-fonts nil) ;; disable variable fonts
 
-;; ;; When I delete gmail messages, they don't go to trash
-;; ;; folder. Instead, they went to all mail. The following setting
-;; ;; seems to fix this.
-;; (setf (alist-get 'trash mu4e-marks)
-;;       '(:char ("d" . "▼")
-;;               :prompt "dtrash"
-;;               :dyn-target (lambda (target msg) (mu4e-get-trash-folder msg))
-;;               ;; Here's the main difference to the regular trash mark, no +T
-;;               ;; before -N so the message is not marked as IMAP-deleted:
-;;               :action (lambda (docid msg target)
-;;                         (mu4e--server-move docid
-;;                                            (mu4e--mark-check-target target) "+S-u-N"))))
-
+;; dictionary and spell-checking
 ;; enable spell-checking in text-mode
 ;; Note: need to install aspell (I installed it via homebrew)
 (dolist (hook '(text-mode-hook))
   (add-hook hook (lambda () (flyspell-mode 1)) ))
+
+;; dictionary lookup in a sidebar instead of separate buffer window
+(setq switch-to-buffer-obey-display-actions t)
+(add-to-list 'display-buffer-alist
+             '("^\\*Dictionary\\*" display-buffer-in-side-window
+               (side . right)
+               (window-width . 50)))
+
+(global-set-key (kbd "M-#") #'dictionary-lookup-definition)
+(setq dictionary-server "dict.org")  ;; use remote sever for dictionary lookup
