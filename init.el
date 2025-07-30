@@ -381,12 +381,8 @@
   ;; additional bookmarks
   (add-to-list 'mu4e-bookmarks
                ;; bookmark for unread messages in my Gmail Inbox
-               '( :name "Unread personal" :key  ?U
+               '( :name "Unread personal inbox" :key  ?U
                   :query "maildir:/gmail/Inbox AND flag:unread"))
-  (add-to-list 'mu4e-bookmarks
-               ;; bookmark for unread messages in my Gmail All mail
-               '( :name "Unread msg" :key  ?A
-                  :query "maildir:/gmail/Archive AND flag:unread"))
 
   (setq mu4e-contexts
         (list
@@ -406,7 +402,8 @@
                   (mu4e-sent-folder . "/gmail/Sent")
                   (mu4e-trash-folder . "/gmail/Trash")
                   (mu4e-maildir-shortcuts . (( "/gmail/Inbox"   .   ?i)
-                                             ("/gmail/Sent" . ?s)))
+                                             ("/gmail/Sent" . ?s)
+                                             ("/gmail/Archive" . ?a)))
 	              (smtpmail-smtp-user . ,(gmail-address))
 	              (smtpmail-default-smtp-server . "smtp.gmail.com")
 	              (smtpmail-smtp-server . "smtp.gmail.com")
@@ -484,3 +481,28 @@
 
 (global-set-key (kbd "M-#") #'dictionary-lookup-definition)
 (setq dictionary-server "dict.org")  ;; use remote sever for dictionary lookup
+
+;; This I roginally found on Mastering Emacs website but code didn't
+;; work and casued issue loading Emacs.  The following is a modified
+;; version of that one and works.
+(defvar mode-line-cleaner-alist
+  '((apheleia-mode . " AP")
+    (python-ts-mode . "py")
+    ;; add more modes as required
+    ))
+
+(defun clean-mode-line ()
+  "Shorten the mode line display for modes in `mode-line-cleaner-alist`."
+  (dolist (cleaner mode-line-cleaner-alist)
+    (let* ((mode (car cleaner))
+           (mode-str (cdr cleaner))
+           (old-mode-str (cdr (assq mode minor-mode-alist))))
+      ;; Update minor mode display
+      (when old-mode-str
+        (setcar old-mode-str mode-str))
+      ;; Update major mode display
+      (when (eq mode major-mode)
+        (setq mode-name mode-str)))))
+
+;; Apply cleanup after major mode changes
+(add-hook 'after-change-major-mode-hook #'clean-mode-line)
