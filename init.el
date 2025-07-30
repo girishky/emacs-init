@@ -1,8 +1,10 @@
-;; Basic UI configuration
-(setq inhibit-startup-screen t)
-;; (menu-bar-mode -1)
-(tool-bar-mode -1)
-(scroll-bar-mode -1)
+;;
+;;Few things to install. Many of them are installed via homebrew
+;; - pyright (for eglot to configure as python lsp)
+;; - ruff (python code formatter for apheleia package)
+;; - aspell (for spell-checking)
+;; - mu, isync (for mu4e email)
+
 
 ;; Store automatic customization options elsewhere
 (setq custom-file (locate-user-emacs-file "custom.el"))
@@ -16,9 +18,13 @@
 
 (use-package emacs
   :init
+  (setq inhibit-startup-screen t)
   (setq initial-scratch-message nil)
   (defun display-startup-echo-area-message ()
     (message ""))
+  (tool-bar-mode -1)
+  (scroll-bar-mode -1)
+  ;; (menu-bar-mode -1)
   (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
   (add-to-list 'default-frame-alist '(ns-appearance . dark))
   (setq ns-use-proxy-icon nil)
@@ -47,56 +53,42 @@
         scroll-preserve-screen-position 1)
   ;; Use spaces instead of tabs by default
   (setq-default indent-tabs-mode nil)
-  ;; Set a reasonable default tab width
-  (setq-default tab-width 4)
+  ;; (setq-default tab-width 4)
   (set-default-coding-systems 'utf-8)
   (set-language-environment "UTF-8")
   ;; Set default font face
   (set-face-attribute 'default nil :font "Iosevka SS08-16")
-  (setq shr-use-fonts nil) ;; disable variable fonts
   (delete-selection-mode 1) ;; enable delete-selection-mode
   (winner-mode 1)
-  ;; (tab-bar-mode 1)
-  ;; (windmove-default-keybindings)
-  :config
-  ;; Use tree-sitter mode for Python
-  (setq major-mode-remap-alist
-        '((python-mode . python-ts-mode)))
-  ;; set path to python virtual environment. This works for me, but
-  ;; is not ideal setting. will not work if the virtual enviroment is
-  ;; at different path.
-  (setq python-shell-interpreter ".venv/bin/python3") 
-  (setq python-shell-prompt-detect-failure-warning nil)
+  
+  :custom
+  (major-mode-remap-alist
+   '((python-mode . python-ts-mode))) ;; use tree-sitter mode for Python
+  (shr-use-fonts nil "disable variable fonts")
 
-  (with-eval-after-load 'eglot
-    ;; (add-to-list 'eglot-server-programs
-    ;;              '(python-ts-mode . ("pyright-langserver" "--stdio")))
-    (add-to-list 'eglot-server-programs
-                 '(text-mode . ("harper-ls" "--stdio"))))
-  ;; Enable relative line numbers in programming modes
-  :hook ((prog-mode . (lambda () (setq display-line-numbers 'relative)))
-         (LaTeX-mode . (lambda () (setq display-line-numbers 'relative)))
-         (python-ts-mode . eglot-ensure)
-         ;; (text-mode . eglot-ensure)
-         )
+  :hook
+  (((prog-mode ) . (lambda ()  (display-line-numbers-mode 1)))
+   (text-mode .  (lambda () (flyspell-mode 1))))
+  
   :bind
   ("M-o" . other-window)
-  ("C-s-f" . toggle-frame-fullscreen)
-  ("C-c l d" . xref-find-definitions)
-  ("C-c l r" . xref-find-references) 
-  ("C-c l a" . eglot-code-actions)  
-  ("C-c l R" . eglot-rename)       
-  ("C-c l f" . eglot-format-buffer)
-  ("C-c l h" . eldoc)             
-  ("C-c l e"  . flymake-show-buffer-diagnostics)
-  ("M-s-n" . flymake-goto-next-error)
-  ("M-s-p" . flymake-goto-prev-error))
+  ("C-s-f" . toggle-frame-fullscreen))
 
+
+(use-package doom-themes
+  :ensure t
+  :config
+  (load-theme 'doom-nord-light t) 
+  ;;  (load-theme 'doom-nord t)
+  )
+;; (use-package atom-one-dark-theme
+;;   :ensure t
+;;   :config
+;;   (load-theme 'atom-one-dark t))
 
 (use-package which-key
   :init
   (setq which-key-idle-delay 0.5) ; Open after .5s instead of 1s
-  :config
   (which-key-mode 1))
 
 (use-package vertico
@@ -113,7 +105,6 @@
         ("DEL" . vertico-directory-delete-word)
         ("M-d" . vertico-directory-delete-char)))
 
-
 (use-package orderless
   :ensure t
   :custom
@@ -121,8 +112,38 @@
   (completion-category-defaults nil)
   (completion-category-overrides '((file (styles partial-completion)))))
 
+(use-package marginalia
+  :ensure t
+  :init
+  (marginalia-mode))
+
+(use-package beacon
+  :ensure t
+  :init (beacon-mode 1)
+  :custom
+  (beacon-blink-when-window-scrolls nil))
+
+(use-package avy
+  :ensure t
+  :init
+  (global-set-key (kbd "M-j") 'avy-goto-char-timer)
+  :custom
+  (avy-timeout-seconds 0.5) ;; default
+  :bind  (("M-g g" . avy-goto-line)
+          ;; ("M-g j" . avy-goto-char)
+          ;; ("M-g M-j"     . avy-goto-word-1)
+          ))
+
+
 (use-package consult
   :ensure t
+  :init
+  (advice-add #'register-preview :override #'consult-register-window)
+  (setq register-preview-delay 0.5)
+  (setq xref-show-xrefs-function #'consult-xref
+        xref-show-definitions-function #'consult-xref)
+  :hook
+  (completion-list-mode . consult-preview-at-point-mode)
   :bind
   (("C-s" . consult-line)    
    ("C-x b" . consult-buffer)
@@ -131,19 +152,7 @@
    ("C-x t b" . consult-buffer-other-tab)
    ("C-x r b" . consult-bookmark)           
    ("C-x p b" . consult-project-buffer)  
-   ("C-x C-r" . consult-recent-file))
-  :hook (completion-list-mode . consult-preview-at-point-mode)
-  :init
-  (advice-add #'register-preview :override #'consult-register-window)
-  (setq register-preview-delay 0.5)
-  (setq xref-show-xrefs-function #'consult-xref
-        xref-show-definitions-function #'consult-xref)
-  )
-
-(use-package marginalia
-  :ensure t
-  :config
-  (marginalia-mode))
+   ("C-x C-r" . consult-recent-file)))
 
 (use-package embark
   :ensure t
@@ -161,8 +170,10 @@
 
 (use-package embark-consult
   :ensure t
+  :after (embark consult)
   :hook
   (embark-collect-mode . consult-preview-at-point-mode))
+
 
 (use-package corfu
   :ensure t
@@ -170,13 +181,120 @@
   (global-corfu-mode)
   (corfu-popupinfo-mode 1)
   (corfu-history-mode 1)
+  :custom
+  (corfu-auto t)
+  (corfu-auto-delay 0)
+  (corfu-cycle t )
+  (corfu-echo-documentation nil))
+
+
+(use-package magit
+  :ensure t
+  :defer t
+  :bind
+  (("C-c g" . magit-file-dispatch))
+  :custom
+  (magit-git-executable "/opt/homebrew/bin/git")
+  (magit-diff-refine-hunk 'all)
+  (magit-repository-directories
+   '(("~/Documents/repos/" . 2))))
+
+
+(use-package eglot
+  :ensure nil
+  :defer t
+  :custom
+  ;; Optimize performance
+  (eglot-send-changes-idle-time 0.5) ;; this is default
+  (eglot-extend-to-xref t)
+  ;; Configure language servers
+  (eglot-server-programs
+   '(;;(python-ts-mode .  ("pyright-langserver" "--stdio"))
+     (text-mode . ("harper-ls" "--stdio"))))
+  :hook ((python-ts-mode . eglot-ensure)
+	 ;; python-specific settings
+         (python-ts-mode . (lambda ()
+                             (setq-local indent-tabs-mode nil
+                                         tab-width 4
+                                         python-indent-offset 4
+					 python-shell-interpreter ".venv/bin/python3"
+					 python-shell-prompt-detect-failure-warning nil)
+                             (superword-mode 1))))
+
+  :bind (:map eglot-mode-map
+              ("C-c l a" . eglot-code-actions)
+              ("C-c l r" . eglot-rename)
+              ("C-c l f" . eglot-format)
+              ("C-c l d" . eldoc)
+              ("C-c l o" . eglot-code-action-organize-imports)
+              ("C-c l h" . eglot-inlay-hints-mode)
+              ("C-c l q" . eglot-shutdown-all)
+	      ("C-c l e"  . flymake-show-buffer-diagnostics)
+	      ("M-s-n" . flymake-goto-next-error)
+	      ("M-s-p" . flymake-goto-prev-error)))
+
+
+(use-package apheleia
+  :ensure t
+  :defer t
+  :hook prog-mode
   :config
-  ;; (add-hook 'prog-mode-hook #'corfu-mode)
-  (setq corfu-auto t
-        corfu-auto-delay 0
-        corfu-cycle t 
-        corfu-echo-documentation nil)
-  ) 
+  (setf (alist-get 'python-ts-mode apheleia-mode-alist)
+        '(ruff-isort ruff)))
+
+
+(use-package auctex
+  :ensure t
+  :defer t
+  :hook ((LaTeX-mode . LaTeX-math-mode)
+         (LaTeX-mode . turn-on-reftex)
+         ;; (LaTeX-mode . TeX-source-correlate-mode)
+         (LaTeX-mode . turn-on-auto-fill)
+         ;; (LaTeX-mode . my-buffer-face-mode-variable)
+         )
+  :custom
+  (TeX-PDF-mode t)
+  (TeX-auto-save t)
+  (TeX-save-query nil)
+  (TeX-parse-self t)
+  ;; (setq-default TeX-master nil)
+  )
+
+(use-package reftex
+  :defer t
+  :custom
+  (reftex-plug-into-AUCTeX t))
+
+(use-package dictionary
+  :ensure nil
+  :init
+  ;; dictionary lookup in a sidebar instead of separate buffer window
+  (setq switch-to-buffer-obey-display-actions t)
+  (add-to-list 'display-buffer-alist
+               '("^\\*Dictionary\\*" display-buffer-in-side-window
+		 (side . right)
+		 (window-width . 50)))
+  :bind (("M-#" .  dictionary-lookup-definition)
+	 :map text-mode-map
+	 ("M-." . dictionary-lookup-definition))
+  :custom
+  (dictionary-server "dict.org"))
+
+
+(use-package olivetti
+  :ensure t
+  :defer t
+  :bind ("C-s-S-f" . olivetti-mode)
+  :init
+  (setq olivetti-body-width 80)
+  (setq olivetti-style 'fancy)
+  (setq olivetti-minimum-body-width 72)
+  :hook
+  (olivetti-mode . (lambda ()
+		     (setq mode-line-format (if olivetti-mode nil (default-value 'mode-line-format)))
+		     (force-mode-line-update))))
+
+
 (use-package popper
   :ensure t
   :bind (("C-`"   . popper-toggle)
@@ -189,132 +307,14 @@
           "\\*Async Shell Command\\*"
           "\\*Warnings\\*"
           "\\*Error\\*"
-	      inferior-python-mode
+	  inferior-python-mode
           flymake-diagnostics-buffer-mode
-          
-	      ;; dired-mode
-	      ;; emacs-lisp-mode
-	      ;; magit-refs-mode
           help-mode
           compilation-mode))
   ;; (setq popper-group-function #'popper-group-by-project)
   ;; (setq popper-group-function #'popper-group-by-directory) 
-  (popper-mode +1)
-  (popper-echo-mode +1))
-
-
-(use-package magit
-  :ensure t
-  :bind
-  (("C-c g" . magit-file-dispatch))
-  :custom
-  (magit-git-executable "/opt/homebrew/bin/git")
-  :config
-  (setq magit-diff-refine-hunk 'all)
-  (setq magit-repository-directories
-        '(("~/Documents/repos/" . 2))))
-
-
-(use-package apheleia
-  :ensure t
-  :hook
-  (prog-mode . (lambda () (apheleia-mode t)))
-  :config
-  ;; (apheleia-global-mode t)
-  (with-eval-after-load 'apheleia
-    (setf (alist-get 'python-mode apheleia-mode-alist)
-          '(ruff-isort ruff))
-    (setf (alist-get 'python-ts-mode apheleia-mode-alist)
-          '(ruff-isort ruff))))
-
-
-(use-package beacon
-  :ensure t
-  :init
-  (beacon-mode 1)
-  :config
-  (setq beacon-blink-when-window-scrolls nil))
-
-
-(use-package olivetti
-  :ensure t
-  ;; :defer
-  :bind ("C-s-S-f" . olivetti-mode)
-  :init
-  (setq olivetti-body-width 80)
-  (setq olivetti-style 'fancy)
-  (setq olivetti-minimum-body-width 72)
-  :hook
-  (olivetti-mode . (lambda ()
-                     (setq mode-line-format (if olivetti-mode nil (default-value 'mode-line-format)))
-                     (force-mode-line-update))))
-
-
-;; (use-package doom-modeline
-;;   :ensure t
-;;   :after evil
-;;   :init (doom-modeline-mode 1)
-;;   (setq doom-modeline-vcs-max-length 25)
-;;   (setq doom-modeline-modal-icon nil
-;;         evil-normal-state-tag   (propertize "<N>")
-;;         evil-emacs-state-tag    (propertize "[Emacs]" )
-;;         evil-insert-state-tag   (propertize "<I>")
-;;         evil-motion-state-tag   (propertize "[Motion]")
-;;         evil-visual-state-tag   (propertize "<V>")
-;;         evil-operator-state-tag (propertize "[Operator]"))
-;;   )
-
-
-(use-package doom-themes
-  :ensure t
-  :config
-  ;; (load-theme 'doom-solarized-light t)
-  ;;  (load-theme 'doom-oceanic-next t)
-  (load-theme 'doom-nord-light t)
-  ;; (load-theme 'doom-nord t)
-  )
-
-
-;; (use-package atom-one-dark-theme
-;;   :ensure t
-;;   :init
-;;   (load-theme 'atom-one-dark t))
-
-;; (use-package gptel
-;;   :ensure t
-;;   :config  
-;;   (setq
-;;    gptel-model 'mistral-nemo:latest
-;;    gptel-backend (gptel-make-ollama "Ollama"   ;Any name of your choosing
-;;                    :host "localhost:11434"     ;Where it's running
-;;                    :stream t                   ;Stream responses
-;;                    :models '("gemma3:1b" "mistral-nemo:latest"))) ;List of models
-;;   (setq gptel-default-mode 'org-mode))
-
-
-(use-package auctex
-  :ensure t
-  :defer t
-  :hook ((LaTeX-mode . LaTeX-math-mode)
-         (LaTeX-mode . turn-on-reftex)
-         ;; (LaTeX-mode . TeX-source-correlate-mode)
-         ;; (LaTeX-mode . flyspell-mode)
-         (LaTeX-mode . turn-on-auto-fill)
-         ;; (LaTeX-mode . my-buffer-face-mode-variable)
-         )
-  :config
-  (setq TeX-PDF-mode t)
-  (setq TeX-auto-save t)
-  (setq TeX-save-query nil)
-  (setq TeX-parse-self t)
-  ;; (setq-default TeX-master nil)
-  )
-
-(use-package reftex
-  :defer t
-  :config
-  (setq reftex-plug-into-AUCTeX t)
-  )
+  (popper-mode 1)
+  (popper-echo-mode 1))
 
 
 ;; Load external file defining email & name functions
@@ -374,9 +374,14 @@
           (message-insert-formatted-citation-line
            nil nil (car (current-time-zone))))
         )
-  ;; (setq
-  ;;  ;;  mu4e-index-cleanup nil      ;; don't do a full cleanup check
-  ;;  mu4e-index-lazy-check t)    ;; don't consider up-to-date dirs
+
+  ;;Quickly switching between plain text and HTML mime type.
+  (keymap-set mu4e-view-mode-map (kbd "K")
+              (lambda ()
+                (interactive)
+                (gnus-article-jump-to-part 1)
+                (gnus-article-press-button)
+                (gnus-article-press-button)))
 
   ;; additional bookmarks
   (add-to-list 'mu4e-bookmarks
@@ -404,9 +409,9 @@
                   (mu4e-maildir-shortcuts . (( "/gmail/Inbox"   .   ?i)
                                              ("/gmail/Sent" . ?s)
                                              ("/gmail/Archive" . ?a)))
-	              (smtpmail-smtp-user . ,(gmail-address))
-	              (smtpmail-default-smtp-server . "smtp.gmail.com")
-	              (smtpmail-smtp-server . "smtp.gmail.com")
+	          (smtpmail-smtp-user . ,(gmail-address))
+	          (smtpmail-default-smtp-server . "smtp.gmail.com")
+	          (smtpmail-smtp-server . "smtp.gmail.com")
                   (smtpmail-smtp-service .  587)
                   (smtpmail-stream-type . starttls)
                   ))
@@ -427,9 +432,9 @@
                   (mu4e-sent-folder . "/othergmail/Sent")
                   (mu4e-trash-folder . "/othergmail/Trash")
                   (mu4e-maildir-shortcuts . (( "/othergmail/Inbox"   .   ?i)))
-	              (smtpmail-smtp-user . ,(another-gmail-address))
-	              (smtpmail-default-smtp-server . "smtp.gmail.com")
-	              (smtpmail-smtp-server . "smtp.gmail.com")
+	          (smtpmail-smtp-user . ,(another-gmail-address))
+	          (smtpmail-default-smtp-server . "smtp.gmail.com")
+	          (smtpmail-smtp-server . "smtp.gmail.com")
                   (smtpmail-smtp-service .  587)
                   (smtpmail-stream-type . starttls)
                   ))
@@ -437,58 +442,16 @@
         )
 
   (setq mu4e-context-policy 'pick-first) ;; start with the first (default) context;
-  (setq mu4e-compose-context-policy 'ask) ;; ask for context if no context 
-
-  ;; Quickly switching between plain text and HTML mime type.
-  (keymap-set mu4e-view-mode-map (kbd "K")
-              (lambda ()
-                (interactive)
-                (gnus-article-jump-to-part 1)
-                (gnus-article-press-button)
-                (gnus-article-press-button)))
-  ;; (with-eval-after-load 'mm-decode
-  ;;   (add-to-list 'mm-discouraged-alternatives "text/html")
-  ;;   (add-to-list 'mm-discouraged-alternatives "text/richtext"))
-
-  (setq message-citation-line-format "On %a, %b %d, %Y at %R %Z, %f wrote:\n")
-  ;; show my timezone when replying instead of UTC time stamp
-  (setq message-citation-line-function
-        (lambda ()
-          (message-insert-formatted-citation-line
-           nil nil (car (current-time-zone)))))
+  (setq mu4e-compose-context-policy 'ask) ;; ask for context if no context
   )
 
-;; function to change the font of buffer
-(defun my-buffer-face-mode-variable ()
-  "Set font to a variable width (proportional) fonts in current buffer"
-  (interactive)
-  (setq buffer-face-mode-face '(:family "Iosevka Aile" :height 160))
-  (buffer-face-mode))
-
-
-;; dictionary and spell-checking
-;; enable spell-checking in text-mode
-;; Note: need to install aspell (I installed it via homebrew)
-(dolist (hook '(text-mode-hook))
-  (add-hook hook (lambda () (flyspell-mode 1)) ))
-
-;; dictionary lookup in a sidebar instead of separate buffer window
-(setq switch-to-buffer-obey-display-actions t)
-(add-to-list 'display-buffer-alist
-             '("^\\*Dictionary\\*" display-buffer-in-side-window
-               (side . right)
-               (window-width . 50)))
-
-(global-set-key (kbd "M-#") #'dictionary-lookup-definition)
-(setq dictionary-server "dict.org")  ;; use remote sever for dictionary lookup
-
-;; This I roginally found on Mastering Emacs website but code didn't
+;;----------------------------------------------------------------------------
+;; This I originally found on Mastering Emacs website but code didn't
 ;; work and casued issue loading Emacs.  The following is a modified
 ;; version of that one and works.
 (defvar mode-line-cleaner-alist
   '((apheleia-mode . " AP")
     (python-ts-mode . "py")
-    ;; add more modes as required
     ))
 
 (defun clean-mode-line ()
@@ -506,3 +469,35 @@
 
 ;; Apply cleanup after major mode changes
 (add-hook 'after-change-major-mode-hook #'clean-mode-line)
+;;----------------------------------------------------------------------------
+
+
+;; ;; function to change the font of buffer
+;; (defun my-buffer-face-mode-variable ()
+;;   "Set font to a variable width (proportional) fonts in current buffer"
+;;   (interactive)
+;;   (setq buffer-face-mode-face '(:family "Iosevka Aile" :height 160))
+;;   (buffer-face-mode))
+
+
+;; (use-package gptel
+;;   :ensure t
+;;   :config  
+;;   (setq
+;;    gptel-model 'mistral-nemo:latest
+;;    gptel-backend (gptel-make-ollama "Ollama"   ;Any name of your choosing
+;;                    :host "localhost:11434"     ;Where it's running
+;;                    :stream t                   ;Stream responses
+;;                    :models '("gemma3:1b" "mistral-nemo:latest"))) ;List of models
+;;   (setq gptel-default-mode 'org-mode))
+
+
+
+;; org-mode
+(global-set-key (kbd "C-c l") #'org-store-link)
+(global-set-key (kbd "C-c a") #'org-agenda)
+(global-set-key (kbd "C-c c") #'org-capture)
+;; Make the indentation look nicer
+(add-hook 'org-mode-hook 'org-indent-mode)
+
+
