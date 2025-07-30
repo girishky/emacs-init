@@ -57,7 +57,8 @@
   (set-default-coding-systems 'utf-8)
   (set-language-environment "UTF-8")
   ;; Set default font face
-  (set-face-attribute 'default nil :font "Iosevka SS08-16")
+  (set-frame-font "Iosevka SS08 15" nil t)
+  ;; (set-face-attribute 'default nil :font "Iosevka SS08-16")
   (delete-selection-mode 1) ;; enable delete-selection-mode
   (winner-mode 1)
   
@@ -67,9 +68,10 @@
   (shr-use-fonts nil "disable variable fonts")
 
   :hook
-  (((prog-mode ) . (lambda ()  (display-line-numbers-mode 1)))
-   (text-mode .  (lambda () (flyspell-mode 1))))
-  
+  ((prog-mode  . display-line-numbers-mode)
+   (prog-mode  . flyspell-prog-mode)
+   (text-mode . flyspell-mode))
+
   :bind
   ("M-o" . other-window)
   ("C-s-f" . toggle-frame-fullscreen))
@@ -77,9 +79,9 @@
 
 (use-package doom-themes
   :ensure t
-  :config
-  (load-theme 'doom-nord-light t) 
-  ;;  (load-theme 'doom-nord t)
+  :init
+  ;;(load-theme 'doom-nord-light t) 
+  (load-theme 'doom-nord t)
   )
 ;; (use-package atom-one-dark-theme
 ;;   :ensure t
