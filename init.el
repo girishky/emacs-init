@@ -326,8 +326,10 @@
   :ensure nil
   :load-path  "/opt/homebrew/share/emacs/site-lisp/mu/mu4e/"
   :init
-  (add-hook 'mu4e-view-mode-hook #'visual-line-mode)
+  (add-hook 'mu4e-view-mode-hook #'turn-on-visual-line-mode)
+  (add-hook 'mu4e-compose-mode-hook #'turn-on-visual-line-mode)
   (add-hook 'mu4e-compose-mode-hook #'turn-off-auto-fill)
+
   :config
   (setq mu4e-mu-binary (executable-find "mu")  ;; mu installed with homebrew
         mu4e-maildir "~/.maildir"
@@ -358,6 +360,8 @@
         mu4e-headers-include-related nil
         ;; hide duplicate messages
         mu4e-headers-skip-duplicates t
+        ;;  use Emacs' completion frameworks
+        mu4e-completing-read-function 'completing-read
         ;; configure function to send mail
         send-mail-function 'smtpmail-send-it
         ;; confirm before sending mail
