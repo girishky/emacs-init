@@ -162,10 +162,9 @@
   :bind
   (("C-s-." . embark-act)
    ("C-s-;" . embark-dwim) 
-   ("C-h B" . embark-bindings))
-  :init
-  (setq prefix-help-command #'embark-prefix-help-command)
+   ("C-h B" . embark-bindings)) 
   :config
+   (setq prefix-help-command #'embark-prefix-help-command)
   (add-to-list 'display-buffer-alist
                '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
                  nil
