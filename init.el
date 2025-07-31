@@ -57,7 +57,7 @@
   (set-default-coding-systems 'utf-8)
   (set-language-environment "UTF-8")
   ;; Set default font face
-  (set-frame-font "Iosevka SS08 15" nil t)
+  (set-frame-font "Iosevka SS08 16" nil t)
   ;; (set-face-attribute 'default nil :font "Iosevka SS08-16")
   (delete-selection-mode 1) ;; enable delete-selection-mode
   (winner-mode 1)
@@ -89,18 +89,19 @@
 ;;   (load-theme 'atom-one-dark t))
 
 (use-package which-key
+  :ensure nil
   :init
   (setq which-key-idle-delay 0.5) ; Open after .5s instead of 1s
   (which-key-mode 1))
 
 (use-package vertico
   :ensure t
+  :init
+  (vertico-mode)
   :custom
   (vertico-count 10)   
   (vertico-resize t)   
   (vertico-cycle t)    
-  :init
-  (vertico-mode)
   :bind
   (:map vertico-map
         ("RET" . vertico-directory-enter)
@@ -192,19 +193,17 @@
 
 (use-package magit
   :ensure t
-  :defer t
   :bind
   (("C-c g" . magit-file-dispatch))
   :custom
   (magit-git-executable "/opt/homebrew/bin/git")
   (magit-diff-refine-hunk 'all)
   (magit-repository-directories
-   '(("~/Documents/repos/" . 2))))
+   '(("~/Documents/repos/" . 2)))) 
 
 
 (use-package eglot
   :ensure nil
-  :defer t
   :custom
   ;; Optimize performance
   (eglot-send-changes-idle-time 0.5) ;; this is default
@@ -238,7 +237,6 @@
 
 (use-package apheleia
   :ensure t
-  :defer t
   :hook prog-mode
   :config
   (setf (alist-get 'python-ts-mode apheleia-mode-alist)
@@ -247,7 +245,6 @@
 
 (use-package auctex
   :ensure t
-  :defer t
   :hook ((LaTeX-mode . LaTeX-math-mode)
          (LaTeX-mode . turn-on-reftex)
          ;; (LaTeX-mode . TeX-source-correlate-mode)
@@ -263,7 +260,7 @@
   )
 
 (use-package reftex
-  :defer t
+  :after auctex
   :custom
   (reftex-plug-into-AUCTeX t))
 
@@ -285,15 +282,16 @@
 
 (use-package olivetti
   :ensure t
-  :defer t
   :bind ("C-s-S-f" . olivetti-mode)
-  :init
-  (setq olivetti-body-width 80)
-  (setq olivetti-style 'fancy)
-  (setq olivetti-minimum-body-width 72)
+  :custom
+  (olivetti-body-width 80)
+  (olivetti-style 'fancy)
+  (olivetti-minimum-body-width 79)
   :hook
   (olivetti-mode . (lambda ()
-		     (setq mode-line-format (if olivetti-mode nil (default-value 'mode-line-format)))
+                     (setq mode-line-format
+                           (if olivetti-mode nil
+                             (default-value 'mode-line-format)))
 		     (force-mode-line-update))))
 
 
