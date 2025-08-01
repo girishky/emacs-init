@@ -24,27 +24,21 @@
     (message ""))
   (tool-bar-mode -1)
   (scroll-bar-mode -1)
-  ;; (menu-bar-mode -1)
   (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
   (add-to-list 'default-frame-alist '(ns-appearance . dark))
   (setq ns-use-proxy-icon nil)
   (setq frame-title-format nil)
-  ;; (setq-default mode-line-format nil)
   (setq window-resize-pixelwise t)
   (setq frame-resize-pixelwise t)
   (save-place-mode 1)
   (recentf-mode 1)
   (electric-pair-mode 1)
   (show-paren-mode 1)
-  (global-visual-line-mode 1)
+  ;; (global-visual-line-mode 1)
   (setq column-number-mode t)
   (defalias 'yes-or-no-p 'y-or-n-p)
-  (setq auto-save-default nil)
   (global-auto-revert-mode 1)
-  (setq treesit-font-lock-level 4)
-  (setq eldoc-echo-area-use-multiline-p nil)
   (global-set-key [remap list-buffers] 'ibuffer)
-  (setq delete-by-moving-to-trash t)
   ;; Improve scrolling behavior
   (setq redisplay-dont-pause t
         scroll-margin 1
@@ -56,20 +50,23 @@
   ;; (setq-default tab-width 4)
   (set-default-coding-systems 'utf-8)
   (set-language-environment "UTF-8")
-  ;; Set default font face
-  (set-frame-font "Iosevka SS08 16" nil t)
-  ;; (set-face-attribute 'default nil :font "Iosevka SS08-16")
+  (set-frame-font "Iosevka SS08 20" nil t) ;; set default font face
   (delete-selection-mode 1) ;; enable delete-selection-mode
   (winner-mode 1)
-  
+
   :custom
+  (delete-by-moving-to-trash t)
+  (trash-directory "~/.Trash")
+  ;; (auto-save-default nil)
+  (treesit-font-lock-level 4)
+  (shr-use-fonts nil "disable variable fonts")
+  (eldoc-echo-area-use-multiline-p nil)
   (major-mode-remap-alist
    '((python-mode . python-ts-mode))) ;; use tree-sitter mode for Python
-  (shr-use-fonts nil "disable variable fonts")
 
   :hook
   ((prog-mode  . display-line-numbers-mode)
-   (prog-mode  . flyspell-prog-mode)
+   ;;(prog-mode  . flyspell-prog-mode)
    (text-mode . flyspell-mode))
 
   :bind
@@ -80,8 +77,9 @@
 (use-package doom-themes
   :ensure t
   :init
-  ;;(load-theme 'doom-nord-light t) 
-  (load-theme 'doom-nord t)
+  (load-theme 'doom-nord-light t) 
+  ;;(load-theme 'doom-nord t)
+  ;;(load-theme 'doom-zenburn t)
   )
 ;; (use-package atom-one-dark-theme
 ;;   :ensure t
@@ -164,7 +162,7 @@
    ("C-s-;" . embark-dwim) 
    ("C-h B" . embark-bindings)) 
   :config
-   (setq prefix-help-command #'embark-prefix-help-command)
+  (setq prefix-help-command #'embark-prefix-help-command)
   (add-to-list 'display-buffer-alist
                '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
                  nil
@@ -283,9 +281,9 @@
   :ensure t
   :bind ("C-s-S-f" . olivetti-mode)
   :custom
-  (olivetti-body-width 80)
+  (olivetti-body-width 88)
   (olivetti-style 'fancy)
-  (olivetti-minimum-body-width 79)
+  (olivetti-minimum-body-width 88)
   :hook
   (olivetti-mode . (lambda ()
                      (setq mode-line-format
@@ -329,54 +327,55 @@
   (add-hook 'mu4e-view-mode-hook #'turn-on-visual-line-mode)
   (add-hook 'mu4e-compose-mode-hook #'turn-on-visual-line-mode)
   (add-hook 'mu4e-compose-mode-hook #'turn-off-auto-fill)
-
+  
+  :custom
+  (mail-user-agent 'mu4e-user-agent)  ;; use mu4e for e-mail in Emacs
+  (mu4e-mu-binary (executable-find "mu"))  ;; mu installed with homebrew
+  (mu4e-maildir "~/.maildir")
+  ;; command to sync imap servers:
+  (mu4e-get-mail-command (concat (executable-find "mbsync") " -a"))
+  (mu4e-update-interval 300)  ;; how often to sync in seconds
+  (mu4e-view-use-gnus t)
+  (mu4e-compose-format-flowed t)
+  (mu4e-headers-auto-update t)
+  (fill-flowed-encode-column 990)
+  (mu4e-attachment-dir "~/Documents") ;; folder to save attachment by default
+  ;; rename files when moving - needed for mbsync
+  (mu4e-change-filenames-when-moving t)
+  ;; don't save message to Sent Messages, IMAP takes care of this
+  (mu4e-sent-messages-behavior 'delete)
+  (message-kill-buffer-on-exit t)
+  (mu4e-compose-dont-reply-to-self t)
+  ;; attempt to show images when viewing messages
+  (mu4e-view-show-images t)
+  ;; Disbale inline images in messages
+  (gnus-inhibit-images t)
+  ;; hide annoying "mu4e Retrieving mail..." msg in mini buffer:
+  (mu4e-hide-index-messages t)
+  ;; by default do not show related emails:
+  (mu4e-headers-include-related nil)
+  ;; hide duplicate messages
+  ( mu4e-headers-skip-duplicates t)
+  ;;  use Emacs' completion frameworks
+  (mu4e-completing-read-function 'completing-read)
+  ;; configure function to send mail
+  (send-mail-function 'smtpmail-send-it)
+  ;; confirm before sending mail
+  (message-confirm-send t)
+  ;; email signature imported from a file
+  (message-signature nil)
+  (message-signature-file "~/.signature_work")
+  ;; use gmail style message citation
+  (message-citation-line-format "On %a, %b %d, %Y at %R %Z, %f wrote:\n")
+  (mu4e-context-policy 'pick-first) ;; start with the first (default) context;
+  (mu4e-compose-context-policy 'ask) ;; ask for context if no context
+  
   :config
-  (setq mu4e-mu-binary (executable-find "mu")  ;; mu installed with homebrew
-        mu4e-maildir "~/.maildir"
-        ;; command to sync imap servers:
-        mu4e-get-mail-command (concat (executable-find "mbsync") " -a")
-        ;; how often to sync in seconds:
-        mu4e-update-interval 300
-        mu4e-headers-auto-update t
-        mu4e-compose-format-flowed t
-        mu4e-view-use-gnus t
-        fill-flowed-encode-column 990
-        ;; save attachment to desktop by default
-        mu4e-attachment-dir "~/Documents"
-        ;; rename files when moving - needed for mbsync:
-        mu4e-change-filenames-when-moving t
-        ;; don't save message to Sent Messages, IMAP takes care of this
-        mu4e-sent-messages-behavior 'delete
-        ;; don't keep message buffers around
-        message-kill-buffer-on-exit t
-        mu4e-compose-dont-reply-to-self t
-        ;; attempt to show images when viewing messages
-        mu4e-view-show-images t
-        ;; Disbale inline images in messages
-        gnus-inhibit-images t
-        ;; hide annoying "mu4e Retrieving mail..." msg in mini buffer:
-        mu4e-hide-index-messages t
-        ;; by default do not show related emails:
-        mu4e-headers-include-related nil
-        ;; hide duplicate messages
-        mu4e-headers-skip-duplicates t
-        ;;  use Emacs' completion frameworks
-        mu4e-completing-read-function 'completing-read
-        ;; configure function to send mail
-        send-mail-function 'smtpmail-send-it
-        ;; confirm before sending mail
-        message-confirm-send t
-        ;; email signature imported from a file
-        message-signature nil
-        message-signature-file "~/.signature_work"
-        ;; use gmail style message citation
-        message-citation-line-format "On %a, %b %d, %Y at %R %Z, %f wrote:\n"
-        ;; show my timezone instead of UTC time
-        message-citation-line-function
+  ;; show my timezone instead of UTC time
+  (setq message-citation-line-function
         (lambda ()
           (message-insert-formatted-citation-line
-           nil nil (car (current-time-zone))))
-        )
+           nil nil (car (current-time-zone)))))
 
   ;;Quickly switching between plain text and HTML mime type.
   (keymap-set mu4e-view-mode-map (kbd "K")
@@ -440,13 +439,7 @@
 	          (smtpmail-smtp-server . "smtp.gmail.com")
                   (smtpmail-smtp-service .  587)
                   (smtpmail-stream-type . starttls)
-                  ))
-         )
-        )
-
-  (setq mu4e-context-policy 'pick-first) ;; start with the first (default) context;
-  (setq mu4e-compose-context-policy 'ask) ;; ask for context if no context
-  )
+                  )))))
 
 ;;----------------------------------------------------------------------------
 ;; This I originally found on Mastering Emacs website but code didn't
@@ -504,3 +497,14 @@
 (add-hook 'org-mode-hook 'org-indent-mode)
 
 
+;; miscellaneous
+
+(defun er-smart-open-line ()
+  "Insert an empty line after the current line.
+Position the cursor at its beginning, according to the current mode.
+credit: emacsredux blog"
+  (interactive)
+  (move-end-of-line nil)
+  (newline-and-indent))
+
+(global-set-key [(shift return)] #'er-smart-open-line)
