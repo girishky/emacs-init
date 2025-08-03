@@ -241,18 +241,19 @@
 
 (use-package pdf-tools
   :ensure t
-  ;; :mode ("\\.pdf\\'" . pdf-view-mode)
-  :config
-  (pdf-tools-install))
+  :mode ("\\.pdf\\'" . pdf-view-mode)
+  ;; :config
+  ;; (pdf-tools-install)
+  )
 
 (use-package auctex
   :ensure t
   :hook ((LaTeX-mode . LaTeX-math-mode)
          (LaTeX-mode . turn-on-reftex)
-         ;; (LaTeX-mode . TeX-source-correlate-mode)
          (LaTeX-mode . turn-on-auto-fill)
          (LaTeX-mode . turn-on-visual-line-mode)
          (TeX-mode . prettify-symbols-mode)
+         ;; (LaTeX-mode . TeX-source-correlate-mode)
          ;; (LaTeX-mode . my-buffer-face-mode-variable)
          )
   :config
@@ -268,8 +269,7 @@
   (TeX-save-query nil) ; save file when compiling
   (TeX-PDF-mode t)
   ;; view pdf inside emacs
-  (TeX-view-program-selection '((output-pdf "PDF Tools")))
-  )
+  (TeX-view-program-selection '((output-pdf "PDF Tools"))))
 
 (use-package reftex
   :after auctex
