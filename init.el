@@ -77,8 +77,8 @@
 (use-package doom-themes
   :ensure t
   :init
-  (load-theme 'doom-nord-light t) 
-  ;;(load-theme 'doom-nord t)
+  ;;(load-theme 'doom-nord-light t) 
+  (load-theme 'doom-nord t)
   ;;(load-theme 'doom-zenburn t)
   )
 ;; (use-package atom-one-dark-theme
@@ -239,6 +239,11 @@
   (setf (alist-get 'python-ts-mode apheleia-mode-alist)
         '(ruff-isort ruff)))
 
+(use-package pdf-tools
+  :ensure t
+  ;; :mode ("\\.pdf\\'" . pdf-view-mode)
+  :config
+  (pdf-tools-install))
 
 (use-package auctex
   :ensure t
@@ -246,14 +251,24 @@
          (LaTeX-mode . turn-on-reftex)
          ;; (LaTeX-mode . TeX-source-correlate-mode)
          (LaTeX-mode . turn-on-auto-fill)
+         (LaTeX-mode . turn-on-visual-line-mode)
+         (TeX-mode . prettify-symbols-mode)
          ;; (LaTeX-mode . my-buffer-face-mode-variable)
          )
+  :config
+  (add-hook 'TeX-after-compilation-finished-functions
+            #'TeX-revert-document-buffer)
+  ;; ;; to go back from pdf file to tex file
+  ;; (with-eval-after-load 'tex
+  ;;   (define-key TeX-source-correlate-map [C-down-mouse-1]
+  ;;               #'TeX-view-mouse))
   :custom
-  (TeX-PDF-mode t)
+  (TeX-parse-self t) ; enable document parsing
   (TeX-auto-save t)
-  (TeX-save-query nil)
-  (TeX-parse-self t)
-  ;; (setq-default TeX-master nil)
+  (TeX-save-query nil) ; save file when compiling
+  (TeX-PDF-mode t)
+  ;; view pdf inside emacs
+  (TeX-view-program-selection '((output-pdf "PDF Tools")))
   )
 
 (use-package reftex
@@ -334,7 +349,7 @@
   (mu4e-maildir "~/.maildir")
   ;; command to sync imap servers:
   (mu4e-get-mail-command (concat (executable-find "mbsync") " -a"))
-  (mu4e-update-interval 300)  ;; how often to sync in seconds
+  (mu4e-update-interval (* 5 60))  ;; update every 5 min
   (mu4e-view-use-gnus t)
   (mu4e-compose-format-flowed t)
   (mu4e-headers-auto-update t)
@@ -384,12 +399,13 @@
                 (gnus-article-jump-to-part 1)
                 (gnus-article-press-button)
                 (gnus-article-press-button)))
-
+  
   ;; additional bookmarks
   (add-to-list 'mu4e-bookmarks
                ;; bookmark for unread messages in my Gmail Inbox
-               '( :name "Unread personal inbox" :key  ?U
-                  :query "maildir:/gmail/Inbox AND flag:unread"))
+               '( :name "Unread personal inbox"
+                  :query "maildir:/gmail/Inbox AND flag:unread"
+                  :key ?U))
 
   (setq mu4e-contexts
         (list
@@ -408,7 +424,7 @@
                   (mu4e-refile-folder . "/gmail/Archive")
                   (mu4e-sent-folder . "/gmail/Sent")
                   (mu4e-trash-folder . "/gmail/Trash")
-                  (mu4e-maildir-shortcuts . (( "/gmail/Inbox"   .   ?i)
+                  (mu4e-maildir-shortcuts . (("/gmail/Inbox"   .   ?i)
                                              ("/gmail/Sent" . ?s)
                                              ("/gmail/Archive" . ?a)))
 	          (smtpmail-smtp-user . ,(gmail-address))
