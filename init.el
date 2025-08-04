@@ -5,6 +5,7 @@
 ;; - aspell (for spell-checking)
 ;; - mu, isync (for mu4e email)
 
+(defun my-full-name () "Girish Kumar")
 
 ;; Store automatic customization options elsewhere
 (setq custom-file (locate-user-emacs-file "custom.el"))
@@ -34,7 +35,7 @@
   (recentf-mode 1)
   (electric-pair-mode 1)
   (show-paren-mode 1)
-  ;; (global-visual-line-mode 1)
+  (global-visual-line-mode 1)
   (setq column-number-mode t)
   (defalias 'yes-or-no-p 'y-or-n-p)
   (global-auto-revert-mode 1)
@@ -50,7 +51,7 @@
   ;; (setq-default tab-width 4)
   (set-default-coding-systems 'utf-8)
   (set-language-environment "UTF-8")
-  (set-frame-font "Iosevka SS08 20" nil t) ;; set default font face
+  (set-frame-font "Iosevka SS08 18" nil t) ;; set default font face
   (delete-selection-mode 1) ;; enable delete-selection-mode
   (winner-mode 1)
 
@@ -71,16 +72,16 @@
 
   :bind
   ("M-o" . other-window)
-  ("C-s-f" . toggle-frame-fullscreen))
+  ("C-s-S-f" . toggle-frame-fullscreen))
 
 
-(use-package doom-themes
-  :ensure t
-  :init
-  ;;(load-theme 'doom-nord-light t) 
-  (load-theme 'doom-nord t)
-  ;;(load-theme 'doom-zenburn t)
-  )
+;; (use-package doom-themes
+;;   :ensure t
+;;   :init
+;;   (load-theme 'doom-nord-light t) 
+;;   ;;(load-theme 'doom-nord t)
+;;   ;;(load-theme 'doom-zenburn t)
+;;   )
 ;; (use-package atom-one-dark-theme
 ;;   :ensure t
 ;;   :config
@@ -201,14 +202,14 @@
 
 (use-package eglot
   :ensure nil
+  :config
+  ;; (add-to-list 'eglot-server-programs
+  ;;              '(python-ts-mode . ("pyright-langserver" "--stdio")))
+  (add-to-list 'eglot-server-programs
+               '(text-mode . ("harper-ls" "--stdio")))
   :custom
-  ;; Optimize performance
   (eglot-send-changes-idle-time 0.5) ;; this is default
   (eglot-extend-to-xref t)
-  ;; Configure language servers
-  (eglot-server-programs
-   '(;;(python-ts-mode .  ("pyright-langserver" "--stdio"))
-     (text-mode . ("harper-ls" "--stdio"))))
   :hook ((python-ts-mode . eglot-ensure)
 	 ;; python-specific settings
          (python-ts-mode . (lambda ()
@@ -227,9 +228,7 @@
               ("C-c l o" . eglot-code-action-organize-imports)
               ("C-c l h" . eglot-inlay-hints-mode)
               ("C-c l q" . eglot-shutdown-all)
-	      ("C-c l e"  . flymake-show-buffer-diagnostics)
-	      ("M-s-n" . flymake-goto-next-error)
-	      ("M-s-p" . flymake-goto-prev-error)))
+	      ("C-c l e"  . flymake-show-buffer-diagnostics)))
 
 
 (use-package apheleia
@@ -239,12 +238,28 @@
   (setf (alist-get 'python-ts-mode apheleia-mode-alist)
         '(ruff-isort ruff)))
 
-(use-package pdf-tools
+
+(use-package flymake
+  :ensure nil
+  :bind (:map flymake-mode-map
+              ("M-N" . flymake-goto-next-error)
+	      ("M-P" . flymake-goto-prev-error)))
+
+;; proselint
+(use-package flymake-proselint
   :ensure t
-  :mode ("\\.pdf\\'" . pdf-view-mode)
-  ;; :config
-  ;; (pdf-tools-install)
-  )
+  :hook
+  (text-mode . (lambda ()
+                 (flymake-mode)
+                 (flymake-proselint-setup))))
+
+
+;; (use-package pdf-tools
+;;   :ensure t
+;;   :mode ("\\.pdf\\'" . pdf-view-mode)
+;;   :config
+;;   (pdf-tools-install)
+;;   )
 
 (use-package auctex
   :ensure t
@@ -268,13 +283,15 @@
   (TeX-auto-save t)
   (TeX-save-query nil) ; save file when compiling
   (TeX-PDF-mode t)
-  ;; view pdf inside emacs
-  (TeX-view-program-selection '((output-pdf "PDF Tools"))))
+  ;; ;; view pdf inside emacs
+  ;; (TeX-view-program-selection '((output-pdf "PDF Tools")))
+  )
 
 (use-package reftex
   :after auctex
   :custom
   (reftex-plug-into-AUCTeX t))
+
 
 (use-package dictionary
   :ensure nil
@@ -294,7 +311,7 @@
 
 (use-package olivetti
   :ensure t
-  :bind ("C-s-S-f" . olivetti-mode)
+  :bind ("C-s-f" . olivetti-mode)
   :custom
   (olivetti-body-width 88)
   (olivetti-style 'fancy)
@@ -333,7 +350,7 @@
 ;; Example code in the file:
 ;;;         (defun gmail-address () "my_gmail_address")
 ;; define simiallry functions for name and other email address
-(load-file (expand-file-name "~/.mu4e-identity.el"))
+(load-file (expand-file-name "~/.my-mu4e-identity.el"))
 
 (use-package mu4e
   :ensure nil
@@ -342,7 +359,7 @@
   (add-hook 'mu4e-view-mode-hook #'turn-on-visual-line-mode)
   (add-hook 'mu4e-compose-mode-hook #'turn-on-visual-line-mode)
   (add-hook 'mu4e-compose-mode-hook #'turn-off-auto-fill)
-  
+
   :custom
   (mail-user-agent 'mu4e-user-agent)  ;; use mu4e for e-mail in Emacs
   (mu4e-mu-binary (executable-find "mu"))  ;; mu installed with homebrew
@@ -379,12 +396,12 @@
   (message-confirm-send t)
   ;; email signature imported from a file
   (message-signature nil)
-  (message-signature-file "~/.signature_work")
+  (message-signature-file "~/.my_signature_work")
   ;; use gmail style message citation
   (message-citation-line-format "On %a, %b %d, %Y at %R %Z, %f wrote:\n")
   (mu4e-context-policy 'pick-first) ;; start with the first (default) context;
   (mu4e-compose-context-policy 'ask) ;; ask for context if no context
-  
+
   :config
   ;; show my timezone instead of UTC time
   (setq message-citation-line-function
@@ -399,7 +416,7 @@
                 (gnus-article-jump-to-part 1)
                 (gnus-article-press-button)
                 (gnus-article-press-button)))
-  
+
   ;; additional bookmarks
   (add-to-list 'mu4e-bookmarks
                ;; bookmark for unread messages in my Gmail Inbox
@@ -418,8 +435,8 @@
           :match-func (lambda (msg)
                         (when msg
                           (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
-          :vars `((user-mail-address . ,(gmail-address))
-                  (user-full-name . ,(full-name))
+          :vars `((user-mail-address . ,(my-gmail-address))
+                  (user-full-name . ,(my-full-name))
                   (mu4e-drafts-folder . "/gmail/Drafts")
                   (mu4e-refile-folder . "/gmail/Archive")
                   (mu4e-sent-folder . "/gmail/Sent")
@@ -427,7 +444,7 @@
                   (mu4e-maildir-shortcuts . (("/gmail/Inbox"   .   ?i)
                                              ("/gmail/Sent" . ?s)
                                              ("/gmail/Archive" . ?a)))
-	          (smtpmail-smtp-user . ,(gmail-address))
+	          (smtpmail-smtp-user . ,(my-gmail-address))
 	          (smtpmail-default-smtp-server . "smtp.gmail.com")
 	          (smtpmail-smtp-server . "smtp.gmail.com")
                   (smtpmail-smtp-service .  587)
@@ -443,19 +460,20 @@
           :match-func (lambda (msg)
                         (when msg
                           (string-prefix-p "/othergmail" (mu4e-message-field msg :maildir))))
-          :vars `((user-mail-address . ,(another-gmail-address))
-                  (user-full-name . ,(full-name))
+          :vars `((user-mail-address . ,(my-another-gmail-address))
+                  (user-full-name . ,(my-full-name))
                   (mu4e-drafts-folder . "/othergmail/Drafts")
                   (mu4e-refile-folder . "/othergmail/Archive")
                   (mu4e-sent-folder . "/othergmail/Sent")
                   (mu4e-trash-folder . "/othergmail/Trash")
                   (mu4e-maildir-shortcuts . (( "/othergmail/Inbox"   .   ?i)))
-	          (smtpmail-smtp-user . ,(another-gmail-address))
+	          (smtpmail-smtp-user . ,(my-another-gmail-address))
 	          (smtpmail-default-smtp-server . "smtp.gmail.com")
 	          (smtpmail-smtp-server . "smtp.gmail.com")
                   (smtpmail-smtp-service .  587)
                   (smtpmail-stream-type . starttls)
-                  )))))
+                  ))
+         )))
 
 ;;----------------------------------------------------------------------------
 ;; This I originally found on Mastering Emacs website but code didn't
@@ -506,9 +524,9 @@
 
 
 ;; org-mode
-(global-set-key (kbd "C-c l") #'org-store-link)
-(global-set-key (kbd "C-c a") #'org-agenda)
-(global-set-key (kbd "C-c c") #'org-capture)
+(global-set-key (kbd "C-c L") #'org-store-link)
+(global-set-key (kbd "C-c A") #'org-agenda)
+(global-set-key (kbd "C-c C") #'org-capture)
 ;; Make the indentation look nicer
 (add-hook 'org-mode-hook 'org-indent-mode)
 
