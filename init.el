@@ -198,6 +198,10 @@
          ("C-c C->"       . mc/mark-more-like-this)
          ))
 
+(use-package expand-region
+  :ensure t
+  :bind ("C-=" . er/expand-region))
+
 (use-package magit
   :ensure t
   :bind
