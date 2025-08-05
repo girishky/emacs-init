@@ -51,13 +51,15 @@
   ;; (setq-default tab-width 4)
   (set-default-coding-systems 'utf-8)
   (set-language-environment "UTF-8")
-  (set-frame-font "Iosevka SS08 18" nil t) ;; set default font face
+  ;;  (set-frame-font "DejaVuSansM Nerd Font Mono 14" nil t) ;; set default font face
+  (set-frame-font "Iosevka SS08 15" nil t)
   (delete-selection-mode 1) ;; enable delete-selection-mode
   (winner-mode 1)
 
   :custom
   (delete-by-moving-to-trash t)
   (trash-directory "~/.Trash")
+  (epg-pinentry-mode 'loopback)
   ;; (auto-save-default nil)
   (treesit-font-lock-level 4)
   (shr-use-fonts nil "disable variable fonts")
@@ -136,7 +138,6 @@
           ;; ("M-g M-j"     . avy-goto-word-1)
           ))
 
-
 (use-package consult
   :ensure t
   :init
@@ -175,7 +176,6 @@
   :hook
   (embark-collect-mode . consult-preview-at-point-mode))
 
-
 (use-package corfu
   :ensure t
   :init
@@ -188,6 +188,15 @@
   (corfu-cycle t )
   (corfu-echo-documentation nil))
 
+
+(use-package multiple-cursors
+  :ensure t
+  :bind (("C-S-m"       . mc/edit-lines)
+         ("C->"         . mc/mark-next-like-this)
+         ("C-<"         . mc/mark-previous-like-this)
+         ("C-c C-<"         . mc/mark-all-like-this)
+         ("C-c C->"       . mc/mark-more-like-this)
+         ))
 
 (use-package magit
   :ensure t
