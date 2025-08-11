@@ -55,6 +55,7 @@
   (set-frame-font "Iosevka SS08 15" nil t)
   (delete-selection-mode 1) ;; enable delete-selection-mode
   (winner-mode 1)
+  (tooltip-mode -1)  ;;tooltip in echo area
 
   :custom
   (delete-by-moving-to-trash t)
