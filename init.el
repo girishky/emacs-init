@@ -219,8 +219,8 @@
   :config
   ;; (add-to-list 'eglot-server-programs
   ;;              '(python-ts-mode . ("pyright-langserver" "--stdio")))
-  (add-to-list 'eglot-server-programs
-               '(text-mode . ("harper-ls" "--stdio")))
+  ;; (add-to-list 'eglot-server-programs
+  ;;              '(text-mode . ("harper-ls" "--stdio")))
   :custom
   (eglot-send-changes-idle-time 0.5) ;; this is default
   (eglot-extend-to-xref t)
@@ -268,12 +268,23 @@
                  (flymake-proselint-setup))))
 
 
-;; (use-package pdf-tools
-;;   :ensure t
-;;   :mode ("\\.pdf\\'" . pdf-view-mode)
-;;   :config
-;;   (pdf-tools-install)
-;;   )
+(use-package pdf-tools
+  :ensure t
+  :mode ("\\.pdf\\'" . pdf-view-mode)
+  :config
+  (pdf-tools-install)
+  ;;pdf-tools and Emacs in fullscreen shift my screen to naother
+  ;;window before showing pdf. The following is a very poor solution
+  ;;but works! There is probably better solution out there. Need to
+  ;;check someday.
+  (defun life-is-beautiful (&optional ARG) 
+    (error "Life is beautiful!"))
+  (advice-add 'pdf-view-goto-page :after #'life-is-beautiful)
+  :hook ((LaTeX-mode .
+                     (lambda () (setq ring-bell-function 'ignore)))
+         (pdf-view-mode .
+                        (lambda () (setq mode-line-format nil))))
+  )
 
 (use-package auctex
   :ensure t
@@ -281,9 +292,12 @@
          (LaTeX-mode . turn-on-reftex)
          (LaTeX-mode . turn-on-auto-fill)
          (LaTeX-mode . turn-on-visual-line-mode)
+         (LaTeX-mode . TeX-fold-mode)
          (TeX-mode . prettify-symbols-mode)
-         ;; (LaTeX-mode . TeX-source-correlate-mode)
+         (LaTeX-mode . TeX-source-correlate-mode)
          ;; (LaTeX-mode . my-buffer-face-mode-variable)
+         (LaTeX-mode .  (lambda () (set (make-local-variable 'TeX-electric-math)
+                                        (cons "\\(" "\\)"))) )
          )
   :config
   (add-hook 'TeX-after-compilation-finished-functions
@@ -297,8 +311,8 @@
   (TeX-auto-save t)
   (TeX-save-query nil) ; save file when compiling
   (TeX-PDF-mode t)
-  ;; ;; view pdf inside emacs
-  ;; (TeX-view-program-selection '((output-pdf "PDF Tools")))
+  ;; view pdf inside emacs
+  (TeX-view-program-selection '((output-pdf "PDF Tools")))
   )
 
 (use-package reftex
@@ -431,12 +445,13 @@
                 (gnus-article-press-button)
                 (gnus-article-press-button)))
 
+
   ;; additional bookmarks
   (add-to-list 'mu4e-bookmarks
-               ;; bookmark for unread messages in my Gmail Inbox
-               '( :name "Unread personal inbox"
-                  :query "maildir:/gmail/Inbox AND flag:unread"
-                  :key ?U))
+               ;; bookmark for unread messages in my Gmail All Mail
+               '( :name "Unread Gmail All Mail"
+                  :query "maildir:/gmail/Archive AND flag:unread"
+                  :key ?A))
 
   (setq mu4e-contexts
         (list
@@ -480,7 +495,8 @@
                   (mu4e-refile-folder . "/othergmail/Archive")
                   (mu4e-sent-folder . "/othergmail/Sent")
                   (mu4e-trash-folder . "/othergmail/Trash")
-                  (mu4e-maildir-shortcuts . (( "/othergmail/Inbox"   .   ?i)))
+                  (mu4e-maildir-shortcuts . (("/othergmail/Inbox"   .   ?i)
+                                             ( "/othergmail/Archive"   .   ?a)))
 	          (smtpmail-smtp-user . ,(my-another-gmail-address))
 	          (smtpmail-default-smtp-server . "smtp.gmail.com")
 	          (smtpmail-smtp-server . "smtp.gmail.com")
