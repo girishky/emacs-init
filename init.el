@@ -37,7 +37,6 @@
   (show-paren-mode 1)
   (global-visual-line-mode 1)
   (setq column-number-mode t)
-  (defalias 'yes-or-no-p 'y-or-n-p)
   (global-auto-revert-mode 1)
   (global-set-key [remap list-buffers] 'ibuffer)
   ;; Improve scrolling behavior
@@ -51,13 +50,14 @@
   ;; (setq-default tab-width 4)
   (set-default-coding-systems 'utf-8)
   (set-language-environment "UTF-8")
-  ;;  (set-frame-font "DejaVuSansM Nerd Font Mono 14" nil t) ;; set default font face
-  (set-frame-font "Iosevka SS08 15" nil t)
+  ;;(set-frame-font "DejaVuSansM Nerd Font Mono 14" nil t) ;; set default font face
+  (set-frame-font "Iosevka SS08-17" nil t)
   (delete-selection-mode 1) ;; enable delete-selection-mode
   (winner-mode 1)
   (tooltip-mode -1)  ;;tooltip in echo area
 
   :custom
+  (use-short-answers t)
   (delete-by-moving-to-trash t)
   (trash-directory "~/.Trash")
   (epg-pinentry-mode 'loopback)
@@ -196,7 +196,7 @@
          ("C->"         . mc/mark-next-like-this)
          ("C-<"         . mc/mark-previous-like-this)
          ("C-c C-<"         . mc/mark-all-like-this)
-         ("C-c C->"       . mc/mark-more-like-this)
+         ("C-c C->"       . mc/mark-more-like-this-extended)
          ))
 
 (use-package expand-region
@@ -271,6 +271,8 @@
 (use-package pdf-tools
   :ensure t
   :mode ("\\.pdf\\'" . pdf-view-mode)
+  :custom
+  (pdf-view-resize-factor 1.1)
   :config
   (pdf-tools-install)
   ;;pdf-tools and Emacs in fullscreen shift my screen to naother
@@ -295,7 +297,7 @@
          (LaTeX-mode . TeX-fold-mode)
          (TeX-mode . prettify-symbols-mode)
          (LaTeX-mode . TeX-source-correlate-mode)
-         ;; (LaTeX-mode . my-buffer-face-mode-variable)
+         (LaTeX-mode . my-buffer-face-mode-variable)
          (LaTeX-mode .  (lambda () (set (make-local-variable 'TeX-electric-math)
                                         (cons "\\(" "\\)"))) )
          )
@@ -335,6 +337,14 @@
 	 ("M-." . dictionary-lookup-definition))
   :custom
   (dictionary-server "dict.org"))
+
+(use-package nov
+  :ensure t
+  :mode ("\\.epub\\'" . nov-mode)
+  :custom
+  (nov-text-width 80)
+  :hook
+  (nov-mode . turn-on-visual-line-mode))
 
 
 (use-package olivetti
@@ -398,7 +408,7 @@
   (mu4e-view-use-gnus t)
   (mu4e-compose-format-flowed t)
   (mu4e-headers-auto-update t)
-  (fill-flowed-encode-column 990)
+  ;; (fill-flowed-encode-column 990)
   (mu4e-attachment-dir "~/Documents") ;; folder to save attachment by default
   ;; rename files when moving - needed for mbsync
   (mu4e-change-filenames-when-moving t)
@@ -532,12 +542,12 @@
 ;;----------------------------------------------------------------------------
 
 
-;; ;; function to change the font of buffer
-;; (defun my-buffer-face-mode-variable ()
-;;   "Set font to a variable width (proportional) fonts in current buffer"
-;;   (interactive)
-;;   (setq buffer-face-mode-face '(:family "Iosevka Aile" :height 160))
-;;   (buffer-face-mode))
+;; function to change the font of buffer
+(defun my-buffer-face-mode-variable ()
+  "Set font to a variable width (proportional) fonts in current buffer"
+  (interactive)
+  (setq buffer-face-mode-face '(:family "iA Writer Duo S" :height 140))
+  (buffer-face-mode))
 
 
 ;; (use-package gptel
