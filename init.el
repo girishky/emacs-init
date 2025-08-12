@@ -78,13 +78,13 @@
   ("C-s-S-f" . toggle-frame-fullscreen))
 
 
-;; (use-package doom-themes
-;;   :ensure t
-;;   :init
-;;   (load-theme 'doom-nord-light t) 
-;;   ;;(load-theme 'doom-nord t)
-;;   ;;(load-theme 'doom-zenburn t)
-;;   )
+(use-package doom-themes
+  :ensure t
+  :init
+  ;; (load-theme 'doom-nord-light t) 
+  (load-theme 'doom-solarized-light t)
+  ;;(load-theme 'doom-zenburn t)
+  )
 ;; (use-package atom-one-dark-theme
 ;;   :ensure t
 ;;   :config
@@ -582,3 +582,29 @@ credit: emacsredux blog"
   (newline-and-indent))
 
 (global-set-key [(shift return)] #'er-smart-open-line)
+
+;; half-screen scrolling (karthink blog)
+(defun scroll-up-half ()
+  (interactive)
+  (scroll-up-command
+   (floor
+    (- (window-height)
+       next-screen-context-lines)
+    2)))
+
+(defun scroll-down-half ()
+  (interactive)
+  (scroll-down-command
+   (floor
+    (- (window-height)
+       next-screen-context-lines)
+    2)))
+
+(global-set-key (kbd "C-v") #'scroll-up-half)
+(global-set-key (kbd "M-v") #'scroll-down-half)
+
+(global-set-key (kbd "C-c D") #'disable-theme)
+(global-set-key (kbd "C-c T") #'consult-theme)
+
+
+
