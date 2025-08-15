@@ -573,7 +573,7 @@
 
 ;; miscellaneous
 
-(defun er-smart-open-line ()
+(defun smart-open-line ()
   "Insert an empty line after the current line.
 Position the cursor at its beginning, according to the current mode.
 credit: emacsredux blog"
@@ -581,7 +581,7 @@ credit: emacsredux blog"
   (move-end-of-line nil)
   (newline-and-indent))
 
-(global-set-key [(shift return)] #'er-smart-open-line)
+(global-set-key [(shift return)] #'smart-open-line)
 
 ;; half-screen scrolling (karthink blog)
 (defun scroll-up-half ()
@@ -603,8 +603,34 @@ credit: emacsredux blog"
 (global-set-key (kbd "C-v") #'scroll-up-half)
 (global-set-key (kbd "M-v") #'scroll-down-half)
 
+(defun mark-whole-line ()
+  "Select the current line."
+  (interactive)
+  (beginning-of-line)
+  (set-mark (point))
+  (end-of-line))
+(global-set-key (kbd "C-S-l") 'mark-whole-line)
+
+
 (global-set-key (kbd "C-c D") #'disable-theme)
 (global-set-key (kbd "C-c T") #'consult-theme)
+
+(use-package elfeed
+  :ensure t
+  :bind ("C-c f" . elfeed)
+  :config
+  (setq elfeed-feeds
+        '(("https://rss.arxiv.org/atom/hep-ph" hep-ph physics)
+          ("https://rss.arxiv.org/atom/hep-ex" hep-ex physics)))
+
+  ;; ;; from Karthink blog
+  ;; (setq elfeed-show-entry-switch #'elfeed-display-buffer)
+
+  ;; (defun elfeed-display-buffer (buf &optional act)
+  ;;   (pop-to-buffer buf)
+  ;;   (set-window-text-height (get-buffer-window) (round (* 0.7 (frame-height)))))
+
+  )
 
 
 
