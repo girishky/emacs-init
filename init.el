@@ -338,13 +338,21 @@
   :custom
   (dictionary-server "dict.org"))
 
+
+
+(defun my-nov-font-setup ()
+  (face-remap-add-relative 'variable-pitch :family "DejaVuSansM Nerd Font" :height 140))
+
 (use-package nov
   :ensure t
   :mode ("\\.epub\\'" . nov-mode)
   :custom
-  (nov-text-width 80)
+  (nov-text-width 70
+                  )
+  ;; (nov-variable-pitch nil) ;; use default emacs font
   :hook
-  (nov-mode . turn-on-visual-line-mode))
+  ((nov-mode . turn-on-visual-line-mode)
+   (nov-mode . my-nov-font-setup)))
 
 
 (use-package olivetti
@@ -408,7 +416,7 @@
   (mu4e-view-use-gnus t)
   (mu4e-compose-format-flowed t)
   (mu4e-headers-auto-update t)
-  ;; (fill-flowed-encode-column 990)
+  (fill-flowed-encode-column 990)
   (mu4e-attachment-dir "~/Documents") ;; folder to save attachment by default
   ;; rename files when moving - needed for mbsync
   (mu4e-change-filenames-when-moving t)
