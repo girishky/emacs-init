@@ -78,13 +78,19 @@
   ("C-s-S-f" . toggle-frame-fullscreen))
 
 
-(use-package doom-themes
+(use-package apropospriate-theme
   :ensure t
-  :init
-  ;; (load-theme 'doom-nord-light t) 
-  (load-theme 'doom-solarized-light t)
-  ;;(load-theme 'doom-zenburn t)
-  )
+  :config 
+  (load-theme 'apropospriate-light t))
+
+
+;; (Use-Package doom-themes
+;;   :ensure t
+;;   :init
+;;   ;; (load-theme 'doom-nord-light t) 
+;;   (load-theme 'doom-solarized-light t)
+;;   ;;(load-theme 'doom-zenburn t)
+;;   )
 ;; (use-package atom-one-dark-theme
 ;;   :ensure t
 ;;   :config
