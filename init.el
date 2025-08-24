@@ -217,7 +217,7 @@
   (magit-git-executable "/opt/homebrew/bin/git")
   (magit-diff-refine-hunk 'all)
   (magit-repository-directories
-   '(("~/Documents/repos/" . 2)))) 
+   '(("~/repos/" . 1)))) 
 
 
 (use-package eglot
@@ -347,7 +347,7 @@
 
 
 (defun my-nov-font-setup ()
-  (face-remap-add-relative 'variable-pitch :family "DejaVuSansM Nerd Font" :height 140))
+  (face-remap-add-relative 'variable-pitch :family "DejaVu Sans" :height 140))
 
 (use-package nov
   :ensure t
@@ -398,136 +398,136 @@
   (popper-echo-mode 1))
 
 
-;; Load external file defining email & name functions
-;; Example code in the file:
-;;;         (defun gmail-address () "my_gmail_address")
-;; define simiallry functions for name and other email address
-(load-file (expand-file-name "~/.my-mu4e-identity.el"))
+;; ;; Load external file defining email & name functions
+;; ;; Example code in the file:
+;; ;;;         (defun gmail-address () "my_gmail_address")
+;; ;; define simiallry functions for name and other email address
+;; (load-file (expand-file-name "~/.my-mu4e-identity.el"))
 
-(use-package mu4e
-  :ensure nil
-  :load-path  "/opt/homebrew/share/emacs/site-lisp/mu/mu4e/"
-  :init
-  (add-hook 'mu4e-view-mode-hook #'turn-on-visual-line-mode)
-  (add-hook 'mu4e-compose-mode-hook #'turn-on-visual-line-mode)
-  (add-hook 'mu4e-compose-mode-hook #'turn-off-auto-fill)
+;; (use-package mu4e
+;;   :ensure nil
+;;   :load-path  "/opt/homebrew/share/emacs/site-lisp/mu/mu4e/"
+;;   :init
+;;   (add-hook 'mu4e-view-mode-hook #'turn-on-visual-line-mode)
+;;   (add-hook 'mu4e-compose-mode-hook #'turn-on-visual-line-mode)
+;;   (add-hook 'mu4e-compose-mode-hook #'turn-off-auto-fill)
 
-  :custom
-  (mail-user-agent 'mu4e-user-agent)  ;; use mu4e for e-mail in Emacs
-  (mu4e-mu-binary (executable-find "mu"))  ;; mu installed with homebrew
-  (mu4e-maildir "~/.maildir")
-  ;; command to sync imap servers:
-  (mu4e-get-mail-command (concat (executable-find "mbsync") " -a"))
-  (mu4e-update-interval (* 5 60))  ;; update every 5 min
-  (mu4e-view-use-gnus t)
-  (mu4e-compose-format-flowed t)
-  (mu4e-headers-auto-update t)
-  (fill-flowed-encode-column 990)
-  (mu4e-attachment-dir "~/Documents") ;; folder to save attachment by default
-  ;; rename files when moving - needed for mbsync
-  (mu4e-change-filenames-when-moving t)
-  ;; don't save message to Sent Messages, IMAP takes care of this
-  (mu4e-sent-messages-behavior 'delete)
-  (message-kill-buffer-on-exit t)
-  (mu4e-compose-dont-reply-to-self t)
-  ;; attempt to show images when viewing messages
-  (mu4e-view-show-images t)
-  ;; Disbale inline images in messages
-  (gnus-inhibit-images t)
-  ;; hide annoying "mu4e Retrieving mail..." msg in mini buffer:
-  (mu4e-hide-index-messages t)
-  ;; by default do not show related emails:
-  (mu4e-headers-include-related nil)
-  ;; hide duplicate messages
-  ( mu4e-headers-skip-duplicates t)
-  ;;  use Emacs' completion frameworks
-  (mu4e-completing-read-function 'completing-read)
-  ;; configure function to send mail
-  (send-mail-function 'smtpmail-send-it)
-  ;; confirm before sending mail
-  (message-confirm-send t)
-  ;; email signature imported from a file
-  (message-signature nil)
-  (message-signature-file "~/.my_signature_work")
-  ;; use gmail style message citation
-  (message-citation-line-format "On %a, %b %d, %Y at %R %Z, %f wrote:\n")
-  (mu4e-context-policy 'pick-first) ;; start with the first (default) context;
-  (mu4e-compose-context-policy 'ask) ;; ask for context if no context
+;;   :custom
+;;   (mail-user-agent 'mu4e-user-agent)  ;; use mu4e for e-mail in Emacs
+;;   (mu4e-mu-binary (executable-find "mu"))  ;; mu installed with homebrew
+;;   (mu4e-maildir "~/.maildir")
+;;   ;; command to sync imap servers:
+;;   (mu4e-get-mail-command (concat (executable-find "mbsync") " -a"))
+;;   (mu4e-update-interval (* 5 60))  ;; update every 5 min
+;;   (mu4e-view-use-gnus t)
+;;   (mu4e-compose-format-flowed t)
+;;   (mu4e-headers-auto-update t)
+;;   (fill-flowed-encode-column 990)
+;;   (mu4e-attachment-dir "~/Documents") ;; folder to save attachment by default
+;;   ;; rename files when moving - needed for mbsync
+;;   (mu4e-change-filenames-when-moving t)
+;;   ;; don't save message to Sent Messages, IMAP takes care of this
+;;   (mu4e-sent-messages-behavior 'delete)
+;;   (message-kill-buffer-on-exit t)
+;;   (mu4e-compose-dont-reply-to-self t)
+;;   ;; attempt to show images when viewing messages
+;;   (mu4e-view-show-images t)
+;;   ;; Disbale inline images in messages
+;;   (gnus-inhibit-images t)
+;;   ;; hide annoying "mu4e Retrieving mail..." msg in mini buffer:
+;;   (mu4e-hide-index-messages t)
+;;   ;; by default do not show related emails:
+;;   (mu4e-headers-include-related nil)
+;;   ;; hide duplicate messages
+;;   ( mu4e-headers-skip-duplicates t)
+;;   ;;  use Emacs' completion frameworks
+;;   (mu4e-completing-read-function 'completing-read)
+;;   ;; configure function to send mail
+;;   (send-mail-function 'smtpmail-send-it)
+;;   ;; confirm before sending mail
+;;   (message-confirm-send t)
+;;   ;; email signature imported from a file
+;;   (message-signature nil)
+;;   (message-signature-file "~/.my_signature_work")
+;;   ;; use gmail style message citation
+;;   (message-citation-line-format "On %a, %b %d, %Y at %R %Z, %f wrote:\n")
+;;   (mu4e-context-policy 'pick-first) ;; start with the first (default) context;
+;;   (mu4e-compose-context-policy 'ask) ;; ask for context if no context
 
-  :config
-  ;; show my timezone instead of UTC time
-  (setq message-citation-line-function
-        (lambda ()
-          (message-insert-formatted-citation-line
-           nil nil (car (current-time-zone)))))
+;;   :config
+;;   ;; show my timezone instead of UTC time
+;;   (setq message-citation-line-function
+;;         (lambda ()
+;;           (message-insert-formatted-citation-line
+;;            nil nil (car (current-time-zone)))))
 
-  ;;Quickly switching between plain text and HTML mime type.
-  (keymap-set mu4e-view-mode-map (kbd "K")
-              (lambda ()
-                (interactive)
-                (gnus-article-jump-to-part 1)
-                (gnus-article-press-button)
-                (gnus-article-press-button)))
+;;   ;;Quickly switching between plain text and HTML mime type.
+;;   (keymap-set mu4e-view-mode-map (kbd "K")
+;;               (lambda ()
+;;                 (interactive)
+;;                 (gnus-article-jump-to-part 1)
+;;                 (gnus-article-press-button)
+;;                 (gnus-article-press-button)))
 
 
-  ;; additional bookmarks
-  (add-to-list 'mu4e-bookmarks
-               ;; bookmark for unread messages in my Gmail All Mail
-               '( :name "Unread Gmail All Mail"
-                  :query "maildir:/gmail/Archive AND flag:unread"
-                  :key ?A))
+;;   ;; additional bookmarks
+;;   (add-to-list 'mu4e-bookmarks
+;;                ;; bookmark for unread messages in my Gmail All Mail
+;;                '( :name "Unread Gmail All Mail"
+;;                   :query "maildir:/gmail/Archive AND flag:unread"
+;;                   :key ?A))
 
-  (setq mu4e-contexts
-        (list
-         (make-mu4e-context
-          :name "personal"
-          :enter-func
-          (lambda () (mu4e-message "Enter context personal Gmail"))
-          :leave-func
-          (lambda () (mu4e-message "Leave context personal Gmail"))
-          :match-func (lambda (msg)
-                        (when msg
-                          (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
-          :vars `((user-mail-address . ,(my-gmail-address))
-                  (user-full-name . ,(my-full-name))
-                  (mu4e-drafts-folder . "/gmail/Drafts")
-                  (mu4e-refile-folder . "/gmail/Archive")
-                  (mu4e-sent-folder . "/gmail/Sent")
-                  (mu4e-trash-folder . "/gmail/Trash")
-                  (mu4e-maildir-shortcuts . (("/gmail/Inbox"   .   ?i)
-                                             ("/gmail/Sent" . ?s)
-                                             ("/gmail/Archive" . ?a)))
-	          (smtpmail-smtp-user . ,(my-gmail-address))
-	          (smtpmail-default-smtp-server . "smtp.gmail.com")
-	          (smtpmail-smtp-server . "smtp.gmail.com")
-                  (smtpmail-smtp-service .  587)
-                  (smtpmail-stream-type . starttls)
-                  ))
+;;   (setq mu4e-contexts
+;;         (list
+;;          (make-mu4e-context
+;;           :name "personal"
+;;           :enter-func
+;;           (lambda () (mu4e-message "Enter context personal Gmail"))
+;;           :leave-func
+;;           (lambda () (mu4e-message "Leave context personal Gmail"))
+;;           :match-func (lambda (msg)
+;;                         (when msg
+;;                           (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
+;;           :vars `((user-mail-address . ,(my-gmail-address))
+;;                   (user-full-name . ,(my-full-name))
+;;                   (mu4e-drafts-folder . "/gmail/Drafts")
+;;                   (mu4e-refile-folder . "/gmail/Archive")
+;;                   (mu4e-sent-folder . "/gmail/Sent")
+;;                   (mu4e-trash-folder . "/gmail/Trash")
+;;                   (mu4e-maildir-shortcuts . (("/gmail/Inbox"   .   ?i)
+;;                                              ("/gmail/Sent" . ?s)
+;;                                              ("/gmail/Archive" . ?a)))
+;; 	          (smtpmail-smtp-user . ,(my-gmail-address))
+;; 	          (smtpmail-default-smtp-server . "smtp.gmail.com")
+;; 	          (smtpmail-smtp-server . "smtp.gmail.com")
+;;                   (smtpmail-smtp-service .  587)
+;;                   (smtpmail-stream-type . starttls)
+;;                   ))
 
-         (make-mu4e-context
-          :name "othergmail"
-          :enter-func
-          (lambda () (mu4e-message "Enter context other Gmail"))
-          :leave-func
-          (lambda () (mu4e-message "Leave context other Gmail"))
-          :match-func (lambda (msg)
-                        (when msg
-                          (string-prefix-p "/othergmail" (mu4e-message-field msg :maildir))))
-          :vars `((user-mail-address . ,(my-another-gmail-address))
-                  (user-full-name . ,(my-full-name))
-                  (mu4e-drafts-folder . "/othergmail/Drafts")
-                  (mu4e-refile-folder . "/othergmail/Archive")
-                  (mu4e-sent-folder . "/othergmail/Sent")
-                  (mu4e-trash-folder . "/othergmail/Trash")
-                  (mu4e-maildir-shortcuts . (("/othergmail/Inbox"   .   ?i)
-                                             ( "/othergmail/Archive"   .   ?a)))
-	          (smtpmail-smtp-user . ,(my-another-gmail-address))
-	          (smtpmail-default-smtp-server . "smtp.gmail.com")
-	          (smtpmail-smtp-server . "smtp.gmail.com")
-                  (smtpmail-smtp-service .  587)
-                  (smtpmail-stream-type . starttls)
-                  ))
-         )))
+;;          (make-mu4e-context
+;;           :name "othergmail"
+;;           :enter-func
+;;           (lambda () (mu4e-message "Enter context other Gmail"))
+;;           :leave-func
+;;           (lambda () (mu4e-message "Leave context other Gmail"))
+;;           :match-func (lambda (msg)
+;;                         (when msg
+;;                           (string-prefix-p "/othergmail" (mu4e-message-field msg :maildir))))
+;;           :vars `((user-mail-address . ,(my-another-gmail-address))
+;;                   (user-full-name . ,(my-full-name))
+;;                   (mu4e-drafts-folder . "/othergmail/Drafts")
+;;                   (mu4e-refile-folder . "/othergmail/Archive")
+;;                   (mu4e-sent-folder . "/othergmail/Sent")
+;;                   (mu4e-trash-folder . "/othergmail/Trash")
+;;                   (mu4e-maildir-shortcuts . (("/othergmail/Inbox"   .   ?i)
+;;                                              ( "/othergmail/Archive"   .   ?a)))
+;; 	          (smtpmail-smtp-user . ,(my-another-gmail-address))
+;; 	          (smtpmail-default-smtp-server . "smtp.gmail.com")
+;; 	          (smtpmail-smtp-server . "smtp.gmail.com")
+;;                   (smtpmail-smtp-service .  587)
+;;                   (smtpmail-stream-type . starttls)
+;;                   ))
+;;          )))
 
 ;;----------------------------------------------------------------------------
 ;; This I originally found on Mastering Emacs website but code didn't
@@ -636,13 +636,6 @@ credit: emacsredux blog"
   (setq elfeed-feeds
         '(("https://rss.arxiv.org/atom/hep-ph" hep-ph physics)
           ("https://rss.arxiv.org/atom/hep-ex" hep-ex physics)))
-
-  ;; ;; from Karthink blog
-  ;; (setq elfeed-show-entry-switch #'elfeed-display-buffer)
-
-  ;; (defun elfeed-display-buffer (buf &optional act)
-  ;;   (pop-to-buffer buf)
-  ;;   (set-window-text-height (get-buffer-window) (round (* 0.7 (frame-height)))))
 
   )
 
