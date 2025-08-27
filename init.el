@@ -584,6 +584,8 @@
 ;; Make the indentation look nicer
 (add-hook 'org-mode-hook 'org-indent-mode)
 
+(setq org-agenda-files '("~/Dropbox/org"))
+
 
 ;; miscellaneous
 
@@ -636,8 +638,16 @@ credit: emacsredux blog"
   (setq elfeed-feeds
         '(("https://rss.arxiv.org/atom/hep-ph" hep-ph physics)
           ("https://rss.arxiv.org/atom/hep-ex" hep-ex physics)))
-
   )
 
 
 
+;; (use-package org-roam
+;;   :ensure t
+;;   :custom
+;;   (org-roam-directory "~/Roam-Notes")
+;;   :bind (("C-c n l" . org-roam-buffer-toggle)
+;;          ("C-c n f" . org-roam-node-find)
+;;          ("C-c n i" . org-roam-node-insert))
+;;   :config
+;;   (org-roam-db-autosync-mode))
