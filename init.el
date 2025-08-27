@@ -302,10 +302,11 @@
          (LaTeX-mode . turn-on-visual-line-mode)
          (LaTeX-mode . TeX-fold-mode)
          (TeX-mode . prettify-symbols-mode)
-  ;;       (LaTeX-mode . TeX-source-correlate-mode)
+         ;;       (LaTeX-mode . TeX-source-correlate-mode)
          (LaTeX-mode . my-buffer-face-mode-variable)
-         (LaTeX-mode .  (lambda () (set (make-local-variable 'TeX-electric-math)
-                                        (cons "\\(" "\\)"))) )
+         ;; (LaTeX-mode .  (lambda () (set (make-local-variable 'TeX-electric-math)
+         ;;                                (cons "\\(" "\\)"))) )
+         (LaTeX-mode .  (lambda () (setq fill-column 80)))
          )
   :config
   (add-hook 'TeX-after-compilation-finished-functions
@@ -320,7 +321,7 @@
   (TeX-save-query nil) ; save file when compiling
   (TeX-PDF-mode t)
   ;; view pdf inside emacs
-;;  (TeX-view-program-selection '((output-pdf "PDF Tools")))
+  ;;  (TeX-view-program-selection '((output-pdf "PDF Tools")))
   )
 
 (use-package reftex
@@ -364,10 +365,10 @@
 (use-package olivetti
   :ensure t
   :bind ("C-s-f" . olivetti-mode)
-  :custom
-  (olivetti-body-width 88)
-  (olivetti-style 'fancy)
-  (olivetti-minimum-body-width 88)
+  ;; :custom
+  ;; (olivetti-body-width 88)
+  ;; (olivetti-style 'fancy)
+  ;; (olivetti-minimum-body-width 66)
   :hook
   (olivetti-mode . (lambda ()
                      (setq mode-line-format
@@ -560,8 +561,8 @@
 (defun my-buffer-face-mode-variable ()
   "Set font to a variable width (proportional) fonts in current buffer"
   (interactive)
-  (setq buffer-face-mode-face '(:family "iA Writer Duo S" :height 140))
-  (buffer-face-mode))
+  (setq buffer-face-mode-face '(:family "DejaVu Sans" :height 160 :width semi-condensed))
+  (buffer-face-mode 1))
 
 
 ;; (use-package gptel
