@@ -311,6 +311,13 @@
   :config
   (add-hook 'TeX-after-compilation-finished-functions
             #'TeX-revert-document-buffer)
+  (set-default 'preview-default-document-pt 12)
+  (set-default 'preview-scale-function 1.2)
+
+  ;; Match preview image size to text size
+  ;; (setq preview-scale-function
+  ;;       (lambda () (/ (face-attribute 'default :height) 120.0)))
+  ;; (setq preview-image-type 'dvipng) ;; or 'dvipng
   ;; ;; to go back from pdf file to tex file
   ;; (with-eval-after-load 'tex
   ;;   (define-key TeX-source-correlate-map [C-down-mouse-1]
@@ -556,12 +563,16 @@
 (add-hook 'after-change-major-mode-hook #'clean-mode-line)
 ;;----------------------------------------------------------------------------
 
+;; suppress prompt when closing running processes like python
+(setq kill-buffer-query-functions
+      (remq 'process-kill-buffer-query-function
+            kill-buffer-query-functions))
 
 ;; function to change the font of buffer
 (defun my-buffer-face-mode-variable ()
   "Set font to a variable width (proportional) fonts in current buffer"
   (interactive)
-  (setq buffer-face-mode-face '(:family "DejaVu Sans" :height 160 :width semi-condensed))
+  (setq buffer-face-mode-face '(:family "DejaVu Sans" :height 200 :width semi-condensed))
   (buffer-face-mode 1))
 
 
@@ -652,3 +663,4 @@ credit: emacsredux blog"
          ("C-c n i" . org-roam-node-insert))
   :config
   (org-roam-db-autosync-mode))
+
