@@ -56,6 +56,9 @@
   (winner-mode 1)
   (tooltip-mode -1)  ;;tooltip in echo area
 
+  :config
+  (add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-ts-mode))
+
   :custom
   (use-short-answers t)
   (delete-by-moving-to-trash t)
@@ -572,7 +575,7 @@
 (defun my-buffer-face-mode-variable ()
   "Set font to a variable width (proportional) fonts in current buffer"
   (interactive)
-  (setq buffer-face-mode-face '(:family "DejaVu Sans" :height 200 :width semi-condensed))
+  (setq buffer-face-mode-face '(:family "iA Writer Duo V" :height 160 :width semi-condensed))
   (buffer-face-mode 1))
 
 
@@ -586,17 +589,6 @@
 ;;                    :stream t                   ;Stream responses
 ;;                    :models '("gemma3:1b" "mistral-nemo:latest"))) ;List of models
 ;;   (setq gptel-default-mode 'org-mode))
-
-
-
-;; org-mode
-(global-set-key (kbd "C-c L") #'org-store-link)
-(global-set-key (kbd "C-c A") #'org-agenda)
-(global-set-key (kbd "C-c C") #'org-capture)
-;; Make the indentation look nicer
-(add-hook 'org-mode-hook 'org-indent-mode)
-
-(setq org-agenda-files '("~/Dropbox/org"))
 
 
 ;; miscellaneous
@@ -652,7 +644,19 @@ credit: emacsredux blog"
 ;;           ("https://rss.arxiv.org/atom/hep-ex" hep-ex physics)))
 ;;   )
 
+(use-package org
+  :ensure nil
+  :hook
+  ((org-mode . my-buffer-face-mode-variable) ;; custom font
+   (org-mode . org-indent-mode))  ;; Make the indentation look nicer
+  :bind
+  (( "C-c L" . org-store-link)
+   ("C-c A" . org-agenda)
+   ( "C-c C" . org-capture))
 
+  :custom
+  (org-agenda-files '("~/Dropbox/org"))
+  (org-archive-location "~/Dropbox/org/archive.org::datetree/"))
 
 (use-package org-roam
   :ensure t
