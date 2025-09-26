@@ -65,7 +65,7 @@
   (trash-directory "~/.Trash")
   (epg-pinentry-mode 'loopback)
   ;; (auto-save-default nil)
-  (treesit-font-lock-level 4)
+  ;; (treesit-font-lock-level 4)
   (shr-use-fonts nil "disable variable fonts")
   (eldoc-echo-area-use-multiline-p nil)
   (major-mode-remap-alist
@@ -81,18 +81,13 @@
   ("C-s-S-f" . toggle-frame-fullscreen))
 
 
-;; (use-package apropospriate-theme
-;;   :ensure t
-;;   :config 
-;;   (load-theme 'apropospriate-dark t))
-
 
 (use-package doom-themes
   :ensure t
   :init
-  ;; (load-theme 'doom-nord-light t) 
+  (load-theme 'doom-nord-light t) 
   ;; (load-theme 'doom-solarized-light t)
-  (load-theme 'doom-zenburn t)
+  ;; (load-theme 'doom-zenburn t)
   )
 ;; (use-package atom-one-dark-theme
 ;;   :ensure t
@@ -375,8 +370,8 @@
 (use-package olivetti
   :ensure t
   :bind ("C-s-f" . olivetti-mode)
-  ;; :custom
-  ;; (olivetti-body-width 88)
+  :custom
+  (olivetti-body-width 90)
   ;; (olivetti-style 'fancy)
   ;; (olivetti-minimum-body-width 66)
   :hook
@@ -575,7 +570,7 @@
 (defun my-buffer-face-mode-variable ()
   "Set font to a variable width (proportional) fonts in current buffer"
   (interactive)
-  (setq buffer-face-mode-face '(:family "iA Writer Duo V" :height 160 :width semi-condensed))
+  (setq buffer-face-mode-face '(:family "Iosevka" :height 160 :width semi-condensed))
   (buffer-face-mode 1))
 
 
