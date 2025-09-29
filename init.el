@@ -51,7 +51,7 @@
   (set-default-coding-systems 'utf-8)
   (set-language-environment "UTF-8")
   ;;(set-frame-font "DejaVuSansM Nerd Font Mono 14" nil t) ;; set default font face
-  (set-frame-font "Iosevka SS08-17" nil t)
+  (set-frame-font "DejaVu Sans Mono-16" nil t)
   (delete-selection-mode 1) ;; enable delete-selection-mode
   (winner-mode 1)
   (tooltip-mode -1)  ;;tooltip in echo area
@@ -215,7 +215,7 @@
   (magit-git-executable "/opt/homebrew/bin/git")
   (magit-diff-refine-hunk 'all)
   (magit-repository-directories
-   '(("~/repos/" . 1)))) 
+   '(("~/Projects/" . 1)))) 
 
 
 (use-package eglot
@@ -351,20 +351,19 @@
   (dictionary-server "dict.org"))
 
 
+;; (defun my-nov-font-setup ()
+;;   (face-remap-add-relative 'variable-pitch :family "DejaVu Sans" :height 140))
 
-(defun my-nov-font-setup ()
-  (face-remap-add-relative 'variable-pitch :family "DejaVu Sans" :height 140))
-
-(use-package nov
-  :ensure t
-  :mode ("\\.epub\\'" . nov-mode)
-  :custom
-  (nov-text-width 70
-                  )
-  ;; (nov-variable-pitch nil) ;; use default emacs font
-  :hook
-  ((nov-mode . turn-on-visual-line-mode)
-   (nov-mode . my-nov-font-setup)))
+;; (use-package nov
+;;   :ensure t
+;;   :mode ("\\.epub\\'" . nov-mode)
+;;   :custom
+;;   (nov-text-width 70
+;;                   )
+;;   ;; (nov-variable-pitch nil) ;; use default emacs font
+;;   :hook
+;;   ((nov-mode . turn-on-visual-line-mode)
+;;    (nov-mode . my-nov-font-setup)))
 
 
 (use-package olivetti
