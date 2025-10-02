@@ -272,25 +272,28 @@
                  (flymake-proselint-setup))))
 
 
-;; (use-package pdf-tools
-;;   :ensure t
-;;   :mode ("\\.pdf\\'" . pdf-view-mode)
-;;   :custom
-;;   (pdf-view-resize-factor 1.1)
-;;   :config
-;;   (pdf-tools-install)
-;;   ;;pdf-tools and Emacs in fullscreen shift my screen to naother
-;;   ;;window before showing pdf. The following is a very poor solution
-;;   ;;but works! There is probably better solution out there. Need to
-;;   ;;check someday.
-;;   (defun life-is-beautiful (&optional ARG) 
-;;     (error "Life is beautiful!"))
-;;   (advice-add 'pdf-view-goto-page :after #'life-is-beautiful)
-;;   :hook ((LaTeX-mode .
-;;                      (lambda () (setq ring-bell-function 'ignore)))
-;;          (pdf-view-mode .
-;;                         (lambda () (setq mode-line-format nil))))
-;;   )
+(use-package pdf-tools
+  :ensure t
+  ;; :mode ("\\.pdf\\'" . pdf-view-mode)
+  :magic ("%PDF" . pdf-view-mode)
+  ;; :custom
+  ;; (pdf-view-resize-factor 1.1)
+  ;; (pdf-view-display-size 'fit-page)
+  ;; (pdf-view-continuous t)
+  :config
+  (pdf-tools-install)
+  ;;pdf-tools and Emacs in fullscreen shift my screen to naother
+  ;;window before showing pdf. The following is a very poor solution
+  ;;but works! There is probably better solution out there. Need to
+  ;;check someday.
+  (defun life-is-beautiful (&optional ARG) 
+    (error "Life is beautiful!"))
+  (advice-add 'pdf-view-goto-page :after #'life-is-beautiful)
+  :hook ((LaTeX-mode .
+                     (lambda () (setq ring-bell-function 'ignore)))
+         (pdf-view-mode .
+                        (lambda () (setq mode-line-format nil))))
+  )
 
 (use-package auctex
   :ensure t
@@ -300,7 +303,7 @@
          (LaTeX-mode . turn-on-visual-line-mode)
          (LaTeX-mode . TeX-fold-mode)
          (TeX-mode . prettify-symbols-mode)
-         ;;       (LaTeX-mode . TeX-source-correlate-mode)
+         (LaTeX-mode . TeX-source-correlate-mode)
          (LaTeX-mode . my-buffer-face-mode-variable)
          ;; (LaTeX-mode .  (lambda () (set (make-local-variable 'TeX-electric-math)
          ;;                                (cons "\\(" "\\)"))) )
@@ -326,7 +329,7 @@
   (TeX-save-query nil) ; save file when compiling
   (TeX-PDF-mode t)
   ;; view pdf inside emacs
-  ;;  (TeX-view-program-selection '((output-pdf "PDF Tools")))
+  (TeX-view-program-selection '((output-pdf "PDF Tools")))
   )
 
 (use-package reftex
