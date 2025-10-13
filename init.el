@@ -51,7 +51,8 @@
   (set-default-coding-systems 'utf-8)
   (set-language-environment "UTF-8")
   ;;(set-frame-font "DejaVuSansM Nerd Font Mono 14" nil t) ;; set default font face
-  (set-frame-font "DejaVu Sans Mono-16" nil t)
+  ;; (set-frame-font "DejaVu Sans Mono-16" nil t)
+  (set-frame-font "JetBrains Mono-17" nil t)
   (delete-selection-mode 1) ;; enable delete-selection-mode
   (winner-mode 1)
   (tooltip-mode -1)  ;;tooltip in echo area
