@@ -635,11 +635,28 @@ credit: emacsredux blog"
 (global-set-key (kbd "C-c T") #'consult-theme)
 
 
-;;; feeds
+;;; elfeed feeds
+
+;; solution found from pragmatic emacs blog
+(defun elf/elfeed-load-db-and-open ()
+  "Wrapper to load the elfeed db from disk before opening"
+  (interactive)
+  (elfeed-db-load)
+  (elfeed)
+  (elfeed-search-update--force))
+
+(defun elf/elfeed-save-db-and-bury ()
+  "Wrapper to save the elfeed db to disk before burying buffer"
+  (interactive)
+  (elfeed-db-save)
+  (quit-window))
+
 (use-package elfeed
   :ensure t
   :bind
-  ("C-c f" . elfeed)
+  (("C-c f" . elf/elfeed-load-db-and-open)
+   (:map elfeed-search-mode-map
+         ("q" . elf/elfeed-save-db-and-bury)))
   :init
   (setq elfeed-search-title-max-width 120) ;; adjust according to screen size
   :custom
