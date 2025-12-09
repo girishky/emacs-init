@@ -83,15 +83,17 @@
 
 
 
-(use-package doom-themes
+;; (use-package doom-themes
+;;   :ensure t
+;;   :init
+;;   (load-theme 'doom-zenburn t)
+;;   )
+
+(use-package spacemacs-theme
   :ensure t
   :init
-  (load-theme 'doom-zenburn t)
+  (load-theme 'spacemacs-light t)
   )
-;; (use-package atom-one-dark-theme
-;;   :ensure t
-;;   :config
-;;   (load-theme 'atom-one-dark t))
 
 (use-package which-key
   :ensure nil
