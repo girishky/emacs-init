@@ -676,16 +676,20 @@ credit: emacsredux blog"
    ( "C-c C" . org-capture))
 
   :custom
-  (org-agenda-files '("~/Dropbox/org"))
-  (org-archive-location "~/Dropbox/org/archive.org::datetree/"))
+  ;; (org-agenda-files '("~/Dropbox/org"))
+  ;; (org-archive-location "~/Dropbox/org/archive.org::datetree/")
+  ;; using Beorg app with iCloud sync
+  (org-agenda-files '("~/Library/Mobile Documents/iCloud~com~appsonthemove~beorg/Documents/org"))
+  (org-archive-location "~/Library/Mobile Documents/iCloud~com~appsonthemove~beorg/Documents/org/archive.org::datetree/")
+  )
 
-(use-package org-roam
-  :ensure t
-  :custom
-  (org-roam-directory "~/Dropbox/RoamNotes")
-  :bind (("C-c n l" . org-roam-buffer-toggle)
-         ("C-c n f" . org-roam-node-find)
-         ("C-c n i" . org-roam-node-insert))
-  :config
-  (org-roam-db-autosync-mode))
+;; (use-package org-roam
+;;   :ensure t
+;;   :custom
+;;   (org-roam-directory "~/Dropbox/RoamNotes")
+;;   :bind (("C-c n l" . org-roam-buffer-toggle)
+;;          ("C-c n f" . org-roam-node-find)
+;;          ("C-c n i" . org-roam-node-insert))
+;;   :config
+;;   (org-roam-db-autosync-mode))
 
