@@ -277,7 +277,8 @@
   :ensure t
   ;; :mode ("\\.pdf\\'" . pdf-view-mode)
   :magic ("%PDF" . pdf-view-mode)
-  ;; :custom
+  :custom
+  (pdf-view-use-scaling t)
   ;; (pdf-view-resize-factor 1.1)
   ;; (pdf-view-display-size 'fit-page)
   ;; (pdf-view-continuous t)
