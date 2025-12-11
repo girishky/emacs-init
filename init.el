@@ -190,7 +190,7 @@
   (corfu-history-mode 1)
   :custom
   (corfu-auto t)
-  (corfu-auto-delay 0)
+  (corfu-auto-delay 0.2)
   (corfu-cycle t )
   (corfu-echo-documentation nil))
 
@@ -309,7 +309,9 @@
          (LaTeX-mode . my-buffer-face-mode-variable)
          (LaTeX-mode .  (lambda () (set (make-local-variable 'TeX-electric-math)
                                         (cons "\\(" "\\)"))) )
-         (LaTeX-mode .  (lambda () (setq fill-column 80)))
+         (plain-TeX-mode .   (lambda () (set (make-local-variable 'TeX-electric-math)
+                                             (cons "$" "$"))))
+         ;; (LaTeX-mode .  (lambda () (setq fill-column 80)))
          )
   :config
   (add-hook 'TeX-after-compilation-finished-functions
@@ -334,10 +336,21 @@
   (TeX-view-program-selection '((output-pdf "PDF Tools")))
   )
 
+
 (use-package reftex
   :after auctex
   :custom
   (reftex-plug-into-AUCTeX t))
+
+;; CDLatex settings
+(use-package cdlatex
+  :ensure t
+  :hook (LaTeX-mode . turn-on-cdlatex)
+  :bind (:map cdlatex-mode-map 
+              ("<tab>" . cdlatex-tab))
+  :custom
+  (cdlatex-takeover-dollar nil)
+  (cdlatex-takeover-parenthesis nil))
 
 
 (use-package dictionary
@@ -651,6 +664,10 @@ credit: emacsredux blog"
   (elfeed-db-save)
   (quit-window))
 
+(defun elfeed-display-buffer (buf &optional act)
+  (pop-to-buffer buf)
+  (set-window-text-height (get-buffer-window) (round (* 0.7 (frame-height)))))
+
 (use-package elfeed
   :ensure t
   :bind
@@ -663,6 +680,7 @@ credit: emacsredux blog"
   (elfeed-db-directory
    (expand-file-name "~/Dropbox/Apps/Emacs/elfeed/"))
   (elfeed-search-filter "@2-week-ago +unread")
+  (elfeed-show-entry-switch #'elfeed-display-buffer)
   :hook
   (elfeed-show-mode . olivetti-mode))
 
