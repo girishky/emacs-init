@@ -311,7 +311,8 @@
                                         (cons "\\(" "\\)"))) )
          (plain-TeX-mode .   (lambda () (set (make-local-variable 'TeX-electric-math)
                                              (cons "$" "$"))))
-         ;; (LaTeX-mode .  (lambda () (setq fill-column 80)))
+         (LaTeX-mode .  (lambda () (setq fill-column 80)))
+         (LaTeX-mode . (lambda () (setq olivetti-body-width 55)))
          )
   :config
   (add-hook 'TeX-after-compilation-finished-functions
@@ -333,7 +334,7 @@
   (TeX-save-query nil) ; save file when compiling
   (TeX-PDF-mode t)
   ;; view pdf inside emacs
-  (TeX-view-program-selection '((output-pdf "PDF Tools")))
+  ;; (TeX-view-program-selection '((output-pdf "PDF Tools")))
   )
 
 
@@ -346,8 +347,8 @@
 (use-package cdlatex
   :ensure t
   :hook (LaTeX-mode . turn-on-cdlatex)
-  :bind (:map cdlatex-mode-map 
-              ("<tab>" . cdlatex-tab))
+  ;; :bind (:map cdlatex-mode-map 
+  ;;             ("<tab>" . cdlatex-tab))
   :custom
   (cdlatex-takeover-dollar nil)
   (cdlatex-takeover-parenthesis nil))
@@ -361,12 +362,17 @@
   (add-to-list 'display-buffer-alist
                '("^\\*Dictionary\\*" display-buffer-in-side-window
 		 (side . right)
-		 (window-width . 50)))
+		 (window-width . 70)))
   :bind (("M-#" .  dictionary-lookup-definition)
 	 :map text-mode-map
 	 ("M-." . dictionary-lookup-definition))
   :custom
   (dictionary-server "dict.org"))
+
+(use-package powerthesaurus
+  :ensure t
+  :bind
+  ("M--" . powerthesaurus-lookup-word-dwim))
 
 
 ;; (defun my-nov-font-setup ()
@@ -388,7 +394,7 @@
   :ensure t
   :bind ("C-s-f" . olivetti-mode)
   :custom
-  (olivetti-body-width 90)
+  (olivetti-body-width 84)
   ;; (olivetti-style 'fancy)
   ;; (olivetti-minimum-body-width 66)
   :hook
@@ -587,7 +593,7 @@
 (defun my-buffer-face-mode-variable ()
   "Set font to a variable width (proportional) fonts in current buffer"
   (interactive)
-  (setq buffer-face-mode-face '(:family "DejaVu Sans Mono" :height 170))
+  (setq buffer-face-mode-face '(:family "iA Writer Quattro V" :height 170))
   (buffer-face-mode 1))
 
 
