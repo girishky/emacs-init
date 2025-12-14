@@ -264,13 +264,13 @@
               ("M-N" . flymake-goto-next-error)
 	      ("M-P" . flymake-goto-prev-error)))
 
-;; proselint
-(use-package flymake-proselint
-  :ensure t
-  :hook
-  (text-mode . (lambda ()
-                 (flymake-mode)
-                 (flymake-proselint-setup))))
+;; ;; proselint
+;; (use-package flymake-proselint
+;;   :ensure t
+;;   :hook
+;;   (text-mode . (lambda ()
+;;                  (flymake-mode)
+;;                  (flymake-proselint-setup))))
 
 
 (use-package pdf-tools
