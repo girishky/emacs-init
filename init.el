@@ -50,9 +50,8 @@
   ;; (setq-default tab-width 4)
   (set-default-coding-systems 'utf-8)
   (set-language-environment "UTF-8")
-  ;;(set-frame-font "DejaVuSansM Nerd Font Mono 14" nil t) ;; set default font face
   ;; (set-frame-font "DejaVu Sans Mono-16" nil t)
-  (set-frame-font "JetBrains Mono-17" nil t)
+  (set-frame-font "Consolas for Powerline-18" nil t)
   (delete-selection-mode 1) ;; enable delete-selection-mode
   (winner-mode 1)
   (tooltip-mode -1)  ;;tooltip in echo area
@@ -224,12 +223,24 @@
   :config
   ;; (add-to-list 'eglot-server-programs
   ;;              '(python-ts-mode . ("pyright-langserver" "--stdio")))
+  (add-to-list 'eglot-server-programs
+               '(python-ts-mode . ("ty" "server")))
+  (add-to-list 'eglot-server-programs
+               '((LaTeX-mode bibtex-mode) . ("texlab")))
   ;; (add-to-list 'eglot-server-programs
   ;;              '(text-mode . ("harper-ls" "--stdio")))
+  (setq-default eglot-workspace-configuration
+                '(:ty
+                  (:inlayHints
+                   (:variableTypes :json-false
+                                   ;; :callArgumentNames :json-false
+                                   )
+                   )))
   :custom
-  (eglot-send-changes-idle-time 0.5) ;; this is default
+  (eglot-send-changes-idle-time 0.2) ;; this is default
   (eglot-extend-to-xref t)
-  :hook ((python-ts-mode . eglot-ensure)
+  
+  :hook (((python-ts-mode LaTeX-mode). eglot-ensure)
 	 ;; python-specific settings
          (python-ts-mode . (lambda ()
                              (setq-local indent-tabs-mode nil
@@ -260,6 +271,8 @@
 
 (use-package flymake
   :ensure nil
+  ;; :hook
+  ;; (text-mode . flymake-mode)
   :bind (:map flymake-mode-map
               ("M-N" . flymake-goto-next-error)
 	      ("M-P" . flymake-goto-prev-error)))
@@ -593,7 +606,7 @@
 (defun my-buffer-face-mode-variable ()
   "Set font to a variable width (proportional) fonts in current buffer"
   (interactive)
-  (setq buffer-face-mode-face '(:family "iA Writer Quattro V" :height 170))
+  (setq buffer-face-mode-face '(:family "Consolas for Powerline" :height 175))
   (buffer-face-mode 1))
 
 
