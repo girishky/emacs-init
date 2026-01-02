@@ -667,56 +667,56 @@ credit: emacsredux blog"
 (global-set-key (kbd "C-c T") #'consult-theme)
 
 
-;;; elfeed feeds
+;; ;;; elfeed feeds
 
-;; solution found from pragmatic emacs blog
-(defun elf/elfeed-load-db-and-open ()
-  "Wrapper to load the elfeed db from disk before opening"
-  (interactive)
-  (elfeed-db-load)
-  (elfeed)
-  (elfeed-search-update--force))
+;; ;; solution found from pragmatic emacs blog
+;; (defun elf/elfeed-load-db-and-open ()
+;;   "Wrapper to load the elfeed db from disk before opening"
+;;   (interactive)
+;;   (elfeed-db-load)
+;;   (elfeed)
+;;   (elfeed-search-update--force))
 
-(defun elf/elfeed-save-db-and-bury ()
-  "Wrapper to save the elfeed db to disk before burying buffer"
-  (interactive)
-  (elfeed-db-save)
-  (quit-window))
+;; (defun elf/elfeed-save-db-and-bury ()
+;;   "Wrapper to save the elfeed db to disk before burying buffer"
+;;   (interactive)
+;;   (elfeed-db-save)
+;;   (quit-window))
 
-(defun elfeed-display-buffer (buf &optional act)
-  (pop-to-buffer buf)
-  (set-window-text-height (get-buffer-window) (round (* 0.7 (frame-height)))))
+;; (defun elfeed-display-buffer (buf &optional act)
+;;   (pop-to-buffer buf)
+;;   (set-window-text-height (get-buffer-window) (round (* 0.7 (frame-height)))))
 
-(use-package elfeed
-  :ensure t
-  :bind
-  (("C-c f" . elf/elfeed-load-db-and-open)
-   (:map elfeed-search-mode-map
-         ("q" . elf/elfeed-save-db-and-bury)))
-  :init
-  (setq elfeed-search-title-max-width 120) ;; adjust according to screen size
-  :custom
-  (elfeed-db-directory
-   (expand-file-name "~/Dropbox/Apps/Emacs/elfeed/"))
-  (elfeed-search-filter "@2-week-ago +unread")
-  (elfeed-show-entry-switch #'elfeed-display-buffer)
-  :hook
-  (elfeed-show-mode . olivetti-mode))
+;; (use-package elfeed
+;;   :ensure t
+;;   :bind
+;;   (("C-c f" . elf/elfeed-load-db-and-open)
+;;    (:map elfeed-search-mode-map
+;;          ("q" . elf/elfeed-save-db-and-bury)))
+;;   :init
+;;   (setq elfeed-search-title-max-width 120) ;; adjust according to screen size
+;;   :custom
+;;   (elfeed-db-directory
+;;    (expand-file-name "~/Dropbox/Apps/Emacs/elfeed/"))
+;;   (elfeed-search-filter "@2-week-ago +unread")
+;;   (elfeed-show-entry-switch #'elfeed-display-buffer)
+;;   :hook
+;;   (elfeed-show-mode . olivetti-mode))
 
-(use-package elfeed-org
-  :ensure t
-  :config
-  (elfeed-org)
-  :custom
-  (rmh-elfeed-org-files (list "~/Dropbox/Apps/Emacs/elfeed.org")))
+;; (use-package elfeed-org
+;;   :ensure t
+;;   :config
+;;   (elfeed-org)
+;;   :custom
+;;   (rmh-elfeed-org-files (list "~/Dropbox/Apps/Emacs/elfeed.org")))
 
-(use-package elfeed-score
-  :ensure t
-  :after elfeed
-  :config
-  (setq elfeed-score-serde-score-file "~/Dropbox/Apps/Emacs/elfeed.score")
-  (elfeed-score-enable)
-  (define-key elfeed-search-mode-map "=" elfeed-score-map))
+;; (use-package elfeed-score
+;;   :ensure t
+;;   :after elfeed
+;;   :config
+;;   (setq elfeed-score-serde-score-file "~/Dropbox/Apps/Emacs/elfeed.score")
+;;   (elfeed-score-enable)
+;;   (define-key elfeed-search-mode-map "=" elfeed-score-map))
 
 
 (use-package org
