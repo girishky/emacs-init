@@ -82,17 +82,17 @@
 
 
 
-;; (use-package doom-themes
-;;   :ensure t
-;;   :init
-;;   (load-theme 'doom-zenburn t)
-;;   )
-
-(use-package spacemacs-theme
+(use-package doom-themes
   :ensure t
   :init
-  (load-theme 'spacemacs-light t)
+  (load-theme 'doom-zenburn t)
   )
+
+;; (use-package spacemacs-theme
+;;   :ensure t
+;;   :init
+;;   (load-theme 'spacemacs-light t)
+;;   )
 
 (use-package which-key
   :ensure nil
@@ -162,24 +162,24 @@
    ("C-x p b" . consult-project-buffer)  
    ("C-x C-r" . consult-recent-file)))
 
-(use-package embark
-  :ensure t
-  :bind
-  (("C-s-." . embark-act)
-   ("C-s-;" . embark-dwim) 
-   ("C-h B" . embark-bindings)) 
-  :config
-  (setq prefix-help-command #'embark-prefix-help-command)
-  (add-to-list 'display-buffer-alist
-               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
-                 nil
-                 (window-parameters (mode-line-format . none)))))
+;; (use-package embark
+;;   :ensure t
+;;   :bind
+;;   (("C-s-." . embark-act)
+;;    ("C-s-;" . embark-dwim) 
+;;    ("C-h B" . embark-bindings)) 
+;;   :config
+;;   (setq prefix-help-command #'embark-prefix-help-command)
+;;   (add-to-list 'display-buffer-alist
+;;                '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+;;                  nil
+;;                  (window-parameters (mode-line-format . none)))))
 
-(use-package embark-consult
-  :ensure t
-  :after (embark consult)
-  :hook
-  (embark-collect-mode . consult-preview-at-point-mode))
+;; (use-package embark-consult
+;;   :ensure t
+;;   :after (embark consult)
+;;   :hook
+;;   (embark-collect-mode . consult-preview-at-point-mode))
 
 (use-package corfu
   :ensure t
@@ -286,29 +286,29 @@
 ;;                  (flymake-proselint-setup))))
 
 
-(use-package pdf-tools
-  :ensure t
-  ;; :mode ("\\.pdf\\'" . pdf-view-mode)
-  :magic ("%PDF" . pdf-view-mode)
-  :custom
-  (pdf-view-use-scaling t)
-  ;; (pdf-view-resize-factor 1.1)
-  ;; (pdf-view-display-size 'fit-page)
-  ;; (pdf-view-continuous t)
-  :config
-  (pdf-tools-install)
-  ;;pdf-tools and Emacs in fullscreen shift my screen to naother
-  ;;window before showing pdf. The following is a very poor solution
-  ;;but works! There is probably better solution out there. Need to
-  ;;check someday.
-  (defun life-is-beautiful (&optional ARG) 
-    (error "Life is beautiful!"))
-  (advice-add 'pdf-view-goto-page :after #'life-is-beautiful)
-  :hook ((LaTeX-mode .
-                     (lambda () (setq ring-bell-function 'ignore)))
-         (pdf-view-mode .
-                        (lambda () (setq mode-line-format nil))))
-  )
+;; (use-package pdf-tools
+;;   :ensure t
+;;   ;; :mode ("\\.pdf\\'" . pdf-view-mode)
+;;   :magic ("%PDF" . pdf-view-mode)
+;;   :custom
+;;   (pdf-view-use-scaling t)
+;;   ;; (pdf-view-resize-factor 1.1)
+;;   ;; (pdf-view-display-size 'fit-page)
+;;   ;; (pdf-view-continuous t)
+;;   :config
+;;   (pdf-tools-install)
+;;   ;;pdf-tools and Emacs in fullscreen shift my screen to naother
+;;   ;;window before showing pdf. The following is a very poor solution
+;;   ;;but works! There is probably better solution out there. Need to
+;;   ;;check someday.
+;;   (defun life-is-beautiful (&optional ARG) 
+;;     (error "Life is beautiful!"))
+;;   (advice-add 'pdf-view-goto-page :after #'life-is-beautiful)
+;;   :hook ((LaTeX-mode .
+;;                      (lambda () (setq ring-bell-function 'ignore)))
+;;          (pdf-view-mode .
+;;                         (lambda () (setq mode-line-format nil))))
+;;   )
 
 (use-package auctex
   :ensure t
@@ -318,7 +318,7 @@
          (LaTeX-mode . turn-on-visual-line-mode)
          (LaTeX-mode . TeX-fold-mode)
          (TeX-mode . prettify-symbols-mode)
-         (LaTeX-mode . TeX-source-correlate-mode)
+         ;; (LaTeX-mode . TeX-source-correlate-mode)
          (LaTeX-mode . my-buffer-face-mode-variable)
          (LaTeX-mode .  (lambda () (set (make-local-variable 'TeX-electric-math)
                                         (cons "\\(" "\\)"))) )
