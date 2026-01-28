@@ -51,7 +51,7 @@
   (set-default-coding-systems 'utf-8)
   (set-language-environment "UTF-8")
   ;; (set-frame-font "DejaVu Sans Mono-16" nil t)
-  (set-frame-font "Consolas for Powerline-18" nil t)
+  (set-frame-font "Fira Code Retina-17" nil t)
   (delete-selection-mode 1) ;; enable delete-selection-mode
   (winner-mode 1)
   (tooltip-mode -1)  ;;tooltip in echo area
@@ -78,21 +78,30 @@
 
   :bind
   ("M-o" . other-window)
-  ("C-s-S-f" . toggle-frame-fullscreen))
+  ("C-s-f" . toggle-frame-fullscreen))
 
 
 
-(use-package doom-themes
-  :ensure t
-  :init
-  (load-theme 'doom-zenburn t)
-  )
+;; (use-package doom-themes
+;;   :ensure t
+;;   :init
+;;   (load-theme 'doom-zenburn t)
+;;   )
 
 ;; (use-package spacemacs-theme
 ;;   :ensure t
 ;;   :init
 ;;   (load-theme 'spacemacs-light t)
 ;;   )
+
+(use-package ef-themes
+  :ensure t
+  :init
+  (ef-themes-take-over-modus-themes-mode 1)
+  :config
+  (setq modus-themes-mixed-fonts t)
+  (setq modus-themes-italic-constructs t)
+  (modus-themes-load-theme 'ef-duo-light))
 
 (use-package which-key
   :ensure nil
@@ -232,9 +241,10 @@
   (setq-default eglot-workspace-configuration
                 '(:ty
                   (:inlayHints
-                   (:variableTypes :json-false
-                                   ;; :callArgumentNames :json-false
-                                   )
+                   (
+                    :variableTypes :json-false
+                    :callArgumentNames :json-false
+                    )
                    )))
   :custom
   (eglot-send-changes-idle-time 0.2) ;; this is default
@@ -405,7 +415,7 @@
 
 (use-package olivetti
   :ensure t
-  :bind ("C-s-f" . olivetti-mode)
+  :bind ("C-s-S-f" . olivetti-mode)
   :custom
   (olivetti-body-width 84)
   ;; (olivetti-style 'fancy)
