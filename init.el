@@ -170,24 +170,24 @@
    ("C-x p b" . consult-project-buffer)  
    ("C-x C-r" . consult-recent-file)))
 
-;; (use-package embark
-;;   :ensure t
-;;   :bind
-;;   (("C-s-." . embark-act)
-;;    ("C-s-;" . embark-dwim) 
-;;    ("C-h B" . embark-bindings)) 
-;;   :config
-;;   (setq prefix-help-command #'embark-prefix-help-command)
-;;   (add-to-list 'display-buffer-alist
-;;                '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
-;;                  nil
-;;                  (window-parameters (mode-line-format . none)))))
+(use-package embark
+  :ensure t
+  :bind
+  (("C-s-." . embark-act)
+   ("C-s-;" . embark-dwim) 
+   ("C-h B" . embark-bindings)) 
+  :config
+  (setq prefix-help-command #'embark-prefix-help-command)
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                 nil
+                 (window-parameters (mode-line-format . none)))))
 
-;; (use-package embark-consult
-;;   :ensure t
-;;   :after (embark consult)
-;;   :hook
-;;   (embark-collect-mode . consult-preview-at-point-mode))
+(use-package embark-consult
+  :ensure t
+  :after (embark consult)
+  :hook
+  (embark-collect-mode . consult-preview-at-point-mode))
 
 (use-package corfu
   :ensure t
@@ -267,7 +267,7 @@
               ("C-c l o" . eglot-code-action-organize-imports)
               ("C-c l h" . eglot-inlay-hints-mode)
               ("C-c l q" . eglot-shutdown-all)
-	      ("C-c l e"  . flymake-show-buffer-diagnostics)))
+	      ("C-c l e" . flymake-show-buffer-diagnostics)))
 
 
 (use-package apheleia
@@ -770,13 +770,16 @@ credit: emacsredux blog"
   :custom
   (citar-bibliography
    (append
-    '("~/Documents/library.bib")
-    (file-expand-wildcards "~/Projects/draft_*/*.bib")))
+    '("~/Zotero/library.bib")
+    ;; (file-expand-wildcards "~/Projects/draft_*/*.bib")
+    ))
   ;; Allow multiple notes per bibliographic entry
   (citar-open-always-create-notes nil)
-  ;; :init
-  ;; (fido-vertical-mode 1)
-  :bind ("C-c w c" . citar-create-note))
+  :hook
+  (LaTeX-mode . citar-capf-setup)
+  (org-mode . citar-capf-setup)
+  :bind
+  ("C-c w c" . citar-create-note))
 
 (use-package citar-denote
   :ensure t
@@ -799,3 +802,9 @@ credit: emacsredux blog"
   (citar-denote-mode)
   :bind
   ("C-c w d" . citar-denote-dwim))
+
+(use-package citar-embark
+  :ensure t
+  :after (citar embark)
+  :no-require
+  :config (citar-embark-mode))
