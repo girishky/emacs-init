@@ -50,8 +50,7 @@
   ;; (setq-default tab-width 4)
   (set-default-coding-systems 'utf-8)
   (set-language-environment "UTF-8")
-  ;; (set-frame-font "DejaVu Sans Mono-16" nil t)
-  (set-frame-font "Fira Code Retina-17" nil t)
+  (set-frame-font "Cascadia Code-17" nil t)
   (delete-selection-mode 1) ;; enable delete-selection-mode
   (winner-mode 1)
   (tooltip-mode -1)  ;;tooltip in echo area
@@ -250,7 +249,7 @@
   (eglot-send-changes-idle-time 0.2) ;; this is default
   (eglot-extend-to-xref t)
   
-  :hook (((python-ts-mode LaTeX-mode). eglot-ensure)
+  :hook (((python-ts-mode). eglot-ensure)
 	 ;; python-specific settings
          (python-ts-mode . (lambda ()
                              (setq-local indent-tabs-mode nil
@@ -296,29 +295,29 @@
 ;;                  (flymake-proselint-setup))))
 
 
-;; (use-package pdf-tools
-;;   :ensure t
-;;   ;; :mode ("\\.pdf\\'" . pdf-view-mode)
-;;   :magic ("%PDF" . pdf-view-mode)
-;;   :custom
-;;   (pdf-view-use-scaling t)
-;;   ;; (pdf-view-resize-factor 1.1)
-;;   ;; (pdf-view-display-size 'fit-page)
-;;   ;; (pdf-view-continuous t)
-;;   :config
-;;   (pdf-tools-install)
-;;   ;;pdf-tools and Emacs in fullscreen shift my screen to naother
-;;   ;;window before showing pdf. The following is a very poor solution
-;;   ;;but works! There is probably better solution out there. Need to
-;;   ;;check someday.
-;;   (defun life-is-beautiful (&optional ARG) 
-;;     (error "Life is beautiful!"))
-;;   (advice-add 'pdf-view-goto-page :after #'life-is-beautiful)
-;;   :hook ((LaTeX-mode .
-;;                      (lambda () (setq ring-bell-function 'ignore)))
-;;          (pdf-view-mode .
-;;                         (lambda () (setq mode-line-format nil))))
-;;   )
+(use-package pdf-tools
+  :ensure t
+  ;; :mode ("\\.pdf\\'" . pdf-view-mode)
+  :magic ("%PDF" . pdf-view-mode)
+  :custom
+  (pdf-view-use-scaling t)
+  ;; (pdf-view-resize-factor 1.1)
+  ;; (pdf-view-display-size 'fit-page)
+  ;; (pdf-view-continuous t)
+  :config
+  (pdf-tools-install)
+  ;;pdf-tools and Emacs in fullscreen shift my screen to naother
+  ;;window before showing pdf. The following is a very poor solution
+  ;;but works! There is probably better solution out there. Need to
+  ;;check someday.
+  (defun life-is-beautiful (&optional ARG) 
+    (error "Life is beautiful!"))
+  (advice-add 'pdf-view-goto-page :after #'life-is-beautiful)
+  :hook ((pdf-view-mode .
+                        (lambda () (setq ring-bell-function 'ignore)))
+         (pdf-view-mode .
+                        (lambda () (setq mode-line-format nil))))
+  )
 
 (use-package auctex
   :ensure t
@@ -328,14 +327,14 @@
          (LaTeX-mode . turn-on-visual-line-mode)
          (LaTeX-mode . TeX-fold-mode)
          (TeX-mode . prettify-symbols-mode)
-         ;; (LaTeX-mode . TeX-source-correlate-mode)
-         (LaTeX-mode . my-buffer-face-mode-variable)
+         (LaTeX-mode . TeX-source-correlate-mode)
+         ;; (LaTeX-mode . my-buffer-face-mode-variable)
          (LaTeX-mode .  (lambda () (set (make-local-variable 'TeX-electric-math)
                                         (cons "\\(" "\\)"))) )
          (plain-TeX-mode .   (lambda () (set (make-local-variable 'TeX-electric-math)
                                              (cons "$" "$"))))
          (LaTeX-mode .  (lambda () (setq fill-column 80)))
-         (LaTeX-mode . (lambda () (setq olivetti-body-width 55)))
+         ;; (LaTeX-mode . (lambda () (setq olivetti-body-width 55)))
          )
   :config
   (add-hook 'TeX-after-compilation-finished-functions
@@ -357,7 +356,7 @@
   (TeX-save-query nil) ; save file when compiling
   (TeX-PDF-mode t)
   ;; view pdf inside emacs
-  ;; (TeX-view-program-selection '((output-pdf "PDF Tools")))
+  (TeX-view-program-selection '((output-pdf "PDF Tools")))
   )
 
 
@@ -581,31 +580,31 @@
 ;;                   ))
 ;;          )))
 
-;;----------------------------------------------------------------------------
-;; This I originally found on Mastering Emacs website but code didn't
-;; work and casued issue loading Emacs.  The following is a modified
-;; version of that one and works.
-(defvar mode-line-cleaner-alist
-  '((apheleia-mode . " AP")
-    (python-ts-mode . "py")
-    ))
+;; ;;----------------------------------------------------------------------------
+;; ;; This I originally found on Mastering Emacs website but code didn't
+;; ;; work and casued issue loading Emacs.  The following is a modified
+;; ;; version of that one and works.
+;; (defvar mode-line-cleaner-alist
+;;   '((apheleia-mode . " AP")
+;;     (python-ts-mode . "py")
+;;     ))
 
-(defun clean-mode-line ()
-  "Shorten the mode line display for modes in `mode-line-cleaner-alist`."
-  (dolist (cleaner mode-line-cleaner-alist)
-    (let* ((mode (car cleaner))
-           (mode-str (cdr cleaner))
-           (old-mode-str (cdr (assq mode minor-mode-alist))))
-      ;; Update minor mode display
-      (when old-mode-str
-        (setcar old-mode-str mode-str))
-      ;; Update major mode display
-      (when (eq mode major-mode)
-        (setq mode-name mode-str)))))
+;; (defun clean-mode-line ()
+;;   "Shorten the mode line display for modes in `mode-line-cleaner-alist`."
+;;   (dolist (cleaner mode-line-cleaner-alist)
+;;     (let* ((mode (car cleaner))
+;;            (mode-str (cdr cleaner))
+;;            (old-mode-str (cdr (assq mode minor-mode-alist))))
+;;       ;; Update minor mode display
+;;       (when old-mode-str
+;;         (setcar old-mode-str mode-str))
+;;       ;; Update major mode display
+;;       (when (eq mode major-mode)
+;;         (setq mode-name mode-str)))))
 
-;; Apply cleanup after major mode changes
-(add-hook 'after-change-major-mode-hook #'clean-mode-line)
-;;----------------------------------------------------------------------------
+;; ;; Apply cleanup after major mode changes
+;; (add-hook 'after-change-major-mode-hook #'clean-mode-line)
+;; ;;----------------------------------------------------------------------------
 
 ;; suppress prompt when closing running processes like python
 (setq kill-buffer-query-functions
@@ -616,7 +615,7 @@
 (defun my-buffer-face-mode-variable ()
   "Set font to a variable width (proportional) fonts in current buffer"
   (interactive)
-  (setq buffer-face-mode-face '(:family "Consolas for Powerline" :height 175))
+  (setq buffer-face-mode-face '(:family "Cascadia Code" :height 175))
   (buffer-face-mode 1))
 
 
@@ -732,7 +731,7 @@ credit: emacsredux blog"
 (use-package org
   :ensure nil
   :hook
-  ((org-mode . my-buffer-face-mode-variable) ;; custom font
+  (;; (org-mode . my-buffer-face-mode-variable) ;; custom font
    (org-mode . org-indent-mode))  ;; Make the indentation look nicer
   :bind
   (( "C-c L" . org-store-link)
@@ -747,21 +746,56 @@ credit: emacsredux blog"
   (org-archive-location "~/Library/Mobile Documents/iCloud~com~appsonthemove~beorg/Documents/org/archive.org::datetree/")
   )
 
+
 (use-package denote
   :ensure t
   :hook (dired-mode . denote-dired-mode)
   :bind
   (("C-c n n" . denote)
+   ("C-c n o" . denote-open-or-create)
    ("C-c n r" . denote-rename-file)
    ("C-c n l" . denote-link)
    ("C-c n b" . denote-backlinks)
    ("C-c n d" . denote-dired)
    ("C-c n g" . denote-grep))
+
   :custom
   (denote-directory (expand-file-name "~/Dropbox/thenotes/"))
-
-  ;; Automatically rename Denote buffers when opening them so that
-  ;; instead of their long file name they have, for example, a literal
-  ;; "[D]" followed by the file's title.  Read the doc string of
-  ;; `denote-rename-buffer-format' for how to modify this.
   (denote-rename-buffer-mode 1))
+
+
+(use-package citar
+  :ensure t
+  :defer t
+  :custom
+  (citar-bibliography
+   (append
+    '("~/Documents/library.bib")
+    (file-expand-wildcards "~/Projects/draft_*/*.bib")))
+  ;; Allow multiple notes per bibliographic entry
+  (citar-open-always-create-notes nil)
+  ;; :init
+  ;; (fido-vertical-mode 1)
+  :bind ("C-c w c" . citar-create-note))
+
+(use-package citar-denote
+  :ensure t
+  :demand t ;; Ensure minor mode loads
+  :after (:any citar denote)
+  :custom
+  ;; Package defaults
+  (citar-denote-file-type 'org)
+  (citar-denote-keyword "bib")
+  (citar-denote-signature nil)
+  (citar-denote-subdir nil)
+  (citar-denote-template nil)
+  (citar-denote-title-format "title")
+  (citar-denote-title-format-andstr "and")
+  (citar-denote-title-format-authors 1)
+  (citar-denote-use-bib-keywords nil)
+  :preface
+  (bind-key "C-c w n" #'citar-denote-open-note)
+  :init
+  (citar-denote-mode)
+  :bind
+  ("C-c w d" . citar-denote-dwim))
