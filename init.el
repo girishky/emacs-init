@@ -733,6 +733,8 @@ credit: emacsredux blog"
   :hook
   (;; (org-mode . my-buffer-face-mode-variable) ;; custom font
    (org-mode . org-indent-mode))  ;; Make the indentation look nicer
+  :custom
+  (org-pretty-entities t)
   :bind
   (( "C-c L" . org-store-link)
    ("C-c A" . org-agenda)
