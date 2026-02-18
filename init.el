@@ -310,7 +310,7 @@
   ;;window before showing pdf. The following is a very poor solution
   ;;but works! There is probably better solution out there. Need to
   ;;check someday.
-  (defun life-is-beautiful (&optional ARG) 
+  (defun life-is-beautiful (&rest ARG) 
     (error "Life is beautiful!"))
   (advice-add 'pdf-view-goto-page :after #'life-is-beautiful)
   :hook ((pdf-view-mode .
@@ -326,7 +326,7 @@
          (LaTeX-mode . turn-on-auto-fill)
          (LaTeX-mode . turn-on-visual-line-mode)
          (LaTeX-mode . TeX-fold-mode)
-         (TeX-mode . prettify-symbols-mode)
+         (LaTeX-mode . prettify-symbols-mode)
          (LaTeX-mode . TeX-source-correlate-mode)
          ;; (LaTeX-mode . my-buffer-face-mode-variable)
          (LaTeX-mode .  (lambda () (set (make-local-variable 'TeX-electric-math)
