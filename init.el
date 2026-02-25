@@ -28,9 +28,9 @@
   (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
   (add-to-list 'default-frame-alist '(ns-appearance . dark))
   (setq ns-use-proxy-icon nil)
-  (setq frame-title-format nil)
-  (setq window-resize-pixelwise t)
-  (setq frame-resize-pixelwise t)
+  ;; (setq frame-title-format nil)
+  ;; (setq window-resize-pixelwise t)
+  ;; (setq frame-resize-pixelwise t)
   (save-place-mode 1)
   (recentf-mode 1)
   (electric-pair-mode 1)
@@ -733,19 +733,19 @@ credit: emacsredux blog"
   :hook
   (;; (org-mode . my-buffer-face-mode-variable) ;; custom font
    (org-mode . org-indent-mode))  ;; Make the indentation look nicer
-  :custom
-  (org-pretty-entities t)
+  ;; :custom
+
   :bind
   (( "C-c L" . org-store-link)
    ("C-c A" . org-agenda)
    ( "C-c C" . org-capture))
-
-  :custom
-  ;; (org-agenda-files '("~/Dropbox/org"))
-  ;; (org-archive-location "~/Dropbox/org/archive.org::datetree/")
-  ;; using Beorg app with iCloud sync
-  (org-agenda-files '("~/Library/Mobile Documents/iCloud~com~appsonthemove~beorg/Documents/org"))
-  (org-archive-location "~/Library/Mobile Documents/iCloud~com~appsonthemove~beorg/Documents/org/archive.org::datetree/")
+  :config
+  (setq org-pretty-entities t)
+  (setq org-directory "~/Library/Mobile Documents/iCloud~com~appsonthemove~beorg/Documents/org/")
+  (setq org-default-notes-file (expand-file-name "inbox.org" org-directory))
+  (setq org-agenda-files (file-expand-wildcards (concat org-directory "*.org")))
+  (setq org-archive-location
+        (expand-file-name "archive.org::datetree/" org-directory))
   )
 
 
