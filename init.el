@@ -50,7 +50,7 @@
   ;; (setq-default tab-width 4)
   (set-default-coding-systems 'utf-8)
   (set-language-environment "UTF-8")
-  (set-frame-font "Cascadia Code-17" nil t)
+  (set-frame-font "Cascadia Code-15" nil t)
   (delete-selection-mode 1) ;; enable delete-selection-mode
   (winner-mode 1)
   (tooltip-mode -1)  ;;tooltip in echo area
@@ -93,14 +93,14 @@
 ;;   (load-theme 'spacemacs-light t)
 ;;   )
 
-(use-package ef-themes
-  :ensure t
-  :init
-  (ef-themes-take-over-modus-themes-mode 1)
-  :config
-  (setq modus-themes-mixed-fonts t)
-  (setq modus-themes-italic-constructs t)
-  (modus-themes-load-theme 'ef-duo-light))
+;; (use-package ef-themes
+;;   :ensure t
+;;   :init
+;;   (ef-themes-take-over-modus-themes-mode 1)
+;;   :config
+;;   (setq modus-themes-mixed-fonts t)
+;;   (setq modus-themes-italic-constructs t)
+;;   (modus-themes-load-theme 'ef-duo-light))
 
 (use-package which-key
   :ensure nil
@@ -211,9 +211,18 @@
          ("C-c C->"       . mc/mark-more-like-this-extended)
          ))
 
-(use-package expand-region
+;; (use-package expand-region
+;;   :ensure t
+;;   :bind ("C-=" . er/expand-region))
+
+(use-package expreg
   :ensure t
-  :bind ("C-=" . er/expand-region))
+  :bind (("C-=" . expreg-expand)
+         ("C--" . expreg-contract))
+  :hook
+  (text-mode .
+             (lambda ()
+               (add-to-list 'expreg-functions #'expreg--sentence))))
 
 (use-package magit
   :ensure t
@@ -329,8 +338,10 @@
          (LaTeX-mode . prettify-symbols-mode)
          (LaTeX-mode . TeX-source-correlate-mode)
          ;; (LaTeX-mode . my-buffer-face-mode-variable)
+         ;; (LaTeX-mode .  (lambda () (set (make-local-variable 'TeX-electric-math)
+         ;;                                (cons "\\(" "\\)"))) )
          (LaTeX-mode .  (lambda () (set (make-local-variable 'TeX-electric-math)
-                                        (cons "\\(" "\\)"))) )
+                                        (cons "$" "$"))) )
          (plain-TeX-mode .   (lambda () (set (make-local-variable 'TeX-electric-math)
                                              (cons "$" "$"))))
          (LaTeX-mode .  (lambda () (setq fill-column 80)))
@@ -340,7 +351,7 @@
   (add-hook 'TeX-after-compilation-finished-functions
             #'TeX-revert-document-buffer)
   (set-default 'preview-default-document-pt 12)
-  (set-default 'preview-scale-function 1.2)
+  (set-default 'preview-scale-function 0.8)
 
   ;; Match preview image size to text size
   ;; (setq preview-scale-function
@@ -611,12 +622,12 @@
       (remq 'process-kill-buffer-query-function
             kill-buffer-query-functions))
 
-;; function to change the font of buffer
-(defun my-buffer-face-mode-variable ()
-  "Set font to a variable width (proportional) fonts in current buffer"
-  (interactive)
-  (setq buffer-face-mode-face '(:family "Cascadia Code" :height 175))
-  (buffer-face-mode 1))
+;; ;; function to change the font of buffer
+;; (defun my-buffer-face-mode-variable ()
+;;   "Set font to a variable width (proportional) fonts in current buffer"
+;;   (interactive)
+;;   (setq buffer-face-mode-face '(:family "Cascadia Code" :height 160))
+;;   (buffer-face-mode 1))
 
 
 ;; (use-package gptel
@@ -732,6 +743,7 @@ credit: emacsredux blog"
   :ensure nil
   :hook
   (;; (org-mode . my-buffer-face-mode-variable) ;; custom font
+   (org-mode-hook . turn-on-org-cdlatex)
    (org-mode . org-indent-mode))  ;; Make the indentation look nicer
   ;; :custom
 
@@ -810,3 +822,5 @@ credit: emacsredux blog"
   :after (citar embark)
   :no-require
   :config (citar-embark-mode))
+
+
