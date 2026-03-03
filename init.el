@@ -219,10 +219,11 @@
   :ensure t
   :bind (("C-=" . expreg-expand)
          ("C--" . expreg-contract))
-  :hook
-  (text-mode .
-             (lambda ()
-               (add-to-list 'expreg-functions #'expreg--sentence))))
+  :config
+  (add-hook 'text-mode-hook
+            (lambda ()
+              (add-to-list 'expreg-functions #'expreg--sentence)))
+  )
 
 (use-package magit
   :ensure t
