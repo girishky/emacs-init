@@ -238,22 +238,22 @@
 (use-package eglot
   :ensure nil
   :config
-  ;; (add-to-list 'eglot-server-programs
-  ;;              '(python-ts-mode . ("pyright-langserver" "--stdio")))
   (add-to-list 'eglot-server-programs
-               '(python-ts-mode . ("ty" "server")))
+               '(python-ts-mode . ("pyright-langserver" "--stdio")))
+  ;; (add-to-list 'eglot-server-programs
+  ;;              '(python-ts-mode . ("ty" "server")))
   (add-to-list 'eglot-server-programs
                '((LaTeX-mode bibtex-mode) . ("texlab")))
   ;; (add-to-list 'eglot-server-programs
   ;;              '(text-mode . ("harper-ls" "--stdio")))
-  (setq-default eglot-workspace-configuration
-                '(:ty
-                  (:inlayHints
-                   (
-                    :variableTypes :json-false
-                    :callArgumentNames :json-false
-                    )
-                   )))
+  ;; (setq-default eglot-workspace-configuration
+  ;;               '(:ty
+  ;;                 (:inlayHints
+  ;;                  (
+  ;;                   :variableTypes :json-false
+  ;;                   :callArgumentNames :json-false
+  ;;                   )
+  ;;                  )))
   :custom
   (eglot-send-changes-idle-time 0.2) ;; this is default
   (eglot-extend-to-xref t)
