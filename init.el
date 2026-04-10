@@ -54,6 +54,8 @@
   (delete-selection-mode 1) ;; enable delete-selection-mode
   (winner-mode 1)
   (tooltip-mode -1)  ;;tooltip in echo area
+  ;; file sizes in human-readable format
+  (setq-default dired-listing-switches "-alh") 
 
   :config
   (add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-ts-mode))
@@ -81,11 +83,11 @@
 
 
 
-;; (use-package doom-themes
-;;   :ensure t
-;;   :init
-;;   (load-theme 'doom-zenburn t)
-;;   )
+(use-package doom-themes
+  :ensure t
+  :init
+  (load-theme 'doom-tokyo-night t)
+  )
 
 ;; (use-package spacemacs-theme
 ;;   :ensure t
@@ -338,14 +340,15 @@
          (LaTeX-mode . TeX-fold-mode)
          (LaTeX-mode . prettify-symbols-mode)
          (LaTeX-mode . TeX-source-correlate-mode)
-         ;; (LaTeX-mode . my-buffer-face-mode-variable)
+         (LaTeX-mode . my-buffer-face-mode-variable)
          ;; (LaTeX-mode .  (lambda () (set (make-local-variable 'TeX-electric-math)
          ;;                                (cons "\\(" "\\)"))) )
          (LaTeX-mode .  (lambda () (set (make-local-variable 'TeX-electric-math)
                                         (cons "$" "$"))) )
          (plain-TeX-mode .   (lambda () (set (make-local-variable 'TeX-electric-math)
                                              (cons "$" "$"))))
-         (LaTeX-mode .  (lambda () (setq fill-column 80)))
+         (LaTeX-mode .  (lambda () (setq fill-column 88)))
+         ;; (LaTeX-mode .  (lambda () (setq line-spacing 0.1)))
          ;; (LaTeX-mode . (lambda () (setq olivetti-body-width 55)))
          )
   :config
@@ -397,9 +400,8 @@
                '("^\\*Dictionary\\*" display-buffer-in-side-window
 		 (side . right)
 		 (window-width . 70)))
-  :bind (("M-#" .  dictionary-lookup-definition)
-	 :map text-mode-map
-	 ("M-." . dictionary-lookup-definition))
+  :bind ("C-c l" .  dictionary-lookup-definition)
+  
   :custom
   (dictionary-server "dict.org"))
 
