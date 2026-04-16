@@ -104,6 +104,18 @@
 ;;   (setq modus-themes-italic-constructs t)
 ;;   (modus-themes-load-theme 'ef-duo-light))
 
+
+;;;; auto-switching themes
+(defun my-set-theme-for-time ()
+  "Switch theme based on current hour."
+  (let* ((hour (string-to-number (format-time-string "%H")))
+         (theme (if (<= 8 hour 19)  'modus-operandi 'doom-tokyo-night )))
+    (unless (custom-theme-enabled-p theme)
+      (mapc #'disable-theme custom-enabled-themes)
+      (load-theme theme t))))
+
+(run-at-time 0 3600 #'my-set-theme-for-time)
+
 (use-package which-key
   :ensure nil
   :init
@@ -830,3 +842,22 @@ credit: emacsredux blog"
 ;; (use-package surround
 ;;   :ensure t
 ;;   :bind-keymap ("M-'" . surround-keymap))
+
+(use-package markdown-mode
+  :ensure t
+  :mode ("\\.md\\'" . markdown-mode))
+
+
+;;;; trying some new setting from Emacs-Redux blog
+
+(setq-default bidi-display-reordering 'left-to-right
+              bidi-paragraph-direction 'left-to-right)
+(setq bidi-inhibit-bpa t)
+
+(setq redisplay-skip-fontification-on-input t)
+(setq read-process-output-max (* 4 1024 1024)) ; 4MB
+(setq-default cursor-in-non-selected-windows nil)
+(setq highlight-nonselected-windows nil)
+(setq save-interprogram-paste-before-kill t)
+(setq kill-do-not-save-duplicates t)
+(setq set-mark-command-repeat-pop t)
