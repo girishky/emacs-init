@@ -50,7 +50,7 @@
   ;; (setq-default tab-width 4)
   (set-default-coding-systems 'utf-8)
   (set-language-environment "UTF-8")
-  (set-frame-font "Cascadia Code-15" nil t)
+  (set-frame-font "Cascadia Mono-14" nil t)
   (delete-selection-mode 1) ;; enable delete-selection-mode
   (winner-mode 1)
   (tooltip-mode -1)  ;;tooltip in echo area
@@ -83,11 +83,11 @@
 
 
 
-(use-package doom-themes
-  :ensure t
-  :init
-  (load-theme 'doom-tokyo-night t)
-  )
+;; (use-package doom-themes
+;;   :ensure t
+;;   :init
+;;   (load-theme 'doom-tokyo-night t)
+;;   )
 
 ;; (use-package spacemacs-theme
 ;;   :ensure t
@@ -232,7 +232,7 @@
   :bind
   (("C-c g" . magit-file-dispatch))
   :custom
-  (magit-git-executable "/opt/homebrew/bin/git")
+  ;; (magit-git-executable "/opt/homebrew/bin/git")
   (magit-diff-refine-hunk 'all)
   (magit-repository-directories
    '(("~/Projects/" . 1)))) 
@@ -307,29 +307,29 @@
 ;;                  (flymake-proselint-setup))))
 
 
-(use-package pdf-tools
-  :ensure t
-  ;; :mode ("\\.pdf\\'" . pdf-view-mode)
-  :magic ("%PDF" . pdf-view-mode)
-  :custom
-  (pdf-view-use-scaling t)
-  ;; (pdf-view-resize-factor 1.1)
-  ;; (pdf-view-display-size 'fit-page)
-  ;; (pdf-view-continuous t)
-  :config
-  (pdf-tools-install)
-  ;;pdf-tools and Emacs in fullscreen shift my screen to naother
-  ;;window before showing pdf. The following is a very poor solution
-  ;;but works! There is probably better solution out there. Need to
-  ;;check someday.
-  (defun life-is-beautiful (&rest ARG) 
-    (error "Life is beautiful!"))
-  (advice-add 'pdf-view-goto-page :after #'life-is-beautiful)
-  :hook ((pdf-view-mode .
-                        (lambda () (setq ring-bell-function 'ignore)))
-         (pdf-view-mode .
-                        (lambda () (setq mode-line-format nil))))
-  )
+;; (use-package pdf-tools
+;;   :ensure t
+;;   ;; :mode ("\\.pdf\\'" . pdf-view-mode)
+;;   :magic ("%PDF" . pdf-view-mode)
+;;   :custom
+;;   (pdf-view-use-scaling t)
+;;   ;; (pdf-view-resize-factor 1.1)
+;;   ;; (pdf-view-display-size 'fit-page)
+;;   ;; (pdf-view-continuous t)
+;;   :config
+;;   (pdf-tools-install)
+;;   ;;pdf-tools and Emacs in fullscreen shift my screen to naother
+;;   ;;window before showing pdf. The following is a very poor solution
+;;   ;;but works! There is probably better solution out there. Need to
+;;   ;;check someday.
+;;   (defun life-is-beautiful (&rest ARG) 
+;;     (error "Life is beautiful!"))
+;;   (advice-add 'pdf-view-goto-page :after #'life-is-beautiful)
+;;   :hook ((pdf-view-mode .
+;;                         (lambda () (setq ring-bell-function 'ignore)))
+;;          (pdf-view-mode .
+;;                         (lambda () (setq mode-line-format nil))))
+;;   )
 
 (use-package auctex
   :ensure t
@@ -339,15 +339,15 @@
          (LaTeX-mode . turn-on-visual-line-mode)
          (LaTeX-mode . TeX-fold-mode)
          (LaTeX-mode . prettify-symbols-mode)
-         (LaTeX-mode . TeX-source-correlate-mode)
-         (LaTeX-mode . my-buffer-face-mode-variable)
+         ;; (LaTeX-mode . TeX-source-correlate-mode)
+         ;; (LaTeX-mode . my-buffer-face-mode-variable)
          ;; (LaTeX-mode .  (lambda () (set (make-local-variable 'TeX-electric-math)
          ;;                                (cons "\\(" "\\)"))) )
          (LaTeX-mode .  (lambda () (set (make-local-variable 'TeX-electric-math)
                                         (cons "$" "$"))) )
          (plain-TeX-mode .   (lambda () (set (make-local-variable 'TeX-electric-math)
                                              (cons "$" "$"))))
-         (LaTeX-mode .  (lambda () (setq fill-column 88)))
+         (LaTeX-mode .  (lambda () (setq fill-column 95)))
          ;; (LaTeX-mode .  (lambda () (setq line-spacing 0.1)))
          ;; (LaTeX-mode . (lambda () (setq olivetti-body-width 55)))
          )
@@ -371,7 +371,7 @@
   (TeX-save-query nil) ; save file when compiling
   (TeX-PDF-mode t)
   ;; view pdf inside emacs
-  (TeX-view-program-selection '((output-pdf "PDF Tools")))
+  ;; (TeX-view-program-selection '((output-pdf "PDF Tools")))
   )
 
 
@@ -764,69 +764,69 @@ credit: emacsredux blog"
   )
 
 
-(use-package denote
-  :ensure t
-  :hook (dired-mode . denote-dired-mode)
-  :bind
-  (("C-c n n" . denote)
-   ("C-c n o" . denote-open-or-create)
-   ("C-c n r" . denote-rename-file)
-   ("C-c n l" . denote-link)
-   ("C-c n b" . denote-backlinks)
-   ("C-c n d" . denote-dired)
-   ("C-c n g" . denote-grep))
+;; (use-package denote
+;;   :ensure t
+;;   :hook (dired-mode . denote-dired-mode)
+;;   :bind
+;;   (("C-c n n" . denote)
+;;    ("C-c n o" . denote-open-or-create)
+;;    ("C-c n r" . denote-rename-file)
+;;    ("C-c n l" . denote-link)
+;;    ("C-c n b" . denote-backlinks)
+;;    ("C-c n d" . denote-dired)
+;;    ("C-c n g" . denote-grep))
 
-  :custom
-  (denote-directory (expand-file-name "~/Dropbox/thenotes/"))
-  (denote-rename-buffer-mode 1))
-
-
-(use-package citar
-  :ensure t
-  :defer t
-  :custom
-  (citar-bibliography
-   (append
-    '("~/Zotero/library.bib")
-    ;; (file-expand-wildcards "~/Projects/draft_*/*.bib")
-    ))
-  ;; Allow multiple notes per bibliographic entry
-  (citar-open-always-create-notes nil)
-  :hook
-  (LaTeX-mode . citar-capf-setup)
-  (org-mode . citar-capf-setup)
-  :bind
-  ("C-c w c" . citar-create-note))
-
-(use-package citar-denote
-  :ensure t
-  :demand t ;; Ensure minor mode loads
-  :after (:any citar denote)
-  :custom
-  ;; Package defaults
-  (citar-denote-file-type 'org)
-  (citar-denote-keyword "bib")
-  (citar-denote-signature nil)
-  (citar-denote-subdir nil)
-  (citar-denote-template nil)
-  (citar-denote-title-format "title")
-  (citar-denote-title-format-andstr "and")
-  (citar-denote-title-format-authors 1)
-  (citar-denote-use-bib-keywords nil)
-  :preface
-  (bind-key "C-c w n" #'citar-denote-open-note)
-  :init
-  (citar-denote-mode)
-  :bind
-  ("C-c w d" . citar-denote-dwim))
-
-(use-package citar-embark
-  :ensure t
-  :after (citar embark)
-  :no-require
-  :config (citar-embark-mode))
+;;   :custom
+;;   (denote-directory (expand-file-name "~/Dropbox/thenotes/"))
+;;   (denote-rename-buffer-mode 1))
 
 
-(use-package surround
-  :ensure t
-  :bind-keymap ("M-'" . surround-keymap))
+;; (use-package citar
+;;   :ensure t
+;;   :defer t
+;;   :custom
+;;   (citar-bibliography
+;;    (append
+;;     '("~/Zotero/library.bib")
+;;     ;; (file-expand-wildcards "~/Projects/draft_*/*.bib")
+;;     ))
+;;   ;; Allow multiple notes per bibliographic entry
+;;   (citar-open-always-create-notes nil)
+;;   :hook
+;;   (LaTeX-mode . citar-capf-setup)
+;;   (org-mode . citar-capf-setup)
+;;   :bind
+;;   ("C-c w c" . citar-create-note))
+
+;; (use-package citar-denote
+;;   :ensure t
+;;   :demand t ;; Ensure minor mode loads
+;;   :after (:any citar denote)
+;;   :custom
+;;   ;; Package defaults
+;;   (citar-denote-file-type 'org)
+;;   (citar-denote-keyword "bib")
+;;   (citar-denote-signature nil)
+;;   (citar-denote-subdir nil)
+;;   (citar-denote-template nil)
+;;   (citar-denote-title-format "title")
+;;   (citar-denote-title-format-andstr "and")
+;;   (citar-denote-title-format-authors 1)
+;;   (citar-denote-use-bib-keywords nil)
+;;   :preface
+;;   (bind-key "C-c w n" #'citar-denote-open-note)
+;;   :init
+;;   (citar-denote-mode)
+;;   :bind
+;;   ("C-c w d" . citar-denote-dwim))
+
+;; (use-package citar-embark
+;;   :ensure t
+;;   :after (citar embark)
+;;   :no-require
+;;   :config (citar-embark-mode))
+
+
+;; (use-package surround
+;;   :ensure t
+;;   :bind-keymap ("M-'" . surround-keymap))
