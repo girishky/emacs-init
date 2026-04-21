@@ -105,11 +105,21 @@
 ;;   (modus-themes-load-theme 'ef-duo-light))
 
 
+;; (use-package batppuccin
+;;   :ensure t
+;;   :config
+;;   (load-theme 'batppuccin-mocha t)) ;; mocha, macchiato, frappe, latte
+
+;; (use-package tokyo-night
+;;   :ensure t
+;;   :config
+;;   (load-theme 'tokyo-night t)) ;; night, storm, moon, day
+
 ;;;; auto-switching themes
 (defun my-set-theme-for-time ()
   "Switch theme based on current hour."
   (let* ((hour (string-to-number (format-time-string "%H")))
-         (theme (if (<= 8 hour 19)  'modus-operandi 'doom-tokyo-night )))
+         (theme (if (<= 8 hour 19)  'tokyo-night-day 'tokyo-night )))
     (unless (custom-theme-enabled-p theme)
       (mapc #'disable-theme custom-enabled-themes)
       (load-theme theme t))))
@@ -247,7 +257,16 @@
   ;; (magit-git-executable "/opt/homebrew/bin/git")
   (magit-diff-refine-hunk 'all)
   (magit-repository-directories
-   '(("~/Projects/" . 1)))) 
+   '(("~/Projects/" . 1))))
+
+(use-package diff-hl
+  :ensure t
+  :init
+  (global-diff-hl-mode 1)
+  :hook (dired-mode . diff-hl-dired-mode)
+  :config
+  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
+  )
 
 
 (use-package eglot
