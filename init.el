@@ -226,6 +226,34 @@
   (corfu-echo-documentation nil))
 
 
+(use-package prescient
+  :ensure t
+  :config
+  (prescient-persist-mode 1))
+
+(use-package corfu-prescient
+  :ensure t
+  :after corfu prescient
+  :custom
+  (corfu-prescient-enable-sorting t)
+  (corfu-prescient-override-sorting nil) ; Don't override `display-sort-function'
+  ;; Filtering
+  (corfu-prescient-enable-filtering nil) ; We want orderless to do the filtering
+  :config
+  (corfu-prescient-mode 1))
+
+(use-package vertico-prescient
+  :ensure t
+  :after vertico prescient
+  :custom
+  (vertico-prescient-enable-sorting t)
+  (vertico-prescient-override-sorting nil) ; Don't override `display-sort-function'
+  ;; Filtering
+  (vertico-prescient-enable-filtering nil) ; We want orderless to do the filtering
+  :config
+  (vertico-prescient-mode 1))
+
+
 (use-package multiple-cursors
   :ensure t
   :bind (("C-S-m"       . mc/edit-lines)
@@ -263,6 +291,7 @@
   :ensure t
   :init
   (global-diff-hl-mode 1)
+  (diff-hl-flydiff-mode 1)
   :hook (dired-mode . diff-hl-dired-mode)
   :config
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
