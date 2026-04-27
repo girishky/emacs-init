@@ -89,31 +89,29 @@
 ;;   (load-theme 'doom-tokyo-night t)
 ;;   )
 
-;; (use-package spacemacs-theme
-;;   :ensure t
-;;   :init
-;;   (load-theme 'spacemacs-light t)
-;;   )
 
-;; (use-package ef-themes
-;;   :ensure t
-;;   :init
-;;   (ef-themes-take-over-modus-themes-mode 1)
-;;   :config
-;;   (setq modus-themes-mixed-fonts t)
-;;   (setq modus-themes-italic-constructs t)
-;;   (modus-themes-load-theme 'ef-duo-light))
+(use-package ef-themes
+  :ensure t
+  ;; :init
+  ;; (ef-themes-take-over-modus-themes-mode 1)
+  ;; :config
+  ;; (setq modus-themes-mixed-fonts t)
+  ;; (setq modus-themes-italic-constructs t)
+  ;; (modus-themes-load-theme 'ef-duo-light)
+  )
 
 
-;; (use-package batppuccin
-;;   :ensure t
-;;   :config
-;;   (load-theme 'batppuccin-mocha t)) ;; mocha, macchiato, frappe, latte
+(use-package batppuccin
+  :ensure t
+  ;; :config
+  ;; (load-theme 'batppuccin-mocha t)
+  ) ;; mocha, macchiato, frappe, latte
 
-;; (use-package tokyo-night
-;;   :ensure t
-;;   :config
-;;   (load-theme 'tokyo-night t)) ;; night, storm, moon, day
+(use-package tokyo-night
+  :ensure t
+  ;; :config
+  ;; (load-theme 'tokyo-night t)
+  ) ;; night, storm, moon, day
 
 ;;;; auto-switching themes
 (defun my-set-theme-for-time ()
@@ -693,29 +691,48 @@
 ;;   (buffer-face-mode 1))
 
 
-;; (use-package gptel
-;;   :ensure t
-;;   :config  
-;;   (setq
-;;    gptel-model 'mistral-nemo:latest
-;;    gptel-backend (gptel-make-ollama "Ollama"   ;Any name of your choosing
-;;                    :host "localhost:11434"     ;Where it's running
-;;                    :stream t                   ;Stream responses
-;;                    :models '("gemma3:1b" "mistral-nemo:latest"))) ;List of models
-;;   (setq gptel-default-mode 'org-mode))
+(use-package gptel
+  :ensure t
+  :bind (
+         :map gptel-mode-map
+         ("S-<return>" . gptel-send)
+         )
+  :config  
+  (setq
+   gptel-model 'qwen3.6:27b-mxfp8
+   gptel-backend (gptel-make-ollama "Ollama"   ;Any name of your choosing
+                   :host "localhost:11434"     ;Where it's running
+                   :stream t                   ;Stream responses
+                   :models '(
+                             "qwen3.6:35b-a3b-mxfp8"
+                             "qwen3.6:35b-a3b-coding-mxfp8"
+                             "qwen3.6:27b-mxfp8"
+                             "qwen3.6:27b-coding-mxfp8"
+                             "gemma4:26b-mxfp8"
+                             "gemma4:31b-mxfp8"
+                             ) ;List of models
+                   )
+   gptel-default-mode 'org-mode
+   ;; gptel-include-reasoning nil
+   ;; gptel-stream nil
+   )
+  (add-hook 'gptel-post-stream-hook 'gptel-auto-scroll)
+
+  )
 
 
 ;; miscellaneous
 
 (defun smart-open-line ()
   "Insert an empty line after the current line.
-Position the cursor at its beginning, according to the current mode.
-credit: emacsredux blog"
+   Position the cursor at its beginning, according to the current mode.
+   credit: emacsredux blog"
   (interactive)
   (move-end-of-line nil)
   (newline-and-indent))
 
-(global-set-key [(shift return)] #'smart-open-line)
+;; (global-set-key [(shift return)] #'smart-open-line)
+(define-key prog-mode-map [(shift return)] #'smart-open-line)
 
 ;; half-screen scrolling (karthink blog)
 (defun scroll-up-half ()
@@ -806,7 +823,7 @@ credit: emacsredux blog"
   :ensure nil
   :hook
   (;; (org-mode . my-buffer-face-mode-variable) ;; custom font
-   (org-mode-hook . turn-on-org-cdlatex)
+   (org-mode . turn-on-org-cdlatex)
    (org-mode . org-indent-mode))  ;; Make the indentation look nicer
   ;; :custom
 
