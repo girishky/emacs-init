@@ -708,8 +708,6 @@
                              "qwen3.6:35b-a3b-coding-mxfp8"
                              "qwen3.6:27b-mxfp8"
                              "qwen3.6:27b-coding-mxfp8"
-                             "gemma4:26b-mxfp8"
-                             "gemma4:31b-mxfp8"
                              ) ;List of models
                    )
    gptel-default-mode 'org-mode
@@ -718,6 +716,13 @@
    )
   (add-hook 'gptel-post-stream-hook 'gptel-auto-scroll)
 
+  (gptel-make-preset 'proofreader
+                     :description "Preset for proofreading tasks"
+                     :system "Fix spelling mistakes in the selected text"
+                     :backend "Ollama"
+                     :model 'qwen3.6:35b-a3b-coding-mxfp8
+                     :use-context 'system      
+                     )
   )
 
 
