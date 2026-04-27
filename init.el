@@ -725,6 +725,12 @@
                      )
   )
 
+(use-package agent-shell
+  :ensure t
+  :config
+  (setq agent-shell-goose-authentication
+        (agent-shell-make-goose-authentication :none t)))
+
 
 ;; miscellaneous
 
