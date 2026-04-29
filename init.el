@@ -699,17 +699,19 @@
          )
   :config  
   (setq
-   gptel-model 'qwen3.6:27b-coding-mxfp8
+   gptel-model 'qwen3.6:35b-a3b-nvfp4
    gptel-backend (gptel-make-ollama "Ollama"   ;Any name of your choosing
                    :host "localhost:11434"     ;Where it's running
                    :stream t                   ;Stream responses
                    :models '(
                              "qwen3.6:27b-mxfp8"
-                             "qwen3.6:27b-coding-mxfp8"
-                             "qwen3.6:27b-mlx-bf16"
+                             "qwen3.6:35b-a3b-coding-mxfp8"
                              "qwen3.6:35b-a3b-mxfp8"
-                             "gemma4:26b-mlx-bf16"
-                             "gemma4:31b-mxfp8"
+                             "qwen3.6:27b-nvfp4"
+                             "qwen3.6:27b-coding-mxfp8"
+                             "qwen3.6:35b-a3b-coding-nvfp4"
+                             "qwen3.6:35b-a3b-nvfp4"
+                             "gemma4:31b-nvfp4"
                              ) ;List of models
                    )
    gptel-default-mode 'org-mode
@@ -721,9 +723,6 @@
   (gptel-make-preset 'proofreader
                      :description "Preset for proofreading tasks"
                      :system "Fix spelling mistakes in the selected text"
-                     :backend "Ollama"
-                     :model 'qwen3.6:27b-mxfp8
-                     :use-context 'system      
                      )
   )
 
