@@ -8,3 +8,4 @@ transient/
 tree-sitter/
 *~
 network-security.data
+var/
