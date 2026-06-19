@@ -283,7 +283,8 @@
   ;; (magit-git-executable "/opt/homebrew/bin/git")
   (magit-diff-refine-hunk 'all)
   (magit-repository-directories
-   '(("~/Projects/" . 1))))
+   '(("~/Projects/" . 1)
+     ("~/Side-projects/" . 1))))
 
 (use-package diff-hl
   :ensure t
@@ -365,29 +366,42 @@
 ;;                  (flymake-proselint-setup))))
 
 
-;; (use-package pdf-tools
-;;   :ensure t
-;;   ;; :mode ("\\.pdf\\'" . pdf-view-mode)
-;;   :magic ("%PDF" . pdf-view-mode)
-;;   :custom
-;;   (pdf-view-use-scaling t)
-;;   ;; (pdf-view-resize-factor 1.1)
-;;   ;; (pdf-view-display-size 'fit-page)
-;;   ;; (pdf-view-continuous t)
-;;   :config
-;;   (pdf-tools-install)
-;;   ;;pdf-tools and Emacs in fullscreen shift my screen to naother
-;;   ;;window before showing pdf. The following is a very poor solution
-;;   ;;but works! There is probably better solution out there. Need to
-;;   ;;check someday.
-;;   (defun life-is-beautiful (&rest ARG) 
-;;     (error "Life is beautiful!"))
-;;   (advice-add 'pdf-view-goto-page :after #'life-is-beautiful)
-;;   :hook ((pdf-view-mode .
-;;                         (lambda () (setq ring-bell-function 'ignore)))
-;;          (pdf-view-mode .
-;;                         (lambda () (setq mode-line-format nil))))
-;;   )
+(use-package pdf-tools
+  :ensure t
+  ;; :mode ("\\.pdf\\'" . pdf-view-mode)
+  :magic ("%PDF" . pdf-view-mode)
+  :custom
+  (pdf-view-use-scaling t)
+  ;; (pdf-view-resize-factor 1.1)
+  ;; (pdf-view-display-size 'fit-page)
+  ;; (pdf-view-continuous t)
+  :config
+  (pdf-tools-install)
+
+  ;; Workaround for macOS fullscreen Space jump:
+  ;; let SyncTeX go to the right page, then stop before later post-sync actions.
+  (with-eval-after-load 'pdf-sync
+    (defun my-pdf-sync-forward-search-no-post-jump (orig-fun &rest args)
+      "Run `pdf-sync-forward-search`, but stop after `pdf-view-goto-page`."
+      (let ((stop-after-goto
+             (lambda (&rest _)
+               (throw 'my-pdf-sync-stop-after-goto-page t))))
+        (catch 'my-pdf-sync-stop-after-goto-page
+          (unwind-protect
+              (progn
+                (advice-add 'pdf-view-goto-page :after stop-after-goto)
+                (apply orig-fun args))
+            (advice-remove 'pdf-view-goto-page stop-after-goto))))))
+
+  (advice-add 'pdf-sync-forward-search
+              :around
+              #'my-pdf-sync-forward-search-no-post-jump)
+  :hook ((pdf-view-mode .
+                        (lambda () (setq-local ring-bell-function #'ignore)))
+         (pdf-view-mode .
+                        (lambda () (setq-local mode-line-format nil))))
+  )
+
 
 (use-package auctex
   :ensure t
@@ -397,7 +411,7 @@
          (LaTeX-mode . turn-on-visual-line-mode)
          (LaTeX-mode . TeX-fold-mode)
          (LaTeX-mode . prettify-symbols-mode)
-         ;; (LaTeX-mode . TeX-source-correlate-mode)
+         (LaTeX-mode . TeX-source-correlate-mode)
          ;; (LaTeX-mode . my-buffer-face-mode-variable)
          ;; (LaTeX-mode .  (lambda () (set (make-local-variable 'TeX-electric-math)
          ;;                                (cons "\\(" "\\)"))) )
@@ -412,6 +426,7 @@
   :config
   (add-hook 'TeX-after-compilation-finished-functions
             #'TeX-revert-document-buffer)
+
   (set-default 'preview-default-document-pt 12)
   (set-default 'preview-scale-function 0.8)
 
@@ -428,8 +443,8 @@
   (TeX-auto-save t)
   (TeX-save-query nil) ; save file when compiling
   (TeX-PDF-mode t)
-  ;; view pdf inside emacs
-  ;; (TeX-view-program-selection '((output-pdf "PDF Tools")))
+  (TeX-source-correlate-start-server t)
+  (TeX-view-program-selection '((output-pdf "PDF Tools")))
   )
 
 
