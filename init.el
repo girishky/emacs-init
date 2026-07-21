@@ -180,8 +180,7 @@
   (setq register-preview-delay 0.5)
   (setq xref-show-xrefs-function #'consult-xref
         xref-show-definitions-function #'consult-xref)
-  :hook
-  (completion-list-mode . consult-preview-at-point-mode)
+  ;; :hook (completion-list-mode . consult-preview-at-point-mode)
   :bind
   (("C-s" . consult-line)    
    ("C-x b" . consult-buffer)
@@ -192,36 +191,46 @@
    ("C-x p b" . consult-project-buffer)  
    ("C-x C-r" . consult-recent-file)))
 
-(use-package embark
-  :ensure t
-  :bind
-  (("C-s-." . embark-act)
-   ("C-s-;" . embark-dwim) 
-   ("C-h B" . embark-bindings)) 
+;; (use-package embark
+;;   :ensure t
+;;   :bind
+;;   (("C-s-." . embark-act)
+;;    ("C-s-;" . embark-dwim) 
+;;    ("C-h B" . embark-bindings)) 
+;;   :config
+;;   (setq prefix-help-command #'embark-prefix-help-command)
+;;   (add-to-list 'display-buffer-alist
+;;                '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+;;                  nil
+;;                  (window-parameters (mode-line-format . none)))))
+
+;; (use-package embark-consult
+;;   :ensure t
+;;   :after (embark consult)
+;;   :hook
+;;   (embark-collect-mode . consult-preview-at-point-mode))
+
+;; (use-package corfu
+;;   :ensure t
+;;   :init
+;;   (global-corfu-mode)
+;;   ;; (corfu-popupinfo-mode 1)
+;;   (corfu-history-mode 1)
+;;   :custom
+;;   (corfu-auto t)
+;;   (corfu-auto-delay 0.2)
+;;   (corfu-cycle t )
+;;   ;; (corfu-echo-documentation nil)
+;;   )
+
+(use-package completion-preview
+  :ensure nil ; built-in
   :config
-  (setq prefix-help-command #'embark-prefix-help-command)
-  (add-to-list 'display-buffer-alist
-               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
-                 nil
-                 (window-parameters (mode-line-format . none)))))
-
-(use-package embark-consult
-  :ensure t
-  :after (embark consult)
-  :hook
-  (embark-collect-mode . consult-preview-at-point-mode))
-
-(use-package corfu
-  :ensure t
-  :init
-  (global-corfu-mode)
-  (corfu-popupinfo-mode 1)
-  (corfu-history-mode 1)
-  :custom
-  (corfu-auto t)
-  (corfu-auto-delay 0.2)
-  (corfu-cycle t )
-  (corfu-echo-documentation nil))
+  ;; cycle through the other candidates with M-n/M-p (those two
+  ;; commands have no default bindings)
+  (define-key completion-preview-active-mode-map (kbd "M-n") #'completion-preview-next-candidate)
+  (define-key completion-preview-active-mode-map (kbd "M-p") #'completion-preview-prev-candidate)
+  (global-completion-preview-mode +1))
 
 
 (use-package prescient
