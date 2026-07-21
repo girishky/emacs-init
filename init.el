@@ -138,8 +138,10 @@
 (use-package which-key
   :ensure nil
   :init
-  (setq which-key-idle-delay 0.5) ; Open after .5s instead of 1s
-  (which-key-mode 1))
+  ;; show the popup faster (the default is a full second)
+  (setq which-key-idle-delay 0.3)
+  (which-key-mode 1)
+  )
 
 (use-package vertico
   :ensure t
