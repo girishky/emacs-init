@@ -375,6 +375,8 @@
   :ensure nil
   ;; :hook
   ;; (text-mode . flymake-mode)
+  :config
+  (setq flymake-show-diagnostics-at-end-of-line t) ;; other option: 'short
   :bind (:map flymake-mode-map
               ("M-N" . flymake-goto-next-error)
 	      ("M-P" . flymake-goto-prev-error)))
