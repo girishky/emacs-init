@@ -55,7 +55,18 @@
   (winner-mode 1)
   (tooltip-mode -1)  ;;tooltip in echo area
   ;; file sizes in human-readable format
-  (setq-default dired-listing-switches "-alh") 
+  (setq-default dired-listing-switches "-alh")
+
+  ;; mode-line: put the buffer name and modification status on the
+  ;; left, and the current line/column and major mode on the right
+
+  (setq-default mode-line-format
+                '(" %+ "
+                  mode-line-buffer-identification
+                  mode-line-position
+                  mode-line-format-right-align
+                  " "
+                  mode-line-modes))
 
   :config
   (add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-ts-mode))
