@@ -47,10 +47,12 @@
         scroll-preserve-screen-position 1)
   ;; Use spaces instead of tabs by default
   (setq-default indent-tabs-mode nil)
+  ;; smart tab behavior - indent or complete
+  (setq tab-always-indent 'complete)
   ;; (setq-default tab-width 4)
   (set-default-coding-systems 'utf-8)
   (set-language-environment "UTF-8")
-  (set-frame-font "Cascadia Mono-14" nil t)
+  (set-frame-font "JetBrains Mono-14" nil t)
   (delete-selection-mode 1) ;; enable delete-selection-mode
   (winner-mode 1)
   (tooltip-mode -1)  ;;tooltip in echo area
@@ -86,7 +88,8 @@
   :hook
   ((prog-mode  . display-line-numbers-mode)
    ;;(prog-mode  . flyspell-prog-mode)
-   (text-mode . flyspell-mode))
+   ;; (text-mode . flyspell-mode)
+   )
 
   :bind
   ("M-o" . other-window)
@@ -128,7 +131,7 @@
 (defun my-set-theme-for-time ()
   "Switch theme based on current hour."
   (let* ((hour (string-to-number (format-time-string "%H")))
-         (theme (if (<= 8 hour 19)  'tokyo-night-day 'tokyo-night )))
+         (theme (if (<= 8 hour 19)  'ef-bio 'ef-bio )))
     (unless (custom-theme-enabled-p theme)
       (mapc #'disable-theme custom-enabled-themes)
       (load-theme theme t))))
@@ -193,7 +196,7 @@
   (setq register-preview-delay 0.5)
   (setq xref-show-xrefs-function #'consult-xref
         xref-show-definitions-function #'consult-xref)
-  ;; :hook (completion-list-mode . consult-preview-at-point-mode)
+  :hook (completion-list-mode . consult-preview-at-point-mode)
   :bind
   (("C-s" . consult-line)    
    ("C-x b" . consult-buffer)
@@ -204,46 +207,45 @@
    ("C-x p b" . consult-project-buffer)  
    ("C-x C-r" . consult-recent-file)))
 
-;; (use-package embark
-;;   :ensure t
-;;   :bind
-;;   (("C-s-." . embark-act)
-;;    ("C-s-;" . embark-dwim) 
-;;    ("C-h B" . embark-bindings)) 
+(use-package embark
+  :ensure t
+  :bind (("C-." . embark-act)
+         ("C-;" . embark-dwim)
+         ("C-h B" . embark-bindings))
+  :init
+  (setq prefix-help-command #'embark-prefix-help-command))
+
+(use-package embark-consult
+  :ensure t
+  :hook (embark-collect-mode . consult-preview-at-point-mode))
+
+(use-package corfu
+  :ensure t
+  :init
+  (global-corfu-mode)
+  (corfu-popupinfo-mode 1)
+  (corfu-history-mode 1)
+  :custom
+  (corfu-auto t)
+  (corfu-auto-delay 0.2)
+  (corfu-cycle t )
+  ;; (corfu-echo-documentation nil)
+  )
+
+(use-package cape
+  :ensure t
+  :init
+  (add-hook 'completion-at-point-functions #'cape-dabbrev)
+  (add-hook 'completion-at-point-functions #'cape-file))
+
+;; (use-package completion-preview
+;;   :ensure nil ; built-in
 ;;   :config
-;;   (setq prefix-help-command #'embark-prefix-help-command)
-;;   (add-to-list 'display-buffer-alist
-;;                '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
-;;                  nil
-;;                  (window-parameters (mode-line-format . none)))))
-
-;; (use-package embark-consult
-;;   :ensure t
-;;   :after (embark consult)
-;;   :hook
-;;   (embark-collect-mode . consult-preview-at-point-mode))
-
-;; (use-package corfu
-;;   :ensure t
-;;   :init
-;;   (global-corfu-mode)
-;;   ;; (corfu-popupinfo-mode 1)
-;;   (corfu-history-mode 1)
-;;   :custom
-;;   (corfu-auto t)
-;;   (corfu-auto-delay 0.2)
-;;   (corfu-cycle t )
-;;   ;; (corfu-echo-documentation nil)
-;;   )
-
-(use-package completion-preview
-  :ensure nil ; built-in
-  :config
-  ;; cycle through the other candidates with M-n/M-p (those two
-  ;; commands have no default bindings)
-  (define-key completion-preview-active-mode-map (kbd "M-n") #'completion-preview-next-candidate)
-  (define-key completion-preview-active-mode-map (kbd "M-p") #'completion-preview-prev-candidate)
-  (global-completion-preview-mode +1))
+;;   ;; cycle through the other candidates with M-n/M-p (those two
+;;   ;; commands have no default bindings)
+;;   (define-key completion-preview-active-mode-map (kbd "M-n") #'completion-preview-next-candidate)
+;;   (define-key completion-preview-active-mode-map (kbd "M-p") #'completion-preview-prev-candidate)
+;;   (global-completion-preview-mode +1))
 
 
 (use-package prescient
@@ -376,10 +378,54 @@
   ;; :hook
   ;; (text-mode . flymake-mode)
   :config
-  (setq flymake-show-diagnostics-at-end-of-line t) ;; other option: 'short
+  (setq flymake-show-diagnostics-at-end-of-line 'short) ;; other option: 'short
   :bind (:map flymake-mode-map
               ("M-N" . flymake-goto-next-error)
 	      ("M-P" . flymake-goto-prev-error)))
+
+(use-package jinx
+  :ensure t
+  :hook (emacs-startup . global-jinx-mode)
+  :bind (("M-$" . jinx-correct)
+         ("C-M-$" . jinx-languages))
+  :custom
+  (jinx-languages "en_US")
+  :config
+  ;; Exclude ordinary comments in every applicable major mode,
+  ;; including Org, programming modes, and TeX.
+  (dolist (face '(font-lock-comment-face
+                  font-lock-comment-delimiter-face))
+    (cl-pushnew face (alist-get t jinx-exclude-faces)))
+
+  ;; Jinx checks these faces by default in programming modes.
+  ;; Exclude them too if strings and doc comments should not be checked.
+  (dolist (face '(font-lock-doc-face
+                  font-lock-string-face))
+    (cl-pushnew face (alist-get 'prog-mode jinx-exclude-faces)))
+
+  ;; Additional TeX exclusions.
+  (dolist (face '(font-latex-warning-face
+                  tex-font-script-face
+                  font-lock-constant-face))
+    (cl-pushnew face (alist-get 'tex-mode jinx-exclude-faces))))
+
+
+
+;; :config
+;; ;; Do not spell-check ordinary comments in programming modes.
+;; (setf (alist-get 'prog-mode jinx-exclude-faces)
+;;       '(font-lock-comment-face))
+
+;; ;; Add these faces to Jinx's existing TeX exclusions.
+;; (setf (alist-get 'tex-mode jinx-exclude-faces)
+;;       (append '(font-latex-warning-face
+;;                 tex-font-script-face
+;;                 font-lock-comment-face
+;;                 ;; Citation keys and reference labels in commands such as
+;;                 ;; \cite{}, \ref{}, and \eqref{}.
+;;                 font-lock-constant-face)
+;;               (alist-get 'tex-mode jinx-exclude-faces))))
+
 
 ;; ;; proselint
 ;; (use-package flymake-proselint
@@ -732,25 +778,24 @@
 
 (use-package gptel
   :ensure t
-  :bind (
-         :map gptel-mode-map
-         ("S-<return>" . gptel-send)
-         )
+  ;; :bind (
+  ;;        :map gptel-mode-map
+  ;;        ("S-<return>" . gptel-send)
+  ;;        )
   :config  
   (setq
-   gptel-model 'qwen3.6:35b-a3b-nvfp4
+   gptel-model 'qwen3.6:35b-mlx
    gptel-backend (gptel-make-ollama "Ollama"   ;Any name of your choosing
                    :host "localhost:11434"     ;Where it's running
                    :stream t                   ;Stream responses
                    :models '(
-                             "qwen3.6:27b-mxfp8"
-                             "qwen3.6:35b-a3b-coding-mxfp8"
+                             "qwen3.6:35b-mlx"
                              "qwen3.6:35b-a3b-mxfp8"
-                             "qwen3.6:27b-nvfp4"
-                             "qwen3.6:27b-coding-mxfp8"
-                             "qwen3.6:35b-a3b-coding-nvfp4"
-                             "qwen3.6:35b-a3b-nvfp4"
-                             "gemma4:31b-nvfp4"
+                             "qwen3.6:27b-mlx"
+                             "qwen3.6:27b-mxfp8"
+                             "gemma4:26b-mxfp8"
+                             "gemma4:31b-mxfp8"
+                             "gemma4:31b-mlx"
                              ) ;List of models
                    )
    gptel-default-mode 'org-mode
@@ -760,9 +805,9 @@
   (add-hook 'gptel-post-stream-hook 'gptel-auto-scroll)
 
   (gptel-make-preset 'proofreader
-                     :description "Preset for proofreading tasks"
-                     :system "Fix spelling mistakes in the selected text"
-                     )
+    :description "Preset for proofreading tasks"
+    :system "Fix spelling mistakes in the selected text"
+    )
   )
 
 (use-package agent-shell
