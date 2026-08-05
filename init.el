@@ -29,14 +29,17 @@
   (add-to-list 'default-frame-alist '(ns-appearance . dark))
   (setq ns-use-proxy-icon nil)
   ;; (setq frame-title-format nil)
-  ;; (setq window-resize-pixelwise t)
-  ;; (setq frame-resize-pixelwise t)
+  (setopt frame-resize-pixelwise t)
+  (setopt window-resize-pixelwise t)
+  (setopt frame-inhibit-implied-resize t)
   (save-place-mode 1)
   (recentf-mode 1)
-  (electric-pair-mode 1)
-  (show-paren-mode 1)
-  (global-visual-line-mode 1)
-  (setq column-number-mode t)
+  (setopt electric-pair-mode t)
+  (show-paren-mode t)
+  (setq show-paren-style 'mixed)
+  (global-visual-line-mode t)
+  (global-visual-wrap-prefix-mode t)
+  (setopt column-number-mode t)
   (global-auto-revert-mode 1)
   (global-set-key [remap list-buffers] 'ibuffer)
   ;; Improve scrolling behavior
@@ -46,29 +49,28 @@
         scroll-conservatively 10000
         scroll-preserve-screen-position 1)
   ;; Use spaces instead of tabs by default
-  (setq-default indent-tabs-mode nil)
+  (setopt indent-tabs-mode nil)
   ;; smart tab behavior - indent or complete
   (setq tab-always-indent 'complete)
   ;; (setq-default tab-width 4)
   (set-default-coding-systems 'utf-8)
   (set-language-environment "UTF-8")
-  (set-frame-font "JetBrains Mono-14" nil t)
-  (delete-selection-mode 1) ;; enable delete-selection-mode
+  (setopt font-use-system-font t)
+  (set-frame-font "Cascadia Mono-14" nil t)
+  (setopt delete-selection-mode t) ;; enable delete-selection-mode
   (winner-mode 1)
   (tooltip-mode -1)  ;;tooltip in echo area
   ;; file sizes in human-readable format
   (setq-default dired-listing-switches "-alh")
-
-  ;; mode-line: put the buffer name and modification status on the
-  ;; left, and the current line/column and major mode on the right
-
-  (setq-default mode-line-format
-                '(" %+ "
-                  mode-line-buffer-identification
-                  mode-line-position
-                  mode-line-format-right-align
-                  " "
-                  mode-line-modes))
+  (setopt mode-line-compact 'long)
+  (setopt savehist-mode t)
+  (setopt save-place-mode t)
+  ;; Dired buffers are refreshed whenever revisiting
+  (setopt dired-auto-revert-buffer t)
+  ;; Show the current directory when prompting for a shell command
+  (setopt shell-command-prompt-show-cwd t)
+  (setopt compilation-scroll-output 'first-error)
+  
 
   :config
   (add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-ts-mode))
@@ -81,6 +83,7 @@
   ;; (auto-save-default nil)
   ;; (treesit-font-lock-level 4)
   (shr-use-fonts nil "disable variable fonts")
+  (pixel-scroll-precision-mode t)
   (eldoc-echo-area-use-multiline-p nil)
   (major-mode-remap-alist
    '((python-mode . python-ts-mode))) ;; use tree-sitter mode for Python
@@ -131,7 +134,7 @@
 (defun my-set-theme-for-time ()
   "Switch theme based on current hour."
   (let* ((hour (string-to-number (format-time-string "%H")))
-         (theme (if (<= 8 hour 19)  'ef-bio 'ef-bio )))
+         (theme (if (<= 8 hour 19)  'ef-frost 'ef-bio )))
     (unless (custom-theme-enabled-p theme)
       (mapc #'disable-theme custom-enabled-themes)
       (load-theme theme t))))
@@ -543,7 +546,7 @@
                '("^\\*Dictionary\\*" display-buffer-in-side-window
 		 (side . right)
 		 (window-width . 70)))
-  :bind ("C-c l" .  dictionary-lookup-definition)
+  :bind ("C-c L" .  dictionary-lookup-definition)
   
   :custom
   (dictionary-server "dict.org"))
@@ -919,14 +922,14 @@
   :ensure nil
   :hook
   (;; (org-mode . my-buffer-face-mode-variable) ;; custom font
-   (org-mode . turn-on-org-cdlatex)
+   ;; (org-mode . turn-on-org-cdlatex)
    (org-mode . org-indent-mode))  ;; Make the indentation look nicer
   ;; :custom
 
   :bind
-  (( "C-c L" . org-store-link)
-   ("C-c A" . org-agenda)
-   ( "C-c C" . org-capture))
+  (( "C-c l" . org-store-link)
+   ("C-c a" . org-agenda)
+   ( "C-c c" . org-capture))
   :config
   (setq org-pretty-entities t)
   (setq org-directory "~/Library/Mobile Documents/iCloud~com~appsonthemove~beorg/Documents/org/")
@@ -1022,3 +1025,5 @@
 (setq save-interprogram-paste-before-kill t)
 (setq kill-do-not-save-duplicates t)
 (setq set-mark-command-repeat-pop t)
+
+(setq warning-minimum-level :warning)
