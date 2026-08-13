@@ -787,20 +787,15 @@
   ;;        )
   :config  
   (setq
-   gptel-model 'qwen3.6:35b-mlx
+   gptel-model 'gemma4:26b-mxfp8
    gptel-backend (gptel-make-ollama "Ollama"   ;Any name of your choosing
                    :host "localhost:11434"     ;Where it's running
                    :stream t                   ;Stream responses
                    :models '(
-                             "qwen3.6:35b-mlx"
-                             "qwen3.6:35b-a3b-mxfp8"
-                             "qwen3.6:27b-mlx"
-                             "qwen3.6:27b-mxfp8"
-                             "gemma4:26b-mxfp8"
                              "gemma4:31b-mxfp8"
-                             "gemma4:31b-mlx"
+                             "gemma4:26b-mxfp8"
                              ) ;List of models
-                   )
+                   ) 
    gptel-default-mode 'org-mode
    ;; gptel-include-reasoning nil
    ;; gptel-stream nil
@@ -808,9 +803,9 @@
   (add-hook 'gptel-post-stream-hook 'gptel-auto-scroll)
 
   (gptel-make-preset 'proofreader
-                     :description "Preset for proofreading tasks"
-                     :system "Fix spelling mistakes in the selected text"
-                     )
+    :description "Preset for proofreading tasks"
+    :system "Fix spelling mistakes in the selected text"
+    )
   )
 
 (use-package agent-shell
