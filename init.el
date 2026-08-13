@@ -808,11 +808,11 @@
     )
   )
 
-(use-package agent-shell
-  :ensure t
-  :config
-  (setopt agent-shell-goose-authentication
-          (agent-shell-make-goose-authentication :none t)))
+;; (use-package agent-shell
+;;   :ensure t
+;;   :config
+;;   (setopt agent-shell-goose-authentication
+;;           (agent-shell-make-goose-authentication :none t)))
 
 
 ;; miscellaneous
