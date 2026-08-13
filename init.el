@@ -8,7 +8,7 @@
 (defun my-full-name () "Girish Kumar")
 
 ;; Store automatic customization options elsewhere
-(setq custom-file (locate-user-emacs-file "custom.el"))
+(setopt custom-file (locate-user-emacs-file "custom.el"))
 (when (file-exists-p custom-file)
   (load custom-file))
 
@@ -19,16 +19,16 @@
 
 (use-package emacs
   :init
-  (setq inhibit-startup-screen t)
-  (setq initial-scratch-message nil)
+  (setopt inhibit-startup-screen t)
+  (setopt initial-scratch-message nil)
   (defun display-startup-echo-area-message ()
     (message ""))
   (tool-bar-mode -1)
   (scroll-bar-mode -1)
   (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
   (add-to-list 'default-frame-alist '(ns-appearance . dark))
-  (setq ns-use-proxy-icon nil)
-  ;; (setq frame-title-format nil)
+  (setopt ns-use-proxy-icon nil)
+  ;; (setoptframe-title-format nil)
   (setopt frame-resize-pixelwise t)
   (setopt window-resize-pixelwise t)
   (setopt frame-inhibit-implied-resize t)
@@ -36,22 +36,22 @@
   (recentf-mode 1)
   (setopt electric-pair-mode t)
   (show-paren-mode t)
-  (setq show-paren-style 'mixed)
+  (setopt show-paren-style 'mixed)
   (global-visual-line-mode t)
   (global-visual-wrap-prefix-mode t)
   (setopt column-number-mode t)
   (global-auto-revert-mode 1)
   (global-set-key [remap list-buffers] 'ibuffer)
-  ;; Improve scrolling behavior
-  (setq redisplay-dont-pause t
-        scroll-margin 1
-        scroll-step 1
-        scroll-conservatively 10000
-        scroll-preserve-screen-position 1)
+  ;; ;; Improve scrolling behavior
+  ;; (setq redisplay-dont-pause t
+  ;;       scroll-margin 1
+  ;;       scroll-step 1
+  ;;       scroll-conservatively 10000
+  ;;       scroll-preserve-screen-position 1)
   ;; Use spaces instead of tabs by default
   (setopt indent-tabs-mode nil)
   ;; smart tab behavior - indent or complete
-  (setq tab-always-indent 'complete)
+  (setopt tab-always-indent 'complete)
   ;; (setq-default tab-width 4)
   (set-default-coding-systems 'utf-8)
   (set-language-environment "UTF-8")
@@ -112,8 +112,8 @@
   ;; :init
   ;; (ef-themes-take-over-modus-themes-mode 1)
   ;; :config
-  ;; (setq modus-themes-mixed-fonts t)
-  ;; (setq modus-themes-italic-constructs t)
+  ;; (setopt modus-themes-mixed-fonts t)
+  ;; (setopt modus-themes-italic-constructs t)
   ;; (modus-themes-load-theme 'ef-duo-light)
   )
 
@@ -145,7 +145,7 @@
   :ensure nil
   :init
   ;; show the popup faster (the default is a full second)
-  (setq which-key-idle-delay 0.3)
+  (setopt which-key-idle-delay 0.3)
   (which-key-mode 1)
   )
 
@@ -196,9 +196,9 @@
   :ensure t
   :init
   (advice-add #'register-preview :override #'consult-register-window)
-  (setq register-preview-delay 0.5)
-  (setq xref-show-xrefs-function #'consult-xref
-        xref-show-definitions-function #'consult-xref)
+  (setopt register-preview-delay 0.5)
+  (setopt xref-show-xrefs-function #'consult-xref
+          xref-show-definitions-function #'consult-xref)
   :hook (completion-list-mode . consult-preview-at-point-mode)
   :bind
   (("C-s" . consult-line)    
@@ -216,7 +216,7 @@
          ("C-;" . embark-dwim)
          ("C-h B" . embark-bindings))
   :init
-  (setq prefix-help-command #'embark-prefix-help-command))
+  (setopt prefix-help-command #'embark-prefix-help-command))
 
 (use-package embark-consult
   :ensure t
@@ -381,7 +381,7 @@
   ;; :hook
   ;; (text-mode . flymake-mode)
   :config
-  (setq flymake-show-diagnostics-at-end-of-line 'short) ;; other option: 'short
+  (setopt flymake-show-diagnostics-at-end-of-line 'short) ;; other option: 'short
   :bind (:map flymake-mode-map
               ("M-N" . flymake-goto-next-error)
 	      ("M-P" . flymake-goto-prev-error)))
@@ -492,9 +492,9 @@
                                         (cons "$" "$"))) )
          (plain-TeX-mode .   (lambda () (set (make-local-variable 'TeX-electric-math)
                                              (cons "$" "$"))))
-         (LaTeX-mode .  (lambda () (setq fill-column 95)))
-         ;; (LaTeX-mode .  (lambda () (setq line-spacing 0.1)))
-         ;; (LaTeX-mode . (lambda () (setq olivetti-body-width 55)))
+         (LaTeX-mode .  (lambda () (setopt fill-column 95)))
+         ;; (LaTeX-mode .  (lambda () (setopt line-spacing 0.1)))
+         ;; (LaTeX-mode . (lambda () (setopt olivetti-body-width 55)))
          )
   :config
   (add-hook 'TeX-after-compilation-finished-functions
@@ -504,9 +504,9 @@
   (set-default 'preview-scale-function 0.8)
 
   ;; Match preview image size to text size
-  ;; (setq preview-scale-function
+  ;; (setopt preview-scale-function
   ;;       (lambda () (/ (face-attribute 'default :height) 120.0)))
-  ;; (setq preview-image-type 'dvipng) ;; or 'dvipng
+  ;; (setopt preview-image-type 'dvipng) ;; or 'dvipng
   ;; ;; to go back from pdf file to tex file
   ;; (with-eval-after-load 'tex
   ;;   (define-key TeX-source-correlate-map [C-down-mouse-1]
@@ -541,7 +541,7 @@
   :ensure nil
   :init
   ;; dictionary lookup in a sidebar instead of separate buffer window
-  (setq switch-to-buffer-obey-display-actions t)
+  (setopt switch-to-buffer-obey-display-actions t)
   (add-to-list 'display-buffer-alist
                '("^\\*Dictionary\\*" display-buffer-in-side-window
 		 (side . right)
@@ -581,9 +581,9 @@
   ;; (olivetti-minimum-body-width 66)
   :hook
   (olivetti-mode . (lambda ()
-                     (setq mode-line-format
-                           (if olivetti-mode nil
-                             (default-value 'mode-line-format)))
+                     (setopt mode-line-format
+                             (if olivetti-mode nil
+                               (default-value 'mode-line-format)))
 		     (force-mode-line-update))))
 
 
@@ -593,18 +593,18 @@
          ("M-`"   . popper-cycle)
          ("C-M-`" . popper-toggle-type))
   :init
-  (setq popper-reference-buffers
-        '("\\*Messages\\*"
-          "Output\\*$"
-          "\\*Async Shell Command\\*"
-          "\\*Warnings\\*"
-          "\\*Error\\*"
-	  inferior-python-mode
-          flymake-diagnostics-buffer-mode
-          help-mode
-          compilation-mode))
-  ;; (setq popper-group-function #'popper-group-by-project)
-  ;; (setq popper-group-function #'popper-group-by-directory) 
+  (setopt popper-reference-buffers
+          '("\\*Messages\\*"
+            "Output\\*$"
+            "\\*Async Shell Command\\*"
+            "\\*Warnings\\*"
+            "\\*Error\\*"
+	    inferior-python-mode
+            flymake-diagnostics-buffer-mode
+            help-mode
+            compilation-mode))
+  ;; (setopt popper-group-function #'popper-group-by-project)
+  ;; (setopt popper-group-function #'popper-group-by-directory) 
   (popper-mode 1)
   (popper-echo-mode 1))
 
@@ -667,7 +667,7 @@
 
 ;;   :config
 ;;   ;; show my timezone instead of UTC time
-;;   (setq message-citation-line-function
+;;   (setopt message-citation-line-function
 ;;         (lambda ()
 ;;           (message-insert-formatted-citation-line
 ;;            nil nil (car (current-time-zone)))))
@@ -688,7 +688,7 @@
 ;;                   :query "maildir:/gmail/Archive AND flag:unread"
 ;;                   :key ?A))
 
-;;   (setq mu4e-contexts
+;;   (setopt mu4e-contexts
 ;;         (list
 ;;          (make-mu4e-context
 ;;           :name "personal"
@@ -760,22 +760,22 @@
 ;;         (setcar old-mode-str mode-str))
 ;;       ;; Update major mode display
 ;;       (when (eq mode major-mode)
-;;         (setq mode-name mode-str)))))
+;;         (setopt mode-name mode-str)))))
 
 ;; ;; Apply cleanup after major mode changes
 ;; (add-hook 'after-change-major-mode-hook #'clean-mode-line)
 ;; ;;----------------------------------------------------------------------------
 
 ;; suppress prompt when closing running processes like python
-(setq kill-buffer-query-functions
-      (remq 'process-kill-buffer-query-function
-            kill-buffer-query-functions))
+(setopt kill-buffer-query-functions
+        (remq 'process-kill-buffer-query-function
+              kill-buffer-query-functions))
 
 ;; ;; function to change the font of buffer
 ;; (defun my-buffer-face-mode-variable ()
 ;;   "Set font to a variable width (proportional) fonts in current buffer"
 ;;   (interactive)
-;;   (setq buffer-face-mode-face '(:family "Cascadia Code" :height 160))
+;;   (setopt buffer-face-mode-face '(:family "Cascadia Code" :height 160))
 ;;   (buffer-face-mode 1))
 
 
@@ -808,16 +808,16 @@
   (add-hook 'gptel-post-stream-hook 'gptel-auto-scroll)
 
   (gptel-make-preset 'proofreader
-    :description "Preset for proofreading tasks"
-    :system "Fix spelling mistakes in the selected text"
-    )
+                     :description "Preset for proofreading tasks"
+                     :system "Fix spelling mistakes in the selected text"
+                     )
   )
 
 (use-package agent-shell
   :ensure t
   :config
-  (setq agent-shell-goose-authentication
-        (agent-shell-make-goose-authentication :none t)))
+  (setopt agent-shell-goose-authentication
+          (agent-shell-make-goose-authentication :none t)))
 
 
 ;; miscellaneous
@@ -866,58 +866,6 @@
 (global-set-key (kbd "C-c T") #'consult-theme)
 
 
-;; ;;; elfeed feeds
-
-;; ;; solution found from pragmatic emacs blog
-;; (defun elf/elfeed-load-db-and-open ()
-;;   "Wrapper to load the elfeed db from disk before opening"
-;;   (interactive)
-;;   (elfeed-db-load)
-;;   (elfeed)
-;;   (elfeed-search-update--force))
-
-;; (defun elf/elfeed-save-db-and-bury ()
-;;   "Wrapper to save the elfeed db to disk before burying buffer"
-;;   (interactive)
-;;   (elfeed-db-save)
-;;   (quit-window))
-
-;; (defun elfeed-display-buffer (buf &optional act)
-;;   (pop-to-buffer buf)
-;;   (set-window-text-height (get-buffer-window) (round (* 0.7 (frame-height)))))
-
-;; (use-package elfeed
-;;   :ensure t
-;;   :bind
-;;   (("C-c f" . elf/elfeed-load-db-and-open)
-;;    (:map elfeed-search-mode-map
-;;          ("q" . elf/elfeed-save-db-and-bury)))
-;;   :init
-;;   (setq elfeed-search-title-max-width 120) ;; adjust according to screen size
-;;   :custom
-;;   (elfeed-db-directory
-;;    (expand-file-name "~/Dropbox/Apps/Emacs/elfeed/"))
-;;   (elfeed-search-filter "@2-week-ago +unread")
-;;   (elfeed-show-entry-switch #'elfeed-display-buffer)
-;;   :hook
-;;   (elfeed-show-mode . olivetti-mode))
-
-;; (use-package elfeed-org
-;;   :ensure t
-;;   :config
-;;   (elfeed-org)
-;;   :custom
-;;   (rmh-elfeed-org-files (list "~/Dropbox/Apps/Emacs/elfeed.org")))
-
-;; (use-package elfeed-score
-;;   :ensure t
-;;   :after elfeed
-;;   :config
-;;   (setq elfeed-score-serde-score-file "~/Dropbox/Apps/Emacs/elfeed.score")
-;;   (elfeed-score-enable)
-;;   (define-key elfeed-search-mode-map "=" elfeed-score-map))
-
-
 (use-package org
   :ensure nil
   :hook
@@ -931,30 +879,30 @@
    ("C-c a" . org-agenda)
    ( "C-c c" . org-capture))
   :config
-  (setq org-pretty-entities t)
-  (setq org-directory "~/Library/Mobile Documents/iCloud~com~appsonthemove~beorg/Documents/org/")
-  (setq org-default-notes-file (expand-file-name "inbox.org" org-directory))
-  (setq org-agenda-files (file-expand-wildcards (concat org-directory "*.org")))
-  (setq org-archive-location
-        (expand-file-name "archive.org::datetree/" org-directory))
+  (setopt org-pretty-entities t)
+  (setopt org-directory "~/Library/Mobile Documents/iCloud~com~appsonthemove~beorg/Documents/org/")
+  (setopt org-default-notes-file (expand-file-name "inbox.org" org-directory))
+  (setopt org-agenda-files (file-expand-wildcards (concat org-directory "*.org")))
+  (setopt org-archive-location
+          (expand-file-name "archive.org::datetree/" org-directory))
   )
 
 
-;; (use-package denote
-;;   :ensure t
-;;   :hook (dired-mode . denote-dired-mode)
-;;   :bind
-;;   (("C-c n n" . denote)
-;;    ("C-c n o" . denote-open-or-create)
-;;    ("C-c n r" . denote-rename-file)
-;;    ("C-c n l" . denote-link)
-;;    ("C-c n b" . denote-backlinks)
-;;    ("C-c n d" . denote-dired)
-;;    ("C-c n g" . denote-grep))
+(use-package denote
+  :ensure t
+  :hook (dired-mode . denote-dired-mode)
+  :bind
+  (("C-c n n" . denote)
+   ("C-c n o" . denote-open-or-create)
+   ("C-c n r" . denote-rename-file)
+   ("C-c n l" . denote-link)
+   ("C-c n b" . denote-backlinks)
+   ("C-c n d" . denote-dired)
+   ("C-c n g" . denote-grep))
 
-;;   :custom
-;;   (denote-directory (expand-file-name "~/Dropbox/thenotes/"))
-;;   (denote-rename-buffer-mode 1))
+  :custom
+  (denote-directory (expand-file-name "~/Dropbox/thenotes/"))
+  (denote-rename-buffer-mode 1))
 
 
 ;; (use-package citar
@@ -1016,14 +964,17 @@
 
 (setq-default bidi-display-reordering 'left-to-right
               bidi-paragraph-direction 'left-to-right)
-(setq bidi-inhibit-bpa t)
+(setopt bidi-inhibit-bpa t)
 
-(setq redisplay-skip-fontification-on-input t)
-(setq read-process-output-max (* 4 1024 1024)) ; 4MB
+(setopt redisplay-skip-fontification-on-input t)
+(setopt read-process-output-max (* 4 1024 1024)) ; 4MB
 (setq-default cursor-in-non-selected-windows nil)
-(setq highlight-nonselected-windows nil)
-(setq save-interprogram-paste-before-kill t)
-(setq kill-do-not-save-duplicates t)
-(setq set-mark-command-repeat-pop t)
+(setopt highlight-nonselected-windows nil)
+(setopt save-interprogram-paste-before-kill t)
+(setopt kill-do-not-save-duplicates t)
+(setopt set-mark-command-repeat-pop t)
 
-(setq warning-minimum-level :warning)
+(setopt warning-minimum-level :error)
+
+
+
