@@ -182,11 +182,6 @@
   :init
   (marginalia-mode))
 
-;; (use-package beacon
-;;   :ensure t
-;;   :init (beacon-mode 1)
-;;   :custom
-;;   (beacon-blink-when-window-scrolls nil))
 
 (use-package pulsar
   :ensure t
@@ -200,9 +195,6 @@
   :config
   (setq pulsar-delay 0.055)
   (setq pulsar-iterations 5)
-  ;; (setq pulsar-face 'pulsar-green)
-  ;; (setq pulsar-region-face 'pulsar-yellow)
-  ;; (setq pulsar-highlight-face 'pulsar-magenta)
   )
 
 (use-package avy
