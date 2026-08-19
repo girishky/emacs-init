@@ -484,7 +484,7 @@
                                         (cons "$" "$"))) )
          (plain-TeX-mode .   (lambda () (set (make-local-variable 'TeX-electric-math)
                                              (cons "$" "$"))))
-         (LaTeX-mode .  (lambda () (setopt fill-column 95)))
+         (LaTeX-mode .  (lambda () (setq-local fill-column 95)))
          ;; (LaTeX-mode .  (lambda () (setopt line-spacing 0.1)))
          ;; (LaTeX-mode . (lambda () (setopt olivetti-body-width 55)))
          )
