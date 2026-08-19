@@ -439,24 +439,24 @@
   :config
   (pdf-tools-install)
 
-  ;; Workaround for macOS fullscreen Space jump:
-  ;; let SyncTeX go to the right page, then stop before later post-sync actions.
-  (with-eval-after-load 'pdf-sync
-    (defun my-pdf-sync-forward-search-no-post-jump (orig-fun &rest args)
-      "Run `pdf-sync-forward-search`, but stop after `pdf-view-goto-page`."
-      (let ((stop-after-goto
-             (lambda (&rest _)
-               (throw 'my-pdf-sync-stop-after-goto-page t))))
-        (catch 'my-pdf-sync-stop-after-goto-page
-          (unwind-protect
-              (progn
-                (advice-add 'pdf-view-goto-page :after stop-after-goto)
-                (apply orig-fun args))
-            (advice-remove 'pdf-view-goto-page stop-after-goto))))))
+  ;; ;; Workaround for macOS fullscreen Space jump:
+  ;; ;; let SyncTeX go to the right page, then stop before later post-sync actions.
+  ;; (with-eval-after-load 'pdf-sync
+  ;;   (defun my-pdf-sync-forward-search-no-post-jump (orig-fun &rest args)
+  ;;     "Run `pdf-sync-forward-search`, but stop after `pdf-view-goto-page`."
+  ;;     (let ((stop-after-goto
+  ;;            (lambda (&rest _)
+  ;;              (throw 'my-pdf-sync-stop-after-goto-page t))))
+  ;;       (catch 'my-pdf-sync-stop-after-goto-page
+  ;;         (unwind-protect
+  ;;             (progn
+  ;;               (advice-add 'pdf-view-goto-page :after stop-after-goto)
+  ;;               (apply orig-fun args))
+  ;;           (advice-remove 'pdf-view-goto-page stop-after-goto))))))
 
-  (advice-add 'pdf-sync-forward-search
-              :around
-              #'my-pdf-sync-forward-search-no-post-jump)
+  ;; (advice-add 'pdf-sync-forward-search
+  ;;             :around
+  ;;             #'my-pdf-sync-forward-search-no-post-jump)
   :hook ((pdf-view-mode .
                         (lambda () (setq-local ring-bell-function #'ignore)))
          (pdf-view-mode .
