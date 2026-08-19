@@ -417,21 +417,6 @@
 
 
 
-;; :config
-;; ;; Do not spell-check ordinary comments in programming modes.
-;; (setf (alist-get 'prog-mode jinx-exclude-faces)
-;;       '(font-lock-comment-face))
-
-;; ;; Add these faces to Jinx's existing TeX exclusions.
-;; (setf (alist-get 'tex-mode jinx-exclude-faces)
-;;       (append '(font-latex-warning-face
-;;                 tex-font-script-face
-;;                 font-lock-comment-face
-;;                 ;; Citation keys and reference labels in commands such as
-;;                 ;; \cite{}, \ref{}, and \eqref{}.
-;;                 font-lock-constant-face)
-;;               (alist-get 'tex-mode jinx-exclude-faces))))
-
 
 ;; ;; proselint
 ;; (use-package flymake-proselint
