@@ -56,10 +56,13 @@
   (set-default-coding-systems 'utf-8)
   (set-language-environment "UTF-8")
   (setopt font-use-system-font t)
-  (set-frame-font "Cascadia Mono-14" nil t)
+  ;; (set-frame-font "Cascadia Mono-14" nil t)
+  (setopt default-frame-alist '((font . "Cascadia Mono-14")))
   (setopt delete-selection-mode t) ;; enable delete-selection-mode
   (winner-mode 1)
-  (tooltip-mode -1)  ;;tooltip in echo area
+  
+  (setopt use-system-tooltips t)
+  (setopt tooltip-mode -1)  ;;tooltip in echo area
   ;; file sizes in human-readable format
   (setq-default dired-listing-switches "-alh")
   (setopt mode-line-compact 'long)
