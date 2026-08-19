@@ -1,9 +1,11 @@
+;;; -*- lexical-binding: t; -*-
+
 ;;
 ;;Few things to install. Many of them are installed via homebrew
 ;; - pyright (for eglot to configure as python lsp)
 ;; - ruff (python code formatter for apheleia package)
-;; - aspell (for spell-checking)
-;; - mu, isync (for mu4e email)
+;; - aspell, enchant (for spell-checking using jinx; for flyspell only aspell is enough)
+;; - notmuch, isync (for notmuch email) if using mu4e, then install mu
 
 (defun my-full-name () "Girish Kumar")
 
@@ -42,12 +44,6 @@
   (setopt column-number-mode t)
   (global-auto-revert-mode 1)
   (global-set-key [remap list-buffers] 'ibuffer)
-  ;; ;; Improve scrolling behavior
-  ;; (setq redisplay-dont-pause t
-  ;;       scroll-margin 1
-  ;;       scroll-step 1
-  ;;       scroll-conservatively 10000
-  ;;       scroll-preserve-screen-position 1)
   ;; Use spaces instead of tabs by default
   (setopt indent-tabs-mode nil)
   ;; smart tab behavior - indent or complete
@@ -62,7 +58,7 @@
   (winner-mode 1)
   
   (setopt use-system-tooltips t)
-  (setopt tooltip-mode -1)  ;;tooltip in echo area
+  ;; (setopt tooltip-mode -1)  ;;tooltip in echo area
   ;; file sizes in human-readable format
   (setq-default dired-listing-switches "-alh")
   (setopt mode-line-compact 'long)
@@ -73,6 +69,10 @@
   ;; Show the current directory when prompting for a shell command
   (setopt shell-command-prompt-show-cwd t)
   (setopt compilation-scroll-output 'first-error)
+
+  (setopt gc-cons-threshold 50000000) ;; reduce the frequency of garbage collection
+
+  ;; (setopt initial-major-mode 'org-mode) ; start the scratch buffer in Org mode.
   
 
   :config
@@ -775,13 +775,16 @@
   ;;        )
   :config  
   (setq
-   gptel-model 'gemma4:26b-mxfp8
+   gptel-model 'qwen3.8:27b-mlx
    gptel-backend (gptel-make-ollama "Ollama"   ;Any name of your choosing
                    :host "localhost:11434"     ;Where it's running
                    :stream t                   ;Stream responses
                    :models '(
                              "gemma4:31b-mxfp8"
                              "gemma4:26b-mxfp8"
+                             "qwen3.8:27b-mxfp8"
+                             "qwen3.8:27b-mlx"
+                             "qwen3.6:35b-a3b-mxfp8"
                              ) ;List of models
                    ) 
    gptel-default-mode 'org-mode
@@ -950,7 +953,7 @@
 (setopt bidi-inhibit-bpa t)
 
 (setopt redisplay-skip-fontification-on-input t)
-(setopt read-process-output-max (* 4 1024 1024)) ; 4MB
+(setopt read-process-output-max (* 1 1024 1024)) ; 1MB
 (setq-default cursor-in-non-selected-windows nil)
 (setopt highlight-nonselected-windows nil)
 (setopt save-interprogram-paste-before-kill t)
