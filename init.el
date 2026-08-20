@@ -82,11 +82,6 @@
   (setopt create-lockfiles nil) ; I don't have a situation where multiple emacses want to edit the same file.
 
   ;; (setopt initial-major-mode 'org-mode) ; start the scratch buffer in Org mode.
-  
-  
-
-  ;; :config
-  ;; (add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-ts-mode))
 
   :custom
   (use-short-answers t)
