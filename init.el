@@ -83,9 +83,10 @@
 
   ;; (setopt initial-major-mode 'org-mode) ; start the scratch buffer in Org mode.
   
+  
 
-  :config
-  (add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-ts-mode))
+  ;; :config
+  ;; (add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-ts-mode))
 
   :custom
   (use-short-answers t)
@@ -97,8 +98,14 @@
   (shr-use-fonts nil "disable variable fonts")
   (pixel-scroll-precision-mode t)
   (eldoc-echo-area-use-multiline-p nil)
-  (major-mode-remap-alist
-   '((python-mode . python-ts-mode))) ;; use tree-sitter mode for Python
+  ;;;; see post https://rahuljuliato.com/posts/emacs-31-around-the-corner for some Emacs 31 configuration below
+  (treesit-auto-install-grammar 'ask)
+  (treesit-enabled-modes t)
+  (delete-pair-push-mark t)
+  (ibuffer-human-readable-size t)
+  (kill-region-dwim 'emacs-word)
+  (view-lossage-auto-refresh t)
+  (display-fill-column-indicator-warning t)
 
   :hook
   ((prog-mode  . display-line-numbers-mode)
@@ -1001,9 +1008,10 @@
 ;;   :ensure t
 ;;   :bind-keymap ("M-'" . surround-keymap))
 
-(use-package markdown-mode
-  :ensure t
-  :mode ("\\.md\\'" . markdown-mode))
+
+(use-package markdown-ts-mode
+  :ensure nil
+  :mode ("\\.md\\'" . markdown-ts-mode))
 
 
 ;;;; trying some new setting from Emacs-Redux blog
