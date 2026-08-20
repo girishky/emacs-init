@@ -29,8 +29,10 @@
   (scroll-bar-mode -1)
   (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
   (add-to-list 'default-frame-alist '(ns-appearance . dark))
+  ;; (add-to-list 'frameset-filter-alist '(ns-transparent-titlebar . :never))
+  ;; (add-to-list 'frameset-filter-alist '(ns-appearance . :never))
   (setopt ns-use-proxy-icon nil)
-  ;; (setoptframe-title-format nil)
+  ;; (setopt frame-title-format nil)
   (setopt frame-resize-pixelwise t)
   (setopt window-resize-pixelwise t)
   (setopt frame-inhibit-implied-resize t)
@@ -75,6 +77,9 @@
   (setopt compilation-scroll-output 'first-error)
 
   (setopt gc-cons-threshold 50000000) ;; reduce the frequency of garbage collection
+  (setopt make-backup-files nil) ; I either have files version controlled or I will manually create backup.
+  (setopt auto-save-default nil) ; I save so often myself that I don't have a need for this.
+  (setopt create-lockfiles nil) ; I don't have a situation where multiple emacses want to edit the same file.
 
   ;; (setopt initial-major-mode 'org-mode) ; start the scratch buffer in Org mode.
   
@@ -137,16 +142,25 @@
   ;; (load-theme 'tokyo-night t)
   ) ;; night, storm, moon, day
 
-;;;; auto-switching themes
-(defun my-set-theme-for-time ()
-  "Switch theme based on current hour."
-  (let* ((hour (string-to-number (format-time-string "%H")))
-         (theme (if (<= 8 hour 19)  'ef-frost 'ef-bio )))
-    (unless (custom-theme-enabled-p theme)
-      (mapc #'disable-theme custom-enabled-themes)
-      (load-theme theme t))))
+;; ;;;; auto-switching themes
+;; (defun my-set-theme-for-time ()
+;;   "Switch theme based on current hour."
+;;   (let* ((hour (string-to-number (format-time-string "%H")))
+;;          (theme (if (<= 8 hour 19)  'ef-frost 'ef-bio )))
+;;     (unless (custom-theme-enabled-p theme)
+;;       (mapc #'disable-theme custom-enabled-themes)
+;;       (load-theme theme t))))
 
-(run-at-time 0 3600 #'my-set-theme-for-time)
+;; (run-at-time 0 3600 #'my-set-theme-for-time)
+
+(defun my/apply-theme (appearance)
+  "Load theme, taking current system APPEARANCE into consideration."
+  (mapc #'disable-theme custom-enabled-themes)
+  (pcase appearance
+    ('light (load-theme 'tango t))
+    ('dark (load-theme 'ef-bio t))))
+
+(add-hook 'ns-system-appearance-change-functions #'my/apply-theme)
 
 (use-package which-key
   :ensure nil
@@ -885,6 +899,56 @@
   :custom
   (denote-directory (expand-file-name "~/Dropbox/thenotes/"))
   (denote-rename-buffer-mode 1))
+
+(use-package denote-sequence
+  :ensure t
+  :after denote
+  :bind
+  ( :map global-map
+    ;; Here we make "C-c n s" a prefix for all "[n]otes with [s]equence".
+    ;; This is just for demonstration purposes: use the key bindings
+    ;; that work for you.  Also check the commands:
+    ;;
+    ;; - `denote-sequence-new-parent'
+    ;; - `denote-sequence-new-sibling'
+    ;; - `denote-sequence-new-child'
+    ;; - `denote-sequence-new-child-of-current'
+    ;; - `denote-sequence-new-sibling-of-current'
+    ("C-c n s s" . denote-sequence)
+    ("C-c n s f" . denote-sequence-find)
+    ("C-c n s l" . denote-sequence-link)
+    ("C-c n s d" . denote-sequence-dired)
+    ("C-c n s r" . denote-sequence-reparent)
+    ("C-c n s c" . denote-sequence-convert))
+  :custom
+  ;; The default sequence scheme is `numeric'.
+  (denote-sequence-scheme 'alphanumeric))
+
+
+(use-package denote-journal
+  :ensure t
+  :after denote
+  ;; ;; Bind those to some key for your convenience.
+  ;; :commands ( denote-journal-new-entry
+  ;;             denote-journal-new-or-existing-entry
+  ;;             denote-journal-link-or-create-entry )
+  ;; :hook (calendar-mode . denote-journal-calendar-mode)
+  :bind
+  ( :map global-map
+    ("C-c n j n" . denote-journal-new-entry)
+    ("C-c n j o" . denote-journal-new-or-existing-entry)
+    ("C-c n j l" . denote-journal-link-or-create-entry))
+  :custom
+  ;; ;; Use the "journal" subdirectory of the `denote-directory'.  Set this
+  ;; ;; to nil to use the `denote-directory' instead.
+  ;; (denote-journal-directory
+  ;;  "~/Library/Mobile Documents/com~apple~CloudDocs/a-journal")
+  (denote-journal-directory (expand-file-name "~/Library/Mobile Documents/com~apple~CloudDocs/a-journal"))
+  ;; Default keyword for new journal entries. It can also be a list of
+  ;; strings.
+  (denote-journal-keyword "journal")
+  ;; Read the doc string of `denote-journal-title-format'.
+  (denote-journal-title-format 'day-date-month-year))
 
 
 ;; (use-package citar
