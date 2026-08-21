@@ -48,8 +48,6 @@
   (global-set-key [remap list-buffers] 'ibuffer)
   ;; Use spaces instead of tabs by default
   (setopt indent-tabs-mode nil)
-  ;; smart tab behavior - indent or complete
-  (setopt tab-always-indent 'complete)
   ;; (setq-default tab-width 4)
   (set-default-coding-systems 'utf-8)
   (set-language-environment "UTF-8")
@@ -93,6 +91,33 @@
   (shr-use-fonts nil "disable variable fonts")
   (pixel-scroll-precision-mode t)
   (eldoc-echo-area-use-multiline-p nil)
+  ;; Enable context menu. `vertico-multiform-mode' adds a menu in the minibuffer
+  ;; to switch display modes.
+  (context-menu-mode t)
+  ;; Support opening new minibuffers from inside existing minibuffers.
+  (enable-recursive-minibuffers t)
+  ;; Hide commands in M-x which do not work in the current mode.  Vertico
+  ;; commands are hidden in normal buffers. This setting is useful beyond
+  ;; Vertico.
+  (read-extended-command-predicate #'command-completion-default-include-p)
+  ;; Do not allow the cursor in the minibuffer prompt
+  (minibuffer-prompt-properties
+   '(read-only t cursor-intangible t face minibuffer-prompt))
+  (read-file-name-completion-ignore-case t)
+  (read-buffer-completion-ignore-case t)
+  (completion-ignore-case t)
+  ;; Enable indentation+completion using the TAB key.
+  ;; `completion-at-point' is often bound to M-TAB.
+  (tab-always-indent 'complete)
+  ;; TAB cycle if there are only few candidates
+  (completion-cycle-threshold 3)
+  ;; ;; Emacs 30 and newer: Disable Ispell completion function.
+  ;; ;; Try `cape-dict' as an alternative.
+  ;; (text-mode-ispell-word-completion 'cape-dict)
+  ;; Hide commands in M-x which do not apply to the current mode.  Corfu
+  ;; commands are hidden, since they are not used via M-x. This setting is
+  ;; useful beyond Corfu.
+  (read-extended-command-predicate #'command-completion-default-include-p)
   ;;;; see post https://rahuljuliato.com/posts/emacs-31-around-the-corner for some Emacs 31 configuration below
   (treesit-auto-install-grammar 'ask)
   (treesit-enabled-modes t)
@@ -144,23 +169,12 @@
   ;; (load-theme 'tokyo-night t)
   ) ;; night, storm, moon, day
 
-;; ;;;; auto-switching themes
-;; (defun my-set-theme-for-time ()
-;;   "Switch theme based on current hour."
-;;   (let* ((hour (string-to-number (format-time-string "%H")))
-;;          (theme (if (<= 8 hour 19)  'ef-frost 'ef-bio )))
-;;     (unless (custom-theme-enabled-p theme)
-;;       (mapc #'disable-theme custom-enabled-themes)
-;;       (load-theme theme t))))
-
-;; (run-at-time 0 3600 #'my-set-theme-for-time)
-
 (defun my/apply-theme (appearance)
   "Load theme, taking current system APPEARANCE into consideration."
   (mapc #'disable-theme custom-enabled-themes)
   (pcase appearance
-    ('light (load-theme 'tango t))
-    ('dark (load-theme 'ef-bio t))))
+    ('light (load-theme 'tokyo-night-day t))
+    ('dark (load-theme 'tokyo-night t))))
 
 (add-hook 'ns-system-appearance-change-functions #'my/apply-theme)
 
@@ -179,19 +193,26 @@
   :custom
   (vertico-count 10)   
   (vertico-resize t)   
-  (vertico-cycle t)    
-  :bind
-  (:map vertico-map
-        ("RET" . vertico-directory-enter)
-        ("DEL" . vertico-directory-delete-word)
-        ("M-d" . vertico-directory-delete-char)))
+  (vertico-cycle t))
+
+(use-package vertico-directory
+  :after vertico
+  :ensure nil
+  ;; More convenient directory navigation commands
+  :bind (:map vertico-map
+              ("RET" . vertico-directory-enter)
+              ("DEL" . vertico-directory-delete-char)
+              ("M-DEL" . vertico-directory-delete-word)))
 
 (use-package orderless
   :ensure t
   :custom
-  (completion-styles '(orderless basic substring initials flex))
+  (completion-styles '(orderless basic))
   (completion-category-defaults nil)
-  (completion-category-overrides '((file (styles partial-completion)))))
+  (completion-category-overrides '((file (styles partial-completion))))
+  (completion-pcm-leading-wildcard t)) ;; Emacs 31: partial-completion behaves like substring
+
+
 
 (use-package marginalia
   :ensure t
@@ -254,24 +275,40 @@
   :ensure t
   :hook (embark-collect-mode . consult-preview-at-point-mode))
 
+
 (use-package corfu
   :ensure t
   :init
   (global-corfu-mode)
-  (corfu-popupinfo-mode 1)
-  (corfu-history-mode 1)
+  (corfu-popupinfo-mode)
+  (corfu-history-mode)
   :custom
   (corfu-auto t)
   (corfu-auto-delay 0.2)
-  (corfu-cycle t )
-  ;; (corfu-echo-documentation nil)
+  (corfu-cycle t)
+  (corfu-auto-trigger ".") ;; Custom trigger characters
+  (corfu-quit-no-match 'separator)
   )
+
+(use-package dabbrev
+  ;; ;; Swap M-/ and C-M-/
+  ;; :bind (("M-/" . dabbrev-completion)
+  ;;        ("C-M-/" . dabbrev-expand))
+  :config
+  (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
+  (add-to-list 'dabbrev-ignored-buffer-modes 'authinfo-mode)
+  (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
+  (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)
+  (add-to-list 'dabbrev-ignored-buffer-modes 'tags-table-mode))
 
 (use-package cape
   :ensure t
   :init
   (add-hook 'completion-at-point-functions #'cape-dabbrev)
-  (add-hook 'completion-at-point-functions #'cape-file))
+  (add-hook 'completion-at-point-functions #'cape-file)
+  (add-hook 'completion-at-point-functions #'cape-elisp-block)
+  (add-hook 'completion-at-point-functions #'cape-history)
+  )
 
 ;; (use-package completion-preview
 ;;   :ensure nil ; built-in
