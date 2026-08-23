@@ -6,3 +6,5 @@
                               (menu-bar-lines . 0)
                               (tool-bar-lines . 0)
                               ))
+
+(setopt warning-minimum-level :error)

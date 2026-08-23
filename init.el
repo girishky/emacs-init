@@ -827,10 +827,6 @@
         :rev :newest)
   :config (gptel-agent-update))         ;Read files from agents directories
 
-(use-package gptel-annotate
-  :vc (:url "https://github.com/karthink/gptel-annotate"
-            :rev :newest)
-  :after gptel)
 
 ;; (use-package agent-shell
 ;;   :ensure t
