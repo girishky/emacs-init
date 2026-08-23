@@ -23,8 +23,6 @@
   :init
   (setopt inhibit-startup-screen t)
   (setopt initial-scratch-message nil)
-  (defun display-startup-echo-area-message ()
-    (message ""))
   (tool-bar-mode -1)
   (scroll-bar-mode -1)
   (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
@@ -81,6 +79,19 @@
 
   ;; (setopt initial-major-mode 'org-mode) ; start the scratch buffer in Org mode.
 
+  ;;;;from Emacs-Redux blog
+  (setq-default bidi-display-reordering 'left-to-right
+                bidi-paragraph-direction 'left-to-right)
+  (setopt bidi-inhibit-bpa t)
+  (setopt redisplay-skip-fontification-on-input t)
+  (setopt read-process-output-max (* 1 1024 1024)) ; 1MB
+  (setq-default cursor-in-non-selected-windows nil)
+  (setopt highlight-nonselected-windows nil)
+  (setopt save-interprogram-paste-before-kill t)
+  (setopt kill-do-not-save-duplicates t)
+  (setopt set-mark-command-repeat-pop t)
+  
+
   :custom
   (use-short-answers t)
   (delete-by-moving-to-trash t)
@@ -96,10 +107,6 @@
   (context-menu-mode t)
   ;; Support opening new minibuffers from inside existing minibuffers.
   (enable-recursive-minibuffers t)
-  ;; Hide commands in M-x which do not work in the current mode.  Vertico
-  ;; commands are hidden in normal buffers. This setting is useful beyond
-  ;; Vertico.
-  (read-extended-command-predicate #'command-completion-default-include-p)
   ;; Do not allow the cursor in the minibuffer prompt
   (minibuffer-prompt-properties
    '(read-only t cursor-intangible t face minibuffer-prompt))
@@ -139,20 +146,13 @@
 
 
 
-;; (use-package doom-themes
-;;   :ensure t
-;;   :init
-;;   (load-theme 'doom-tokyo-night t)
-;;   )
-
-
 (use-package ef-themes
   :ensure t
-  ;; :init
-  ;; (ef-themes-take-over-modus-themes-mode 1)
-  ;; :config
-  ;; (setopt modus-themes-mixed-fonts t)
-  ;; (setopt modus-themes-italic-constructs t)
+  :init
+  (ef-themes-take-over-modus-themes-mode 1)
+  :config
+  (setopt modus-themes-mixed-fonts t)
+  (setopt modus-themes-italic-constructs t)
   ;; (modus-themes-load-theme 'ef-duo-light)
   )
 
@@ -310,15 +310,6 @@
   (add-hook 'completion-at-point-functions #'cape-history)
   )
 
-;; (use-package completion-preview
-;;   :ensure nil ; built-in
-;;   :config
-;;   ;; cycle through the other candidates with M-n/M-p (those two
-;;   ;; commands have no default bindings)
-;;   (define-key completion-preview-active-mode-map (kbd "M-n") #'completion-preview-next-candidate)
-;;   (define-key completion-preview-active-mode-map (kbd "M-p") #'completion-preview-prev-candidate)
-;;   (global-completion-preview-mode +1))
-
 
 (use-package prescient
   :ensure t
@@ -357,9 +348,6 @@
          ("C-c C->"       . mc/mark-more-like-this-extended)
          ))
 
-;; (use-package expand-region
-;;   :ensure t
-;;   :bind ("C-=" . er/expand-region))
 
 (use-package expreg
   :ensure t
@@ -376,7 +364,7 @@
   :bind
   (("C-c g" . magit-file-dispatch))
   :custom
-  ;; (magit-git-executable "/opt/homebrew/bin/git")
+  (magit-git-executable "/opt/homebrew/bin/git")
   (magit-diff-refine-hunk 'all)
   (magit-repository-directories
    '(("~/Projects/" . 1)
@@ -437,6 +425,11 @@
 	      ("C-c l e" . flymake-show-buffer-diagnostics)))
 
 
+(use-package markdown-ts-mode
+  :ensure nil
+  :mode ("\\.md\\'" . markdown-ts-mode))
+
+
 (use-package apheleia
   :ensure t
   :hook prog-mode
@@ -481,16 +474,6 @@
                   font-lock-constant-face))
     (cl-pushnew face (alist-get 'tex-mode jinx-exclude-faces))))
 
-
-
-
-;; ;; proselint
-;; (use-package flymake-proselint
-;;   :ensure t
-;;   :hook
-;;   (text-mode . (lambda ()
-;;                  (flymake-mode)
-;;                  (flymake-proselint-setup))))
 
 
 (use-package pdf-tools
@@ -594,21 +577,6 @@
   ("M--" . powerthesaurus-lookup-word-dwim))
 
 
-;; (defun my-nov-font-setup ()
-;;   (face-remap-add-relative 'variable-pitch :family "DejaVu Sans" :height 140))
-
-;; (use-package nov
-;;   :ensure t
-;;   :mode ("\\.epub\\'" . nov-mode)
-;;   :custom
-;;   (nov-text-width 70
-;;                   )
-;;   ;; (nov-variable-pitch nil) ;; use default emacs font
-;;   :hook
-;;   ((nov-mode . turn-on-visual-line-mode)
-;;    (nov-mode . my-nov-font-setup)))
-
-
 (use-package olivetti
   :ensure t
   :bind ("C-s-S-f" . olivetti-mode)
@@ -621,7 +589,8 @@
                      (setopt mode-line-format
                              (if olivetti-mode nil
                                (default-value 'mode-line-format)))
-		     (force-mode-line-update))))
+		     ;; (force-mode-line-update)
+                     )))
 
 
 (use-package popper
@@ -823,7 +792,7 @@
   ;;        ("S-<return>" . gptel-send)
   ;;        )
   :config  
-  (setq
+  (setopt
    gptel-model 'qwen3.8:27b-mlx
    gptel-backend (gptel-make-ollama "Ollama"   ;Any name of your choosing
                    :host "localhost:11434"     ;Where it's running
@@ -847,6 +816,21 @@
     :system "Fix spelling mistakes in the selected text"
     )
   )
+
+;; (use-package gptel-agent
+;;   :ensure t
+;;   :after gptel
+;;   :config (gptel-agent-update))         ;Read files from agents directories
+
+(use-package gptel-agent
+  :vc ( :url "https://github.com/karthink/gptel-agent"
+        :rev :newest)
+  :config (gptel-agent-update))         ;Read files from agents directories
+
+(use-package gptel-annotate
+  :vc (:url "https://github.com/karthink/gptel-annotate"
+            :rev :newest)
+  :after gptel)
 
 ;; (use-package agent-shell
 ;;   :ensure t
@@ -1041,155 +1025,139 @@
 ;;   :bind-keymap ("M-'" . surround-keymap))
 
 
-(use-package markdown-ts-mode
-  :ensure nil
-  :mode ("\\.md\\'" . markdown-ts-mode))
-
-
-;;;; trying some new setting from Emacs-Redux blog
-
-(setq-default bidi-display-reordering 'left-to-right
-              bidi-paragraph-direction 'left-to-right)
-(setopt bidi-inhibit-bpa t)
-
-(setopt redisplay-skip-fontification-on-input t)
-(setopt read-process-output-max (* 1 1024 1024)) ; 1MB
-(setq-default cursor-in-non-selected-windows nil)
-(setopt highlight-nonselected-windows nil)
-(setopt save-interprogram-paste-before-kill t)
-(setopt kill-do-not-save-duplicates t)
-(setopt set-mark-command-repeat-pop t)
-
-(setopt warning-minimum-level :error)
 
 
 
 
-;; -------------------------------------------------------------------
-;; Asynchronous mail polling
-;; -------------------------------------------------------------------
-
-(defun my/notmuch-refresh-buffers ()
-  "Refresh all open Notmuch buffers."
-  (dolist (buffer (buffer-list))
-    (with-current-buffer buffer
-      (when (derived-mode-p
-             'notmuch-hello-mode
-             'notmuch-search-mode
-             'notmuch-show-mode
-             'notmuch-tree-mode)
-        (ignore-errors
-          (notmuch-refresh-this-buffer))))))
 
 
-(defun my/notmuch-poll-async ()
-  "Run `notmuch new' asynchronously.
-
-The Notmuch pre-new hook is expected to run mbsync.
-Refresh open Notmuch buffers when synchronization finishes."
-  (interactive)
-
-  ;; Avoid launching multiple simultaneous mail syncs.
-  (if (get-process "notmuch-new")
-
-      (message "Mail sync already in progress.")
-
-    (message "Syncing mail...")
-
-    (notmuch-start-notmuch
-     "notmuch-new"
-     nil
-
-     (lambda (process _event)
-       (when (memq (process-status process) '(exit signal))
-
-         (if (zerop (process-exit-status process))
-
-             (progn
-               (my/notmuch-refresh-buffers)
-               (message "Mail sync complete."))
-
-           (message
-            "Mail sync failed; see buffer *notmuch-new*."))))
-
-     "new")))
-
-(use-package notmuch
-  :ensure nil
-  :load-path "/opt/homebrew/opt/notmuch/share/emacs/site-lisp/notmuch"
-  :commands (notmuch notmuch-hello notmuch-search)
-  :bind
-  (("C-c m" . notmuch))
-  
-  :custom
-  (notmuch-command "/opt/homebrew/bin/notmuch")
-  (notmuch-search-oldest-first nil)
-  ;; Cleaner hello screen.
-  (notmuch-show-logo nil)
-  ;; Opening a message marks it read.
-  (notmuch-show-mark-read-tags '("-unread"))
-  ;; Archive = remove inbox tag.
-  (notmuch-archive-tags '("-inbox"))
-  ;; Do not create another Sent copy locally.
-  ;; Gmail SMTP will keep one for us.
-  (notmuch-fcc-dirs nil)
-
-  ;; Prefer text/plain, then rendered HTML.
-  (notmuch-multipart/alternative-discouraged
-   '("text/plain" "text/html"))
 
 
-  ;; ;; dashboard
-  ;; (notmuch-saved-searches
-  ;;  '((:name "inbox"
-  ;;           :query "tag:inbox"
-  ;;           :key "i")
-  ;;    (:name "unread"
-  ;;           :query "tag:inbox and tag:unread"
-  ;;           :key "u")
-  ;;    (:name "today"
-  ;;           :query "date:today"
-  ;;           :key "t")
-  ;;    (:name "week"
-  ;;           :query "date:1week.."
-  ;;           :key "w")
-  ;;    (:name "attachments"
-  ;;           :query "attachment:*"
-  ;;           :key "a")
-  ;;    ))
-  :config
-  ;; Use Notmuch as Emacs' mail user agent.
-  (setopt mail-user-agent 'notmuch-user-agent)
-  ;; Kill composition buffer after successful sending.
-  (setopt message-kill-buffer-on-exit t)
-  ;; Make G perform asynchronous synchronization.
-  (define-key notmuch-hello-mode-map
-              (kbd "G") #'my/notmuch-poll-async)
+;; ;; -------------------------------------------------------------------
+;; ;; Asynchronous mail polling
+;; ;; -------------------------------------------------------------------
 
-  (define-key notmuch-search-mode-map
-              (kbd "G") #'my/notmuch-poll-async)
+;; (defun my/notmuch-refresh-buffers ()
+;;   "Refresh all open Notmuch buffers."
+;;   (dolist (buffer (buffer-list))
+;;     (with-current-buffer buffer
+;;       (when (derived-mode-p
+;;              'notmuch-hello-mode
+;;              'notmuch-search-mode
+;;              'notmuch-show-mode
+;;              'notmuch-tree-mode)
+;;         (ignore-errors
+;;           (notmuch-refresh-this-buffer))))))
 
-  (define-key notmuch-show-mode-map
-              (kbd "G") #'my/notmuch-poll-async)
 
-  (when (boundp 'notmuch-tree-mode-map)
-    (define-key notmuch-tree-mode-map
-                (kbd "G") #'my/notmuch-poll-async))
-  )
+;; (defun my/notmuch-poll-async ()
+;;   "Run `notmuch new' asynchronously.
 
-(use-package smtpmail
-  :ensure nil
-  :custom
-  (smtpmail-smtp-server "smtp.gmail.com")
-  (smtpmail-smtp-service 587)
-  (smtpmail-stream-type 'starttls)
-  (message-send-mail-function #'smtpmail-send-it)
-  (send-mail-function #'smtpmail-send-it)
-  )
+;; The Notmuch pre-new hook is expected to run mbsync.
+;; Refresh open Notmuch buffers when synchronization finishes."
+;;   (interactive)
 
-(use-package auth-source
-  :ensure nil
-  :config
-  (add-to-list 'auth-sources 'macos-keychain-internet)
-  (add-to-list 'auth-sources 'macos-keychain-generic))
+;;   ;; Avoid launching multiple simultaneous mail syncs.
+;;   (if (get-process "notmuch-new")
+
+;;       (message "Mail sync already in progress.")
+
+;;     (message "Syncing mail...")
+
+;;     (notmuch-start-notmuch
+;;      "notmuch-new"
+;;      nil
+
+;;      (lambda (process _event)
+;;        (when (memq (process-status process) '(exit signal))
+
+;;          (if (zerop (process-exit-status process))
+
+;;              (progn
+;;                (my/notmuch-refresh-buffers)
+;;                (message "Mail sync complete."))
+
+;;            (message
+;;             "Mail sync failed; see buffer *notmuch-new*."))))
+
+;;      "new")))
+
+;; (use-package notmuch
+;;   :ensure nil
+;;   :load-path "/opt/homebrew/opt/notmuch/share/emacs/site-lisp/notmuch"
+;;   :commands (notmuch notmuch-hello notmuch-search)
+;;   :bind
+;;   (("C-c m" . notmuch))
+
+;;   :custom
+;;   (notmuch-command "/opt/homebrew/bin/notmuch")
+;;   (notmuch-search-oldest-first nil)
+;;   ;; Cleaner hello screen.
+;;   (notmuch-show-logo nil)
+;;   ;; Opening a message marks it read.
+;;   (notmuch-show-mark-read-tags '("-unread"))
+;;   ;; Archive = remove inbox tag.
+;;   (notmuch-archive-tags '("-inbox"))
+;;   ;; Do not create another Sent copy locally.
+;;   ;; Gmail SMTP will keep one for us.
+;;   (notmuch-fcc-dirs nil)
+
+;;   ;; Prefer text/plain, then rendered HTML.
+;;   (notmuch-multipart/alternative-discouraged
+;;    '("text/plain" "text/html"))
+
+
+;;   ;; ;; dashboard
+;;   ;; (notmuch-saved-searches
+;;   ;;  '((:name "inbox"
+;;   ;;           :query "tag:inbox"
+;;   ;;           :key "i")
+;;   ;;    (:name "unread"
+;;   ;;           :query "tag:inbox and tag:unread"
+;;   ;;           :key "u")
+;;   ;;    (:name "today"
+;;   ;;           :query "date:today"
+;;   ;;           :key "t")
+;;   ;;    (:name "week"
+;;   ;;           :query "date:1week.."
+;;   ;;           :key "w")
+;;   ;;    (:name "attachments"
+;;   ;;           :query "attachment:*"
+;;   ;;           :key "a")
+;;   ;;    ))
+;;   :config
+;;   ;; Use Notmuch as Emacs' mail user agent.
+;;   (setopt mail-user-agent 'notmuch-user-agent)
+;;   ;; Kill composition buffer after successful sending.
+;;   (setopt message-kill-buffer-on-exit t)
+;;   ;; Make G perform asynchronous synchronization.
+;;   (define-key notmuch-hello-mode-map
+;;               (kbd "G") #'my/notmuch-poll-async)
+
+;;   (define-key notmuch-search-mode-map
+;;               (kbd "G") #'my/notmuch-poll-async)
+
+;;   (define-key notmuch-show-mode-map
+;;               (kbd "G") #'my/notmuch-poll-async)
+
+;;   (when (boundp 'notmuch-tree-mode-map)
+;;     (define-key notmuch-tree-mode-map
+;;                 (kbd "G") #'my/notmuch-poll-async))
+;;   )
+
+;; (use-package smtpmail
+;;   :ensure nil
+;;   :custom
+;;   (smtpmail-smtp-server "smtp.gmail.com")
+;;   (smtpmail-smtp-service 587)
+;;   (smtpmail-stream-type 'starttls)
+;;   (message-send-mail-function #'smtpmail-send-it)
+;;   (send-mail-function #'smtpmail-send-it)
+;;   )
+
+;; (use-package auth-source
+;;   :ensure nil
+;;   :config
+;;   (add-to-list 'auth-sources 'macos-keychain-internet)
+;;   (add-to-list 'auth-sources 'macos-keychain-generic))
 
