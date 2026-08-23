@@ -26,7 +26,7 @@
   (tool-bar-mode -1)
   (scroll-bar-mode -1)
   (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
-  (add-to-list 'default-frame-alist '(ns-appearance . dark))
+  ;; (add-to-list 'default-frame-alist '(ns-appearance . dark))
   ;; (add-to-list 'frameset-filter-alist '(ns-transparent-titlebar . :never))
   ;; (add-to-list 'frameset-filter-alist '(ns-appearance . :never))
   (setopt ns-use-proxy-icon nil)
@@ -50,10 +50,11 @@
   (set-default-coding-systems 'utf-8)
   (set-language-environment "UTF-8")
   (setopt font-use-system-font t)
-  ;; (set-frame-font "Cascadia Mono-14" nil t)
-  (setopt default-frame-alist '((font . "Cascadia Mono-14")))
+  (set-frame-font "Cascadia Mono-13:weight=semilight" nil t)
+  ;; (setopt default-frame-alist '((font . "Cascadia Mono-14")))
   (setopt delete-selection-mode t) ;; enable delete-selection-mode
   (winner-mode 1)
+  
 
   ;; MacOS screen, when in fullscreen, jumps when i am in LaTeX buffer and view the compiled
   ;; pdf file. I use pdf-tools package for pdf files. I checked that setting system-tooltips variables to t fixes the issue.
@@ -153,7 +154,15 @@
   :config
   (setopt modus-themes-mixed-fonts t)
   (setopt modus-themes-italic-constructs t)
-  ;; (modus-themes-load-theme 'ef-duo-light)
+  )
+
+(use-package standard-themes
+  :ensure t
+  :init
+  (standard-themes-take-over-modus-themes-mode 1)
+  :config
+  (setopt modus-themes-mixed-fonts t)
+  (setopt modus-themes-italic-constructs t)
   )
 
 
@@ -173,10 +182,12 @@
   "Load theme, taking current system APPEARANCE into consideration."
   (mapc #'disable-theme custom-enabled-themes)
   (pcase appearance
-    ('light (load-theme 'tokyo-night-day t))
-    ('dark (load-theme 'tokyo-night t))))
+    ('light (load-theme 'standard-light-tinted t))
+    ('dark (load-theme 'standard-dark t))))
 
 (add-hook 'ns-system-appearance-change-functions #'my/apply-theme)
+
+
 
 (use-package which-key
   :ensure nil
@@ -793,7 +804,7 @@
   ;;        )
   :config  
   (setopt
-   gptel-model 'qwen3.8:27b-mlx
+   gptel-model 'gemma4:31b-mxfp8
    gptel-backend (gptel-make-ollama "Ollama"   ;Any name of your choosing
                    :host "localhost:11434"     ;Where it's running
                    :stream t                   ;Stream responses
