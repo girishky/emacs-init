@@ -817,14 +817,9 @@
     )
   )
 
-;; (use-package gptel-agent
-;;   :ensure t
-;;   :after gptel
-;;   :config (gptel-agent-update))         ;Read files from agents directories
-
 (use-package gptel-agent
-  :vc ( :url "https://github.com/karthink/gptel-agent"
-        :rev :newest)
+  :ensure t
+  :after gptel
   :config (gptel-agent-update))         ;Read files from agents directories
 
 
