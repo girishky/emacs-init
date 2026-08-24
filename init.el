@@ -557,8 +557,8 @@
   )
 
 
-(use-package auctex
-  :ensure t
+(use-package tex
+  :ensure auctex
   :hook ((LaTeX-mode . LaTeX-math-mode)
          (LaTeX-mode . turn-on-reftex)
          (LaTeX-mode . turn-on-auto-fill)
