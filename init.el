@@ -183,7 +183,7 @@
   (mapc #'disable-theme custom-enabled-themes)
   (pcase appearance
     ('light (load-theme 'standard-light-tinted t))
-    ('dark (load-theme 'standard-dark t))))
+    ('dark (load-theme 'ef-bio t))))
 
 (add-hook 'ns-system-appearance-change-functions #'my/apply-theme)
 
@@ -392,48 +392,98 @@
   )
 
 
+;; (use-package eglot
+;;   :ensure nil
+;;   :config
+;;   (add-to-list 'eglot-server-programs
+;;                '(python-ts-mode . ("pyright-langserver" "--stdio")))
+;;   ;; (add-to-list 'eglot-server-programs
+;;   ;;              '(python-ts-mode . ("ty" "server")))
+;;   (add-to-list 'eglot-server-programs
+;;                '((LaTeX-mode bibtex-mode) . ("texlab")))
+;;   ;; (add-to-list 'eglot-server-programs
+;;   ;;              '(text-mode . ("harper-ls" "--stdio")))
+;;   ;; (setq-default eglot-workspace-configuration
+;;   ;;               '(:ty
+;;   ;;                 (:inlayHints
+;;   ;;                  (
+;;   ;;                   :variableTypes :json-false
+;;   ;;                   :callArgumentNames :json-false
+;;   ;;                   )
+;;   ;;                  )))
+;;   :custom
+;;   ;; (eglot-send-changes-idle-time 0.2)
+;;   (eglot-extend-to-xref t)
+
+;;   :hook (((python-ts-mode). eglot-ensure)
+;; 	 ;; python-specific settings
+;;          (python-ts-mode . (lambda ()
+;;                              (setq-local indent-tabs-mode nil
+;;                                          tab-width 4
+;;                                          python-indent-offset 4
+;; 					 python-shell-interpreter ".venv/bin/python3"
+;; 					 python-shell-prompt-detect-failure-warning nil)
+;;                              (superword-mode 1))))
+
+;;   :bind (:map eglot-mode-map
+;;               ("C-c l a" . eglot-code-actions)
+;;               ("C-c l r" . eglot-rename)
+;;               ("C-c l f" . eglot-format)
+;;               ("C-c l d" . eldoc)
+;;               ("C-c l o" . eglot-code-action-organize-imports)
+;;               ("C-c l h" . eglot-inlay-hints-mode)
+;;               ("C-c l q" . eglot-shutdown-all)
+;; 	      ("C-c l e" . flymake-show-buffer-diagnostics)))
+
+(defun my/python-venv-root ()
+  "Return the project's .venv directory, or nil."
+  (when-let* ((proj (project-current))
+              (root (project-root proj))
+              (venv (expand-file-name ".venv" root))
+              ((file-directory-p venv)))
+    venv))
+
+(defun my/python-setup ()
+  "Buffer-local Python setup; must run before `eglot-ensure'."
+  (setq-local python-shell-prompt-detect-failure-warning nil)
+  (superword-mode 1)
+  (when-let* ((venv (my/python-venv-root))
+              (py (expand-file-name "bin/python3" venv))
+              ((file-executable-p py)))
+    (setq-local python-shell-interpreter py
+                python-shell-virtualenv-root venv
+                eglot-workspace-configuration
+                `(:python (:pythonPath ,py :venvPath ,(file-name-directory venv))
+                          :python.analysis (:typeCheckingMode "standard"
+                                                              :autoImportCompletions t))))
+  (eglot-ensure))
+
 (use-package eglot
   :ensure nil
+  :custom
+  ;; (eglot-send-changes-idle-time 0.2)   ; default is 0.5
+  (eglot-extend-to-xref t)
+  (eglot-autoshutdown t)
+  (eglot-sync-connect nil)
+  (eglot-events-buffer-config '(:size 0 :format full))
+  :hook ((python-ts-mode . my/python-setup)
+         (LaTeX-mode . eglot-ensure)
+         (bibtex-mode . eglot-ensure))
   :config
   (add-to-list 'eglot-server-programs
                '(python-ts-mode . ("pyright-langserver" "--stdio")))
-  ;; (add-to-list 'eglot-server-programs
-  ;;              '(python-ts-mode . ("ty" "server")))
   (add-to-list 'eglot-server-programs
                '((LaTeX-mode bibtex-mode) . ("texlab")))
-  ;; (add-to-list 'eglot-server-programs
-  ;;              '(text-mode . ("harper-ls" "--stdio")))
-  ;; (setq-default eglot-workspace-configuration
-  ;;               '(:ty
-  ;;                 (:inlayHints
-  ;;                  (
-  ;;                   :variableTypes :json-false
-  ;;                   :callArgumentNames :json-false
-  ;;                   )
-  ;;                  )))
-  :custom
-  (eglot-send-changes-idle-time 0.2) ;; this is default
-  (eglot-extend-to-xref t)
-  
-  :hook (((python-ts-mode). eglot-ensure)
-	 ;; python-specific settings
-         (python-ts-mode . (lambda ()
-                             (setq-local indent-tabs-mode nil
-                                         tab-width 4
-                                         python-indent-offset 4
-					 python-shell-interpreter ".venv/bin/python3"
-					 python-shell-prompt-detect-failure-warning nil)
-                             (superword-mode 1))))
-
   :bind (:map eglot-mode-map
               ("C-c l a" . eglot-code-actions)
               ("C-c l r" . eglot-rename)
-              ("C-c l f" . eglot-format)
               ("C-c l d" . eldoc)
               ("C-c l o" . eglot-code-action-organize-imports)
               ("C-c l h" . eglot-inlay-hints-mode)
               ("C-c l q" . eglot-shutdown-all)
-	      ("C-c l e" . flymake-show-buffer-diagnostics)))
+              ("C-c l e" . flymake-show-buffer-diagnostics)
+              ("C-c l i" . eglot-find-implementation)
+              ("C-c l t" . eglot-find-typeDefinition)))
 
 
 (use-package markdown-ts-mode
