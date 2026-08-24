@@ -44,9 +44,6 @@
   (setopt column-number-mode t)
   (global-auto-revert-mode 1)
   (global-set-key [remap list-buffers] 'ibuffer)
-  ;; Use spaces instead of tabs by default
-  (setopt indent-tabs-mode nil)
-  ;; (setq-default tab-width 4)
   (set-default-coding-systems 'utf-8)
   (set-language-environment "UTF-8")
   (setopt font-use-system-font t)
@@ -73,7 +70,7 @@
   (setopt shell-command-prompt-show-cwd t)
   (setopt compilation-scroll-output 'first-error)
 
-  (setopt gc-cons-threshold 50000000) ;; reduce the frequency of garbage collection
+  (setopt gc-cons-threshold 50000000)
   (setopt make-backup-files nil) ; I either have files version controlled or I will manually create backup.
   (setopt auto-save-default nil) ; I save so often myself that I don't have a need for this.
   (setopt create-lockfiles nil) ; I don't have a situation where multiple emacses want to edit the same file.
@@ -114,6 +111,8 @@
   (read-file-name-completion-ignore-case t)
   (read-buffer-completion-ignore-case t)
   (completion-ignore-case t)
+  (indent-tabs-mode nil) ;; Use spaces instead of tabs by default
+  (tab-width 4) ;; set the tab width to 4 spaces
   ;; Enable indentation+completion using the TAB key.
   ;; `completion-at-point' is often bound to M-TAB.
   (tab-always-indent 'complete)
