@@ -47,7 +47,7 @@
   (set-default-coding-systems 'utf-8)
   (set-language-environment "UTF-8")
   (setopt font-use-system-font t)
-  (set-frame-font "Cascadia Mono-13:weight=semilight" nil t)
+  (set-frame-font "Cascadia Mono-14:weight=semilight" nil t)
   ;; (setopt default-frame-alist '((font . "Cascadia Mono-14")))
   (setopt delete-selection-mode t) ;; enable delete-selection-mode
   (winner-mode 1)
@@ -300,6 +300,17 @@
   (corfu-quit-no-match 'separator)
   )
 
+(use-package completion-preview
+  :ensure nil ; built-in
+  :config
+  ;; cycle through the other candidates with M-n/M-p (those two
+  ;; commands have no default bindings)
+  (define-key completion-preview-active-mode-map (kbd "M-n") #'completion-preview-next-candidate)
+  (define-key completion-preview-active-mode-map (kbd "M-p") #'completion-preview-prev-candidate)
+  ;; show the preview only after typing at least 3 characters (the default)
+  (setopt completion-preview-minimum-symbol-length 3)
+  (global-completion-preview-mode +1))
+
 (use-package dabbrev
   ;; ;; Swap M-/ and C-M-/
   ;; :bind (("M-/" . dabbrev-completion)
@@ -463,8 +474,10 @@
   ;; (eglot-send-changes-idle-time 0.2)   ; default is 0.5
   (eglot-extend-to-xref t)
   (eglot-autoshutdown t)
+  ;; prevents Eglot from blocking on the initial connection, allowing
+  ;; the connection to continue in the background
   (eglot-sync-connect nil)
-  (eglot-events-buffer-config '(:size 0 :format full))
+  (eglot-events-buffer-config '(:size 0))
   :hook ((python-ts-mode . my/python-setup)
          (LaTeX-mode . eglot-ensure)
          (bibtex-mode . eglot-ensure))
@@ -624,8 +637,8 @@
   (setopt switch-to-buffer-obey-display-actions t)
   (add-to-list 'display-buffer-alist
                '("^\\*Dictionary\\*" display-buffer-in-side-window
-		 (side . right)
-		 (window-width . 70)))
+		         (side . right)
+		         (window-width . 70)))
   :bind ("C-c L" .  dictionary-lookup-definition)
   
   :custom
@@ -649,7 +662,7 @@
                      (setopt mode-line-format
                              (if olivetti-mode nil
                                (default-value 'mode-line-format)))
-		     ;; (force-mode-line-update)
+		             ;; (force-mode-line-update)
                      )))
 
 
@@ -665,7 +678,7 @@
             "\\*Async Shell Command\\*"
             "\\*Warnings\\*"
             "\\*Error\\*"
-	    inferior-python-mode
+	        inferior-python-mode
             flymake-diagnostics-buffer-mode
             help-mode
             compilation-mode))
