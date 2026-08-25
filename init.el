@@ -516,10 +516,10 @@
   ;; :hook
   ;; (text-mode . flymake-mode)
   :config
-  (setopt flymake-show-diagnostics-at-end-of-line 'short) ;; other option: 'short
+  (setopt flymake-show-diagnostics-at-end-of-line nil) ;; other option: 'short, 'fancy
   :bind (:map flymake-mode-map
               ("M-N" . flymake-goto-next-error)
-	      ("M-P" . flymake-goto-prev-error)))
+	          ("M-P" . flymake-goto-prev-error)))
 
 (use-package jinx
   :ensure t
