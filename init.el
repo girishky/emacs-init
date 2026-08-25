@@ -99,7 +99,9 @@
   ;; (treesit-font-lock-level 4)
   (shr-use-fonts nil "disable variable fonts")
   (pixel-scroll-precision-mode t)
+  (pixel-scroll-precision-use-momentum nil) ;; Disable momentum scrolling for pixel precision
   (eldoc-echo-area-use-multiline-p nil)
+  (use-dialog-box nil) ;; Disable dialog boxes in favor of minibuffer prompts.
   ;; Enable context menu. `vertico-multiform-mode' adds a menu in the minibuffer
   ;; to switch display modes.
   (context-menu-mode t)
