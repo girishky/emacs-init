@@ -183,7 +183,7 @@
   "Load theme, taking current system APPEARANCE into consideration."
   (mapc #'disable-theme custom-enabled-themes)
   (pcase appearance
-    ('light (load-theme 'standard-light-tinted t))
+    ('light (load-theme 'standard-light t))
     ('dark (load-theme 'ef-bio t))))
 
 (add-hook 'ns-system-appearance-change-functions #'my/apply-theme)
@@ -868,16 +868,16 @@
   ;;        )
   :config  
   (setopt
-   gptel-model 'gemma4:31b-mxfp8
+   gptel-model 'qwen3.8:27b-mxfp8
    gptel-backend (gptel-make-ollama "Ollama"   ;Any name of your choosing
                    :host "localhost:11434"     ;Where it's running
                    :stream t                   ;Stream responses
                    :models '(
-                             "gemma4:31b-mxfp8"
-                             "gemma4:26b-mxfp8"
+                             ;; "gemma4:31b-mxfp8"
+                             ;; "gemma4:26b-mxfp8"
                              "qwen3.8:27b-mxfp8"
-                             "qwen3.8:27b-mlx"
-                             "qwen3.6:35b-a3b-mxfp8"
+                             ;; "qwen3.8:27b-mlx"
+                             ;; "qwen3.6:35b-a3b-mxfp8"
                              ) ;List of models
                    ) 
    gptel-default-mode 'org-mode
