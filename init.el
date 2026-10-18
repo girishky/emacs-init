@@ -47,7 +47,8 @@
   (set-default-coding-systems 'utf-8)
   (set-language-environment "UTF-8")
   (setopt font-use-system-font t)
-  (set-frame-font "Cascadia Mono-14:weight=semilight" nil t)
+  ;;(set-frame-font "Cascadia Mono-14:weight=semilight" nil t)
+  (set-frame-font "IBM Plex Mono Text" nil t)
   ;; (setopt default-frame-alist '((font . "Cascadia Mono-14")))
   (setopt delete-selection-mode t) ;; enable delete-selection-mode
   (winner-mode 1)
