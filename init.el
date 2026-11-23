@@ -633,19 +633,19 @@
   (cdlatex-takeover-parenthesis nil))
 
 
-(use-package dictionary
-  :ensure nil
-  :init
-  ;; dictionary lookup in a sidebar instead of separate buffer window
-  (setopt switch-to-buffer-obey-display-actions t)
-  (add-to-list 'display-buffer-alist
-               '("^\\*Dictionary\\*" display-buffer-in-side-window
-		         (side . right)
-		         (window-width . 70)))
-  :bind ("C-c L" .  dictionary-lookup-definition)
-  
-  :custom
-  (dictionary-server "dict.org"))
+;; (use-package dictionary
+;;   :ensure nil
+;;   :init
+;;   ;; dictionary lookup in a sidebar instead of separate buffer window
+;;   (setopt switch-to-buffer-obey-display-actions t)
+;;   (add-to-list 'display-buffer-alist
+;;                '("^\\*Dictionary\\*" display-buffer-in-side-window
+;; 		         (side . right)
+;; 		         (window-width . 70)))
+;;   :bind ("C-c L" .  dictionary-lookup-definition)
+
+;;   :custom
+;;   (dictionary-server "dict.org"))
 
 (use-package powerthesaurus
   :ensure t
@@ -1220,3 +1220,31 @@
 ;;   (add-to-list 'auth-sources 'macos-keychain-internet)
 ;;   (add-to-list 'auth-sources 'macos-keychain-generic))
 
+(defun my-quick-sdcv-dwim (&optional arg)
+  "Look up a word using quick-sdcv.
+By default, looks up the word at point.
+With a prefix argument (\\[universal-argument]), prompts for a word."
+  (interactive "P")
+  (if arg
+	  (call-interactively #'quick-sdcv-search-input)
+	(quick-sdcv-search-at-point)))
+
+(use-package quick-sdcv
+  :ensure t
+  :bind
+  ("s-d" . my-quick-sdcv-dwim)
+  (:map quick-sdcv-mode-map
+    	("q" . quit-window)
+    	("<tab>" . outline-toggle-children))
+  :hook
+  (quick-sdcv-mode . goto-address-mode)
+  :config
+  (add-to-list 'display-buffer-alist
+			   '("\\*sdcv"
+				 (display-buffer-reuse-window display-buffer-at-bottom)
+				 (window-height . 0.3)))
+  :custom
+  (quick-sdcv-dictionary-prefix-symbol "▶")
+  (quick-sdcv-ellipsis " ▼")
+  (quick-sdcv-unique-buffers t)
+  (quick-sdcv-fold-on-search t))
