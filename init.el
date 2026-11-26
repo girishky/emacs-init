@@ -48,7 +48,7 @@
   (set-language-environment "UTF-8")
   (setopt font-use-system-font t)
   ;;(set-frame-font "Cascadia Mono-14:weight=semilight" nil t)
-  (set-frame-font "IBM Plex Mono Text" nil t)
+  (set-frame-font "IBM Plex Mono Text-15" nil t)
   ;; (setopt default-frame-alist '((font . "Cascadia Mono-14")))
   (setopt delete-selection-mode t) ;; enable delete-selection-mode
   (winner-mode 1)
@@ -98,7 +98,7 @@
   (epg-pinentry-mode 'loopback)
   ;; (auto-save-default nil)
   ;; (treesit-font-lock-level 4)
-  (shr-use-fonts nil "disable variable fonts")
+  ;; (shr-use-fonts nil "disable variable fonts")
   (pixel-scroll-precision-mode t)
   (pixel-scroll-precision-use-momentum nil) ;; Disable momentum scrolling for pixel precision
   (eldoc-echo-area-use-multiline-p nil)
@@ -167,6 +167,9 @@
   (setopt modus-themes-italic-constructs t)
   )
 
+(use-package doric-themes
+  :ensure t
+  )
 
 (use-package batppuccin
   :ensure t
@@ -184,7 +187,7 @@
   "Load theme, taking current system APPEARANCE into consideration."
   (mapc #'disable-theme custom-enabled-themes)
   (pcase appearance
-    ('light (load-theme 'standard-light t))
+    ('light (load-theme 'doric-light t))
     ('dark (load-theme 'ef-bio t))))
 
 (add-hook 'ns-system-appearance-change-functions #'my/apply-theme)
@@ -485,8 +488,14 @@
          (LaTeX-mode . eglot-ensure)
          (bibtex-mode . eglot-ensure))
   :config
+  ;; (add-to-list 'eglot-server-programs
+  ;;              '(python-ts-mode . ("pyright-langserver" "--stdio")))
+
   (add-to-list 'eglot-server-programs
-               '(python-ts-mode . ("pyright-langserver" "--stdio")))
+               `(python-ts-mode . ,(eglot-alternatives
+                                    '(("ty" "server")
+                                      ("pyright-langserver" "--stdio")
+                                      ))))
   (add-to-list 'eglot-server-programs
                '((LaTeX-mode bibtex-mode) . ("texlab")))
   :bind (:map eglot-mode-map
@@ -657,7 +666,7 @@
   :ensure t
   :bind ("C-s-S-f" . olivetti-mode)
   :custom
-  (olivetti-body-width 84)
+  (olivetti-body-width 80)
   ;; (olivetti-style 'fancy)
   ;; (olivetti-minimum-body-width 66)
   :hook
@@ -877,6 +886,8 @@
                              ;; "gemma4:31b-mxfp8"
                              ;; "gemma4:26b-mxfp8"
                              "qwen3.8:27b-mxfp8"
+                             "gemma4:31b-mxfp8"
+                             "inkling-2-mini:26b-a5b-nvfp4"
                              ;; "qwen3.8:27b-mlx"
                              ;; "qwen3.6:35b-a3b-mxfp8"
                              ) ;List of models
@@ -910,8 +921,8 @@
 
 (defun smart-open-line ()
   "Insert an empty line after the current line.
-   Position the cursor at its beginning, according to the current mode.
-   credit: emacsredux blog"
+  Position the cursor at its beginning, according to the current mode.
+  credit: emacsredux blog"
   (interactive)
   (move-end-of-line nil)
   (newline-and-indent))
@@ -1248,3 +1259,50 @@ With a prefix argument (\\[universal-argument]), prompts for a word."
   (quick-sdcv-ellipsis " ▼")
   (quick-sdcv-unique-buffers t)
   (quick-sdcv-fold-on-search t))
+
+
+(use-package elfeed
+  :ensure t
+  :custom
+  (elfeed-db-directory
+   (expand-file-name "elfeed" user-emacs-directory))
+  ;; (elfeed-show-entry-switch 'display-buffer)
+  (elfeed-show-entry-switch #'pop-to-buffer-same-window)
+  (browse-url-browser-function #'eww-browse-url)
+  (elfeed-search-filter "@1-month-ago +unread")
+  :bind
+  ("C-x w" . elfeed))
+
+(use-package elfeed-org
+  :ensure t
+  :after elfeed
+  :config
+  (setq rmh-elfeed-org-files
+        (list (expand-file-name "~/Library/Mobile Documents/iCloud~com~appsonthemove~beorg/Documents/org/elfeed.org")))
+  (elfeed-org))
+
+;; Pick the first installed font from this list
+(defvar my/reading-font
+  (seq-find (lambda (f) (member f (font-family-list)))
+            '("SF Pro Text" "Helvetica Neue" ))
+  "Font used for reading articles in elfeed and eww.")
+
+(defun my/reading-mode ()
+  "Make the current buffer comfortable for long-form reading."
+  (when my/reading-font
+    ;; Only this buffer gets the reading font; the rest of Emacs is unaffected
+    (face-remap-add-relative 'variable-pitch :family my/reading-font :height 1.0))
+  (setq-local line-spacing 0.15)                ; more space between lines
+  (when (fboundp 'olivetti-mode)                ; center the text column
+    (olivetti-mode 1)))
+
+(add-hook 'elfeed-show-mode-hook #'my/reading-mode)
+(add-hook 'eww-mode-hook         #'my/reading-mode)
+
+;; Settings for shr, the HTML renderer that both elfeed and eww use
+(setq shr-use-fonts t               ; proportional fonts for body text
+      shr-max-width 72              ; ~72 characters per line is easy to read
+      shr-use-colors nil            ; ignore site colors and use your theme's
+      shr-max-image-proportion 0.6  ; images at most 60% of the window
+      shr-discard-aria-hidden t)    ; skip hidden page clutter
+
